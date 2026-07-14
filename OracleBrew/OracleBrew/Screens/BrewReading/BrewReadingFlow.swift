@@ -9,7 +9,7 @@
 import SwiftUI
 
 enum ReadingStep: Hashable {
-    case tellers, intention, photo, result
+    case tellers, intention, photo, result, chat
 }
 
 struct BrewReadingFlow: View {
@@ -61,7 +61,13 @@ struct BrewReadingFlow: View {
                 onBack: pop,
                 onClose: onClose
             )
-        case .result: FlowStub(title: "flow.step.result", onClose: onClose)
+        case .result:
+            ReadingResultView(
+                onAskOracle: { path.append(ReadingStep.chat) },
+                onClose: onClose
+            )
+        case .chat:
+            FlowStub(title: "flow.step.chat", onClose: onClose)
         }
     }
 
