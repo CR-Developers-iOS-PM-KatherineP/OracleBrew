@@ -1,0 +1,15 @@
+# Build artifacts / deps
+Pods/
+DerivedData/
+build/
+fastlane/
+
+# Binary assets (not code)
+*.xcassets
+*.ttf
+*.png
+*.svg
+
+# Xcode project internals
+*.xcodeproj/
+*.xcworkspace/

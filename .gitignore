@@ -30,3 +30,6 @@ fastlane/test_output
 *.p12
 *.mobileprovision
 .env
+
+# Graphify: local-only cost, graph itself is committed
+graphify-out/cost.json

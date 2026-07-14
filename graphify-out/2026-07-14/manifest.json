@@ -1,0 +1,192 @@
+{
+  ".mcp.json": {
+    "mtime": 1784012530.6877513,
+    "ast_hash": "144e68ab3ab18caad8e0f7a3637c930f",
+    "semantic_hash": "144e68ab3ab18caad8e0f7a3637c930f"
+  },
+  "OracleBrew/OracleBrew/App/Atrium.swift": {
+    "mtime": 1784013674.458569,
+    "ast_hash": "22f9de445ca8bd01bd6a34e2991378c7",
+    "semantic_hash": "22f9de445ca8bd01bd6a34e2991378c7"
+  },
+  "OracleBrew/OracleBrew/App/Ignition.swift": {
+    "mtime": 1784013271.1601567,
+    "ast_hash": "695a3577a3d6a064dc191f57617587f9",
+    "semantic_hash": "695a3577a3d6a064dc191f57617587f9"
+  },
+  "OracleBrew/OracleBrew/Backbone/DrinkCatalog.swift": {
+    "mtime": 1784014593.717201,
+    "ast_hash": "94e1e184b88542f81e57ea47877c9b73",
+    "semantic_hash": "94e1e184b88542f81e57ea47877c9b73"
+  },
+  "OracleBrew/OracleBrew/Backbone/FortuneTellers.swift": {
+    "mtime": 1784016201.9330866,
+    "ast_hash": "18a9bddd700cffe2b696fd3403cae824",
+    "semantic_hash": "18a9bddd700cffe2b696fd3403cae824"
+  },
+  "OracleBrew/OracleBrew/Backbone/Pathfinder.swift": {
+    "mtime": 1784013632.5412636,
+    "ast_hash": "ae732ce204435e190a810985dc336262",
+    "semantic_hash": "ae732ce204435e190a810985dc336262"
+  },
+  "OracleBrew/OracleBrew/Backbone/ReadingDraft.swift": {
+    "mtime": 1784030513.078668,
+    "ast_hash": "dc7e9f6a6dd1714df78435e32ffbaf50",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Backbone/Waypoint.swift": {
+    "mtime": 1784013623.7507057,
+    "ast_hash": "3e17b0fa186ae84a58bc46079170203b",
+    "semantic_hash": "3e17b0fa186ae84a58bc46079170203b"
+  },
+  "OracleBrew/OracleBrew/Kit/Cadence.swift": {
+    "mtime": 1784014069.8288774,
+    "ast_hash": "01a68397e3580c89afdba6bfd39b3348",
+    "semantic_hash": "01a68397e3580c89afdba6bfd39b3348"
+  },
+  "OracleBrew/OracleBrew/Kit/FlowChrome.swift": {
+    "mtime": 1784028141.0520797,
+    "ast_hash": "072b39408e2cff4858fc6787968bdcbb",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Kit/FlowLayout.swift": {
+    "mtime": 1784016242.0430343,
+    "ast_hash": "aa9ed336c6c8a734eeeca91701bfc79d",
+    "semantic_hash": "aa9ed336c6c8a734eeeca91701bfc79d"
+  },
+  "OracleBrew/OracleBrew/Kit/Lettering.swift": {
+    "mtime": 1784013246.8100512,
+    "ast_hash": "65f31fe343c1b8462e6d25750f6eff6b",
+    "semantic_hash": "65f31fe343c1b8462e6d25750f6eff6b"
+  },
+  "OracleBrew/OracleBrew/Kit/Pigment.swift": {
+    "mtime": 1784014619.550733,
+    "ast_hash": "c52eefdda6b32859548f8b8c0dae637f",
+    "semantic_hash": "c52eefdda6b32859548f8b8c0dae637f"
+  },
+  "OracleBrew/OracleBrew/Kit/StarRating.swift": {
+    "mtime": 1784016072.8545065,
+    "ast_hash": "59aa211daa383261c4c87d6cc09ea204",
+    "semantic_hash": "59aa211daa383261c4c87d6cc09ea204"
+  },
+  "OracleBrew/OracleBrew/Kit/StepDots.swift": {
+    "mtime": 1784027683.2833326,
+    "ast_hash": "c345994e49185729bfb1900378e212db",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Kit/TabChrome.swift": {
+    "mtime": 1784027555.9087355,
+    "ast_hash": "44581823791602f4d90b873f7d8e082a",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Kit/TopicChip.swift": {
+    "mtime": 1784016079.8596163,
+    "ast_hash": "58630ff49f8a3006ef5addaf83e5f08f",
+    "semantic_hash": "58630ff49f8a3006ef5addaf83e5f08f"
+  },
+  "OracleBrew/OracleBrew/Screens/Brew/BrewModel.swift": {
+    "mtime": 1784013713.779476,
+    "ast_hash": "b7249905b14feeedd397ee0b0ef37634",
+    "semantic_hash": "b7249905b14feeedd397ee0b0ef37634"
+  },
+  "OracleBrew/OracleBrew/Screens/Brew/BrewView.swift": {
+    "mtime": 1784015057.964105,
+    "ast_hash": "eb7690eed5a67d7529efad9697f53f9d",
+    "semantic_hash": "eb7690eed5a67d7529efad9697f53f9d"
+  },
+  "OracleBrew/OracleBrew/Screens/Brew/components/FlowCard.swift": {
+    "mtime": 1784014161.5678108,
+    "ast_hash": "97e62631fa53484ce6e800a55334c454",
+    "semantic_hash": "97e62631fa53484ce6e800a55334c454"
+  },
+  "OracleBrew/OracleBrew/Screens/BrewReading/BrewReadingFlow.swift": {
+    "mtime": 1784030517.444094,
+    "ast_hash": "ea938980f45f07d3b6e02412cb2a4ec1",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/DrinkSelection/DrinkSelectionView.swift": {
+    "mtime": 1784029096.1532307,
+    "ast_hash": "393d80559b0851df10220fd44c4cc68e",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/DrinkSelection/components/DrinkCard.swift": {
+    "mtime": 1784015588.2853801,
+    "ast_hash": "2b914251e9ad5b4aee0d20224fa4c3ac",
+    "semantic_hash": "2b914251e9ad5b4aee0d20224fa4c3ac"
+  },
+  "OracleBrew/OracleBrew/Screens/FortuneTellers/FortuneTellersView.swift": {
+    "mtime": 1784016171.455443,
+    "ast_hash": "cd403519fc81b2d8ec10a70c472a6148",
+    "semantic_hash": "cd403519fc81b2d8ec10a70c472a6148"
+  },
+  "OracleBrew/OracleBrew/Screens/FortuneTellers/components/TellerCard.swift": {
+    "mtime": 1784016684.198528,
+    "ast_hash": "cfa69eaa62498c34be4eb22af24d3aba",
+    "semantic_hash": "cfa69eaa62498c34be4eb22af24d3aba"
+  },
+  "OracleBrew/OracleBrew/Screens/TellerProfile/TellerProfileView.swift": {
+    "mtime": 1784016229.2223678,
+    "ast_hash": "33d1dcc2a84c9b14b252d00784b3483b",
+    "semantic_hash": "33d1dcc2a84c9b14b252d00784b3483b"
+  },
+  "OracleBrew/OracleBrew/Screens/TellerProfile/components/ReviewCard.swift": {
+    "mtime": 1784016210.6392498,
+    "ast_hash": "8636ed2809a5312aebe449cdf924e0d6",
+    "semantic_hash": "8636ed2809a5312aebe449cdf924e0d6"
+  },
+  "docs/superpowers/specs/2026-07-14-oraclebrew-v1-design.md": {
+    "mtime": 1784012252.9511065,
+    "ast_hash": "530cf39dac6e22e5354b57ccd873f2e0",
+    "semantic_hash": "530cf39dac6e22e5354b57ccd873f2e0"
+  },
+  "OracleBrew/OracleBrew/Backbone/Intention.swift": {
+    "mtime": 1784027694.6811192,
+    "ast_hash": "3b0d5b5e44e465b985f718cd57c500bd",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Backbone/ReadingEngine.swift": {
+    "mtime": 1784028642.5455763,
+    "ast_hash": "af3d949d92a6e9c11c12073a56dec604",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Kit/CameraPicker.swift": {
+    "mtime": 1784028161.0656154,
+    "ast_hash": "2fb72f0f48a057b75e959467a3635fc7",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Kit/SegmentedSelector.swift": {
+    "mtime": 1784027710.6107285,
+    "ast_hash": "8f75c463b6d06f8daaf7849c921161f4",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/Intention/IntentionView.swift": {
+    "mtime": 1784027737.072869,
+    "ast_hash": "4e36126ac01b17289bd74d0c8421fa9e",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/Intention/components/TopicButton.swift": {
+    "mtime": 1784027721.2255347,
+    "ast_hash": "760b1d3b9c82732c3f57525ce4b6e397",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/PhotoUpload/PhotoUploadView.swift": {
+    "mtime": 1784029103.9883194,
+    "ast_hash": "cce224df990e3fae86fa912c76413ee6",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/ReadingResult/ReadingResultView.swift": {
+    "mtime": 1784029464.1901112,
+    "ast_hash": "afa805d1e596d2d8d74421472389c4ab",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/ReadingResult/components/SymbolChip.swift": {
+    "mtime": 1784028684.9433997,
+    "ast_hash": "b0e3a8c876cf70fa705bcc9c44be926a",
+    "semantic_hash": ""
+  },
+  "OracleBrew/OracleBrew/Screens/ReadingResult/components/ThumbCard.swift": {
+    "mtime": 1784029120.5482712,
+    "ast_hash": "dae2dd5d450e801fc44e8649c4cc1a86",
+    "semantic_hash": ""
+  }
+}
