@@ -2,7 +2,8 @@
 //  StepDots.swift
 //  OracleBrew
 //
-//  Flow progress indicator: the current step is a wide pill, the rest are dots.
+//  Flow progress indicator: the current step is a wide pill, completed steps are
+//  filled dots, upcoming steps are dim dots.
 //
 
 import SwiftUI
@@ -15,7 +16,7 @@ struct StepDots: View {
         HStack(spacing: 4) {
             ForEach(1...total, id: \.self) { i in
                 Capsule()
-                    .fill(i == current ? Pigment.cream : Pigment.cream.opacity(0.2))
+                    .fill(i <= current ? Pigment.cream : Pigment.cream.opacity(0.2))
                     .frame(width: i == current ? 24 : 8, height: 8)
             }
         }
