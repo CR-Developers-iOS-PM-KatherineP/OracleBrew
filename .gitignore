@@ -33,3 +33,4 @@ fastlane/test_output
 
 # Graphify: local-only cost, graph itself is committed
 graphify-out/cost.json
+graphify-out/**/cost.json
