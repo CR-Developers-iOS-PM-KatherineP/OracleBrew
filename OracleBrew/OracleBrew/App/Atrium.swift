@@ -13,6 +13,16 @@ struct Atrium: View {
     @State private var brewRouter = Pathfinder()
     @State private var profileStore = UserProfileStore()
 
+    /// The floating tab bar only makes sense at each tab's root — once a tab
+    /// pushes a destination, it'd otherwise float on top of that content too
+    /// (it's a ZStack sibling, not scoped to any one NavigationStack).
+    private var showTabBar: Bool {
+        switch tab {
+        case .brew: brewRouter.path.isEmpty
+        case .chats, .history: true
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             Pigment.background.ignoresSafeArea()
@@ -21,7 +31,7 @@ struct Atrium: View {
             case .brew:
                 NavigationStack(path: $brewRouter.path) {
                     BrewView()
-                        .navigationDestination(for: Waypoint.self) { destination($0) }
+                        .waypointDestinations(brewRouter)
                 }
                 .environment(brewRouter)
             case .chats:
@@ -30,20 +40,11 @@ struct Atrium: View {
                 TabPlaceholder(title: "tab.history")
             }
 
-            TabBar(selection: $tab)
+            if showTabBar {
+                TabBar(selection: $tab)
+            }
         }
         .environment(profileStore)
-    }
-
-    @ViewBuilder
-    private func destination(_ waypoint: Waypoint) -> some View {
-        // Real screens land here as flows are built.
-        switch waypoint {
-        case .settings: TabPlaceholder(title: "settings.title")
-        case .brewReading: TabPlaceholder(title: "flow.brew_reading")
-        case .profile:
-            ProfileView(onBack: brewRouter.pop, onSaved: brewRouter.pop)
-        }
     }
 }
 

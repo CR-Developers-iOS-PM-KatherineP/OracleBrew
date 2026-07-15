@@ -60,23 +60,9 @@ struct BrewView: View {
                     .foregroundStyle(Pigment.creamDim)
             }
             Spacer()
-            settingsButton
+            SettingsButton()
         }
         .padding(.leading, 4)
-    }
-
-    private var settingsButton: some View {
-        Button {
-            router.push(.settings)
-        } label: {
-            Image(systemName: "gearshape")
-                .font(.system(size: 18))
-                .foregroundStyle(Pigment.cream)
-                .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
-                .background(Circle().fill(Pigment.surface))
-                .contentShape(Circle())
-        }
-        .buttonStyle(.plain)
     }
 
     // MARK: Hero
