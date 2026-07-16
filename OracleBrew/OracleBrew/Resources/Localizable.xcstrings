@@ -1123,6 +1123,46 @@
         }
       }
     },
+    "share.brand" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oracle Brew"
+          }
+        }
+      }
+    },
+    "share.cup_is_read" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your cup is read"
+          }
+        }
+      }
+    },
+    "share.preview_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My cup reading"
+          }
+        }
+      }
+    },
+    "share.tagline" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decipher the Signs of Fate"
+          }
+        }
+      }
+    },
     "tab.brew" : {
       "localizations" : {
         "en" : {

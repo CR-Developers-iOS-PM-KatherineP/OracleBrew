@@ -48,6 +48,17 @@ enum Pigment {
     static let settingsCard = Color(hex: 0x1A1430)
     /// Destructive — Delete Account.
     static let danger = Color(hex: 0xEF4444)
+    /// Amber — warm end of the share card's cup ring.
+    static let amber = Color(hex: 0xF59E0B)
+
+    /// Ring around the cup photo on the share card. Figma draws a gradient
+    /// stroke, but Dev Mode flattens strokes to a single colour and the stops
+    /// aren't variables — so this approximates it from the existing palette
+    /// (accent → amber). Replace if the designer supplies the real stops.
+    static let cupRing = LinearGradient(
+        colors: [accent, amber],
+        startPoint: .leading, endPoint: .trailing
+    )
 
     /// Hairline border on form fields and unselected chips.
     static let fieldBorder = Color(hex: 0xFFFFFF, alpha: 0.07)

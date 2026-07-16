@@ -20,6 +20,9 @@ struct ReadingResultView: View {
 
     @State private var reading: Reading?
     @State private var savedConfirmation = false
+    /// Rendered once when the reading lands — ImageRenderer is too heavy to run
+    /// on every body pass.
+    @State private var shareCard: ShareCardImage?
 
     private let card = Color(hex: 0x271C3E)
 
@@ -58,6 +61,10 @@ struct ReadingResultView: View {
                 let session = historyStore.record(drink: drink, teller: teller, topic: draft.topic,
                                                    horizon: draft.horizon, photo: draft.photo, reading: result)
                 draft.historySessionID = session.id
+            }
+            if let image = ShareCardRenderer.render(photo: draft.photo, advice: result.advice,
+                                                    timeframe: result.timeframe) {
+                shareCard = ShareCardImage(image: image)
             }
         }
     }
@@ -194,8 +201,15 @@ struct ReadingResultView: View {
     private var actions: some View {
         VStack(spacing: 8) {
             HStack(spacing: 9) {
-                ShareLink(item: reading?.whatISee ?? "") {
-                    secondaryLabel("result.share", icon: "square.and.arrow.up")
+                if let card = shareCard {
+                    ShareLink(
+                        item: card,
+                        preview: SharePreview("share.preview_title", image: Image(uiImage: card.image))
+                    ) {
+                        secondaryLabel("result.share", icon: "square.and.arrow.up")
+                    }
+                } else {
+                    secondaryLabel("result.share", icon: "square.and.arrow.up").opacity(0.4)
                 }
                 Button(action: savePhoto) {
                     secondaryLabel("result.save", icon: "arrow.down.to.line")
