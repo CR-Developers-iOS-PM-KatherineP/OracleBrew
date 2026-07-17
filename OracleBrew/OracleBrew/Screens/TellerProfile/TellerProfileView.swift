@@ -11,7 +11,8 @@ import SwiftUI
 
 struct TellerProfileView: View {
     let teller: FortuneTeller
-    let onContinue: () -> Void
+    /// nil in view-only mode (opened from a chat) — the Continue button hides.
+    var onContinue: (() -> Void)? = nil
     let onBack: () -> Void
 
     var body: some View {
@@ -31,26 +32,32 @@ struct TellerProfileView: View {
 
             backButton
 
-            VStack {
-                Spacer()
-                PrimaryButton(title: "teller.continue", action: onContinue)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
-                    .background(
-                        LinearGradient(colors: [Pigment.background.opacity(0), Pigment.background],
-                                       startPoint: .top, endPoint: .bottom)
-                        .frame(height: 120).allowsHitTesting(false),
-                        alignment: .bottom
-                    )
+            if let onContinue {
+                VStack {
+                    Spacer()
+                    PrimaryButton(title: "teller.continue", action: onContinue)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 8)
+                        .background(
+                            LinearGradient(colors: [Pigment.background.opacity(0), Pigment.background],
+                                           startPoint: .top, endPoint: .bottom)
+                            .frame(height: 120).allowsHitTesting(false),
+                            alignment: .bottom
+                        )
+                }
             }
         }
         .toolbar(.hidden, for: .navigationBar)
     }
 
     private var hero: some View {
-        Image(teller.portrait)
-            .resizable()
-            .scaledToFill()
+        Group {
+            if let url = teller.portraitURL, !url.isEmpty {
+                RemoteImage(urlString: url, cornerRadius: 0)
+            } else {
+                Image(teller.portrait).resizable().scaledToFill()
+            }
+        }
             .frame(height: 360)
             .frame(maxWidth: .infinity)
             .clipped()

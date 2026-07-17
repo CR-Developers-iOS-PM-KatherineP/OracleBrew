@@ -30,14 +30,25 @@ struct ChatsView: View {
             .toolbar(.hidden, for: .navigationBar)
             .waypointDestinations(router)
             .navigationDestination(for: ChatSummary.self) { summary in
-                OracleChatView(thread: chatStore.thread(for: summary), userName: "Susan", onClose: router.pop)
+                let thread = chatStore.thread(for: summary)
+                OracleChatView(thread: thread, userName: "Susan", onClose: router.pop,
+                               onOpenProfile: { router.path.append(TellerPeek(teller: thread.teller)) })
             }
             .navigationDestination(for: ChatThread.self) { thread in
-                OracleChatView(thread: thread, userName: "Susan", onClose: router.pop)
+                OracleChatView(thread: thread, userName: "Susan", onClose: router.pop,
+                               onOpenProfile: { router.path.append(TellerPeek(teller: thread.teller)) })
+            }
+            .navigationDestination(for: TellerPeek.self) { peek in
+                TellerProfileView(teller: peek.teller, onBack: router.pop)
             }
         }
         .environment(router)
         .task { await chatStore.loadList() }
+        .onChange(of: router.path.isEmpty) { _, atRoot in
+            // Returning to the list — refresh so the unread dot clears (the
+            // backend marked the thread read when it was opened).
+            if atRoot { Task { await chatStore.loadList() } }
+        }
     }
 
     @ViewBuilder

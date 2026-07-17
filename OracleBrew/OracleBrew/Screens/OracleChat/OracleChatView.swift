@@ -9,15 +9,26 @@
 
 import SwiftUI
 
+/// Wraps an oracle for a view-only profile push from a chat, so it doesn't
+/// collide with the selection-mode FortuneTeller destination in the reading flow.
+struct TellerPeek: Hashable {
+    let teller: FortuneTeller
+}
+
 struct OracleChatView: View {
     let thread: ChatThread
     let userName: String
     let onClose: () -> Void
+    /// Opens the oracle's profile (view-only) when the header portrait is tapped.
+    var onOpenProfile: (() -> Void)? = nil
+    /// Returns to the reading this chat grew out of (post-reading chat only).
+    var onReturnToReading: (() -> Void)? = nil
 
     @State private var draftText = ""
     @State private var loading = false
     @State private var sending = false
     @State private var sendFailed = false
+    @State private var chipsHidden = false
     @FocusState private var inputFocused: Bool
 
     private let repository = ChatRepository()
@@ -27,13 +38,17 @@ struct OracleChatView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Pigment.background.ignoresSafeArea()
+            ChatBackground()
 
             VStack(spacing: 0) {
                 header
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 12) {
+                            if let reading = draft?.reading, let onReturnToReading {
+                                readingCard(reading, action: onReturnToReading)
+                            }
+                            if !thread.messages.isEmpty { dateDivider }
                             ForEach(thread.messages) { ChatBubble(message: $0).id($0.id) }
                             if sending { TypingBubble().id("typing") }
                         }
@@ -43,7 +58,7 @@ struct OracleChatView: View {
                     .onChange(of: thread.messages.count) { scrollToBottom(proxy) }
                     .onChange(of: sending) { scrollToBottom(proxy) }
                 }
-                if !thread.quickQuestions.isEmpty { quickChips }
+                if !thread.quickQuestions.isEmpty && !chipsHidden { quickMenu }
                 inputBar
             }
             .padding(.horizontal, 20)
@@ -90,56 +105,122 @@ struct OracleChatView: View {
         }
     }
 
+    // Back on the left, the oracle centred — matching the design (was a
+    // portrait-left / close-right layout).
     private var header: some View {
-        HStack(spacing: 12) {
-            Group {
-                if let url = teller.portraitURL, !url.isEmpty {
-                    RemoteImage(urlString: url, cornerRadius: 22)
-                } else {
-                    Image(teller.portrait).resizable().scaledToFill()
+        ZStack {
+            Button { onOpenProfile?() } label: {
+                HStack(spacing: 12) {
+                    Group {
+                        if let url = teller.portraitURL, !url.isEmpty {
+                            RemoteImage(urlString: url, cornerRadius: 24)
+                        } else {
+                            Image(teller.portrait).resizable().scaledToFill()
+                        }
+                    }
+                    .frame(width: 48, height: 48)
+                    .clipShape(Circle())
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(teller.name)
+                            .font(Lettering.displayMedium(18))
+                            .foregroundStyle(Pigment.cream)
+                        Text(teller.title)
+                            .font(Lettering.body(12))
+                            .foregroundStyle(Pigment.cream.opacity(0.5))
+                    }
                 }
             }
-            .frame(width: 44, height: 44)
-            .clipShape(Circle())
-            VStack(alignment: .leading, spacing: 2) {
-                Text(teller.name)
-                    .font(Lettering.displayMedium(18))
-                    .foregroundStyle(Pigment.cream)
-                Text(teller.title)
-                    .font(Lettering.body(12))
-                    .foregroundStyle(Pigment.cream.opacity(0.5))
-            }
-            Spacer()
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Pigment.cream)
-                    .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
-                    .background(Circle().fill(Pigment.surface))
-            }
             .buttonStyle(.plain)
+            .disabled(onOpenProfile == nil)
+
+            HStack {
+                Button(action: onClose) {
+                    Image(systemName: "arrow.left")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(Pigment.cream)
+                        .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
+                        .background(Circle().fill(Pigment.surface))
+                }
+                .buttonStyle(.plain)
+                Spacer()
+            }
         }
         .padding(.top, 4)
         .padding(.bottom, 8)
     }
 
-    private var quickChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+    /// A tappable summary of the reading this chat came from — returns to the
+    /// full result. Shown at the top of a post-reading chat.
+    private func readingCard(_ reading: Reading, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: "cup.and.saucer.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Pigment.accent)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(Pigment.accent.opacity(0.15)))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("chat.reading_card")
+                        .font(Lettering.bodyMedium(11))
+                        .textCase(.uppercase)
+                        .foregroundStyle(Pigment.accent)
+                    Text(reading.advice)
+                        .font(Lettering.body(13))
+                        .foregroundStyle(Pigment.cream)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 4)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Pigment.cream.opacity(0.4))
+            }
+            .padding(12)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Pigment.surface))
+            .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Pigment.accent.opacity(0.3), lineWidth: 1))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var dateDivider: some View {
+        Text("chat.today")
+            .font(Lettering.body(12))
+            .foregroundStyle(Pigment.cream.opacity(0.4))
+            .frame(maxWidth: .infinity)
+            .padding(.top, 4)
+    }
+
+    // Vertical suggestion menu pinned bottom-right, with a dismiss button on the
+    // left — matching the design (was a horizontal chip strip).
+    private var quickMenu: some View {
+        HStack(alignment: .bottom, spacing: 8) {
+            Button { withAnimation { chipsHidden = true } } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Pigment.cream.opacity(0.6))
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(Pigment.surface))
+                    .overlay(Circle().strokeBorder(Color.white.opacity(0.12), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+
+            Spacer(minLength: 0)
+
+            VStack(alignment: .trailing, spacing: 8) {
                 ForEach(thread.quickQuestions, id: \.self) { question in
                     Button { send(question) } label: {
                         Text(question)
                             .font(Lettering.body(13))
                             .foregroundStyle(Pigment.cream)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .background(Capsule().fill(Pigment.surface))
-                            .overlay(Capsule().strokeBorder(Color.white.opacity(0.12), lineWidth: 1))
+                            .multilineTextAlignment(.trailing)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Capsule().fill(Pigment.accent.opacity(0.18)))
+                            .overlay(Capsule().strokeBorder(Pigment.accent.opacity(0.4), lineWidth: 1))
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.vertical, 4)
         }
         .padding(.bottom, 8)
     }

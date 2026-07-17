@@ -24,7 +24,9 @@ struct OracleChatEntryFlow: View {
                 onContinue: { path.append(ChatEntryStep.chat) },
                 onOpenProfile: { path.append($0) },
                 onBack: onClose,
-                onClose: onClose
+                onClose: onClose,
+                step: nil,                       // single step — no progress/back
+                ctaTitle: "chat.start"
             )
             .navigationDestination(for: FortuneTeller.self) { teller in
                 TellerProfileView(
@@ -38,8 +40,13 @@ struct OracleChatEntryFlow: View {
             }
             .navigationDestination(for: ChatEntryStep.self) { _ in
                 if let teller = draft.teller {
-                    OracleChatView(thread: chatStore.thread(for: teller, context: nil), userName: "Susan", onClose: onClose)
+                    OracleChatView(thread: chatStore.thread(for: teller, context: nil), userName: "Susan",
+                                   onClose: onClose,
+                                   onOpenProfile: { path.append(TellerPeek(teller: teller)) })
                 }
+            }
+            .navigationDestination(for: TellerPeek.self) { peek in
+                TellerProfileView(teller: peek.teller, onBack: { if !path.isEmpty { path.removeLast() } })
             }
         }
         .environment(draft)

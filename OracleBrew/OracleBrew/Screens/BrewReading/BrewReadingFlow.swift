@@ -37,6 +37,9 @@ struct BrewReadingFlow: View {
                     onBack: pop
                 )
             }
+            .navigationDestination(for: TellerPeek.self) { peek in
+                TellerProfileView(teller: peek.teller, onBack: pop)
+            }
         }
         .environment(draft)
         .alert("reading.failed.title", isPresented: showReadingError) {
@@ -93,7 +96,13 @@ struct BrewReadingFlow: View {
             )
         case .chat:
             let teller = draft.teller ?? FortuneTellerRoster.all[0]
-            OracleChatView(thread: chatStore.thread(for: teller, context: draft), userName: "Susan", onClose: onClose)
+            OracleChatView(
+                thread: chatStore.thread(for: teller, context: draft),
+                userName: "Susan",
+                onClose: onClose,
+                onOpenProfile: { path.append(TellerPeek(teller: teller)) },
+                onReturnToReading: pop
+            )
         }
     }
 

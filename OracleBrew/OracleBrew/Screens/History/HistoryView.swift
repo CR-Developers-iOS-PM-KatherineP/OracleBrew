@@ -40,7 +40,16 @@ struct HistoryView: View {
                 )
             }
             .navigationDestination(for: ChatThread.self) { thread in
-                OracleChatView(thread: thread, userName: "Susan", onClose: router.pop)
+                OracleChatView(
+                    thread: thread,
+                    userName: "Susan",
+                    onClose: router.pop,
+                    onOpenProfile: { router.path.append(TellerPeek(teller: thread.teller)) },
+                    onReturnToReading: router.pop
+                )
+            }
+            .navigationDestination(for: TellerPeek.self) { peek in
+                TellerProfileView(teller: peek.teller, onBack: router.pop)
             }
         }
         .environment(router)

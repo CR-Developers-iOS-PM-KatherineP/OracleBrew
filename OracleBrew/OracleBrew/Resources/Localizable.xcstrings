@@ -122,6 +122,16 @@
         }
       }
     },
+    "chat.reading_card" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your reading"
+          }
+        }
+      }
+    },
     "chat.send_failed.message" : {
       "localizations" : {
         "en" : {
@@ -138,6 +148,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Message not sent"
+          }
+        }
+      }
+    },
+    "chat.start" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Chat"
+          }
+        }
+      }
+    },
+    "chat.today" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         }
       }
