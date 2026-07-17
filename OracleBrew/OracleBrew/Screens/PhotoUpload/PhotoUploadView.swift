@@ -18,6 +18,8 @@ struct PhotoUploadView: View {
 
     @State private var pickerItem: PhotosPickerItem?
     @State private var showCamera = false
+    @State private var camera = CupCamera()
+    @State private var capturing = false
 
     private let field = Color(hex: 0x271C3E)
 
@@ -52,6 +54,13 @@ struct PhotoUploadView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .onAppear(perform: prefillRandomIfNeeded)
+        .task {
+            // Access is asked for here, before the feed is needed — the Random
+            // Cup path never shows a camera, so it's never prompted.
+            guard !hasPhoto, !draft.isRandomPath else { return }
+            await camera.prepare()
+        }
+        .onDisappear { camera.stop() }
         .onChange(of: pickerItem) { _, item in loadPicked(item) }
         .fullScreenCover(isPresented: $showCamera) {
             CameraPicker { draft.photo = $0 }.ignoresSafeArea()
@@ -88,29 +97,48 @@ struct PhotoUploadView: View {
                 Color.clear
                     .overlay { Image(uiImage: photo).resizable().scaledToFill() }
                     .clipShape(RoundedRectangle(cornerRadius: 20))
+            } else if let session = camera.session {
+                // Live feed — the user frames the cup right in the drop zone.
+                CameraPreview(session: session)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .strokeBorder(Pigment.accent.opacity(0.5),
+                                          style: StrokeStyle(lineWidth: 2, dash: [6, 5]))
+                    )
+                    .overlay { if capturing { Color.white.opacity(0.7) } }
+                    .animation(.easeOut(duration: 0.15), value: capturing)
             } else {
-                VStack(spacing: 16) {
-                    ZStack {
-                        Circle().fill(Pigment.accent.opacity(0.15)).frame(width: 72, height: 72)
-                        Image(systemName: "camera.fill")
-                            .font(.system(size: 26))
-                            .foregroundStyle(Pigment.accent)
-                    }
-                    Text("photo.zone.hint")
-                        .font(Lettering.body(14))
-                        .foregroundStyle(Pigment.cream.opacity(0.4))
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(RoundedRectangle(cornerRadius: 20).fill(field).opacity(0.8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(Pigment.accent.opacity(0.5),
-                                      style: StrokeStyle(lineWidth: 2, dash: [6, 5]))
-                )
+                dropZonePlaceholder
             }
         }
         .frame(maxWidth: .infinity)
         .frame(height: 395 * Screen.vScale)
+    }
+
+    /// Shown until the feed is up, and for good where it can't run at all
+    /// (no camera, access denied).
+    private var dropZonePlaceholder: some View {
+        VStack(spacing: 16) {
+            ZStack {
+                Circle().fill(Pigment.accent.opacity(0.15)).frame(width: 72, height: 72)
+                Image(systemName: camera.phase == .denied ? "camera.badge.ellipsis" : "camera.fill")
+                    .font(.system(size: 26))
+                    .foregroundStyle(Pigment.accent)
+            }
+            Text(camera.phase == .denied ? "photo.zone.denied" : "photo.zone.hint")
+                .font(Lettering.body(14))
+                .foregroundStyle(Pigment.cream.opacity(0.4))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(RoundedRectangle(cornerRadius: 20).fill(field).opacity(0.8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .strokeBorder(Pigment.accent.opacity(0.5),
+                              style: StrokeStyle(lineWidth: 2, dash: [6, 5]))
+        )
     }
 
     private var instructionCard: some View {
@@ -145,9 +173,8 @@ struct PhotoUploadView: View {
                     secondaryLabel("photo.upload_gallery")
                 }
                 .buttonStyle(.plain)
-                PrimaryButton(title: "photo.take") {
-                    if CameraPicker.isAvailable { showCamera = true }
-                }
+                PrimaryButton(title: "photo.take", action: take)
+                    .disabled(capturing)
             }
         }
     }
@@ -165,6 +192,22 @@ struct PhotoUploadView: View {
 
     // MARK: Actions
 
+    /// Snaps the live feed. Where no session could start (simulator, denied)
+    /// falls back to the system camera modal.
+    private func take() {
+        guard camera.phase == .running else {
+            if CameraPicker.isAvailable { showCamera = true }
+            return
+        }
+        capturing = true
+        Task {
+            defer { capturing = false }
+            guard let image = await camera.capture() else { return }
+            draft.photo = image
+            camera.stop()
+        }
+    }
+
     private func prefillRandomIfNeeded() {
         guard draft.isRandomPath, draft.photo == nil,
               let sample = UIImage(named: "SampleCup") else { return }
@@ -176,7 +219,10 @@ struct PhotoUploadView: View {
         Task {
             if let data = try? await item.loadTransferable(type: Data.self),
                let image = UIImage(data: data) {
-                await MainActor.run { draft.photo = image }
+                await MainActor.run {
+                    draft.photo = image
+                    camera.stop()
+                }
             }
         }
     }
