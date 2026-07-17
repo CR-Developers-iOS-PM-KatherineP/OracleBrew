@@ -14,7 +14,8 @@ struct DrinkCard: View {
     var body: some View {
         Button(action: onTap) { card }
             .buttonStyle(.plain)
-            .opacity(dimmed ? 0.4 : 1)
+            // The design drops everything but the picked drink right down to 20%.
+            .opacity(dimmed ? 0.2 : 1)
             .animation(.easeInOut(duration: 0.15), value: dimmed)
     }
 
@@ -41,13 +42,11 @@ struct DrinkCard: View {
         .overlay(alignment: .topLeading) {
             if drink.isRandom { ribbon }
         }
+        .overlay(alignment: .topTrailing) { radio }
         .clipShape(RoundedRectangle(cornerRadius: Cadence.cardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: Cadence.cardRadius)
-                .strokeBorder(
-                    isSelected ? Pigment.accent : Color.white.opacity(0.1),
-                    lineWidth: 2
-                )
+                .strokeBorder(Color.white.opacity(0.1), lineWidth: 2)
         )
     }
 
@@ -57,7 +56,9 @@ struct DrinkCard: View {
             // Prefer the API image; fall back to the bundled art (slug-mapped)
             // while the backend serves image: null.
             if let url = drink.imageURL, !url.isEmpty {
-                RemoteImage(urlString: url, cornerRadius: Cadence.cardRadius)
+                // Clear backing: the art is a cutout, so it has to sit on the
+                // card's own gradient — an opaque fill reads as a box around it.
+                RemoteImage(urlString: url, cornerRadius: Cadence.cardRadius, backing: .clear)
             } else {
                 Image(drink.art)
                     .resizable()
@@ -66,23 +67,28 @@ struct DrinkCard: View {
         }
         .frame(height: 108)
         .frame(maxWidth: .infinity)
+        // The design insets the photo 4pt inside the card's own 12pt padding
+        // (138 wide in a 170 card); as an inset it holds on wider screens too.
+        .padding(.horizontal, 4)
         .clipShape(RoundedRectangle(cornerRadius: Cadence.cardRadius))
         .allowsHitTesting(false)
     }
 
     private var radio: some View {
         ZStack {
-            Circle()
-                .strokeBorder(Color.white.opacity(0.15), lineWidth: 2)
-                .frame(width: 24, height: 24)
             if isSelected {
-                Circle().fill(Pigment.accent).frame(width: 24, height: 24)
+                Circle().fill(Pigment.accent)
                 Image(systemName: "checkmark")
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(Pigment.cream)
+                    .foregroundStyle(.white)
+            } else {
+                Circle().strokeBorder(Color.white.opacity(0.15), lineWidth: 2)
             }
         }
-        .padding(10)
+        .frame(width: 24, height: 24)
+        .padding(.top, 6)
+        .padding(.trailing, 10)
+        .allowsHitTesting(false)
     }
 
     private var ribbon: some View {

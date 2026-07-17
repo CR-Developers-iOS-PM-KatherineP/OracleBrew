@@ -8,6 +8,8 @@ import SwiftUI
 struct TellerCard: View {
     let teller: FortuneTeller
     let isSelected: Bool
+    /// Another oracle is picked — this one recedes.
+    var dimmed: Bool = false
     let onSelect: () -> Void
     let onViewProfile: () -> Void
 
@@ -26,10 +28,13 @@ struct TellerCard: View {
             .clipShape(RoundedRectangle(cornerRadius: Cadence.cardRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: Cadence.cardRadius)
-                    .strokeBorder(isSelected ? Pigment.accent : Color.white.opacity(0.1), lineWidth: 2)
+                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 2)
             )
         }
         .buttonStyle(.plain)
+        // The design drops the unpicked oracles to 30%.
+        .opacity(dimmed ? 0.3 : 1)
+        .animation(.easeInOut(duration: 0.15), value: dimmed)
     }
 
     private var portrait: some View {
@@ -134,12 +139,14 @@ struct TellerCard: View {
 
     private var radio: some View {
         ZStack {
-            Circle().strokeBorder(Pigment.cream.opacity(0.15), lineWidth: 2).frame(width: 24, height: 24)
             if isSelected {
-                Circle().fill(Pigment.accent).frame(width: 24, height: 24)
-                Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundStyle(Pigment.cream)
+                Circle().fill(Pigment.accent)
+                Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundStyle(.white)
+            } else {
+                Circle().strokeBorder(Pigment.cream.opacity(0.15), lineWidth: 2)
             }
         }
+        .frame(width: 24, height: 24)
         // Figma: 24pt dot at (319, 6) on a 353-wide card → 10 from the trailing
         // edge, 6 from the top. Pad the dot itself before stretching — padding
         // after .frame(maxWidth: .infinity) grows the block past the card and

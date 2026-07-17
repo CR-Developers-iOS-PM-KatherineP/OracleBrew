@@ -14,6 +14,9 @@ struct RemoteImage: View {
     let urlString: String?
     var cornerRadius: CGFloat = 12
     var contentMode: ContentMode = .fill
+    /// What sits behind the image. Cutout art (transparent PNGs) wants `.clear`
+    /// so it blends into whatever the host draws, instead of reading as a box.
+    var backing: Color = Pigment.settingsCard
 
     @State private var image: Image?
     @State private var failed = false
@@ -22,12 +25,12 @@ struct RemoteImage: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(Pigment.settingsCard)
+            .fill(backing)
             .overlay {
                 if let image {
                     image.resizable().aspectRatio(contentMode: contentMode)
                 } else if hasURL && !failed {
-                    ShimmerFill(cornerRadius: cornerRadius)
+                    ShimmerFill(cornerRadius: cornerRadius, backing: backing)
                 } else {
                     Image(systemName: "photo")
                         .font(.system(size: 24))
@@ -62,12 +65,13 @@ struct RemoteImage: View {
 /// Running light highlight across the backing while an image loads.
 private struct ShimmerFill: View {
     let cornerRadius: CGFloat
+    var backing: Color = Pigment.settingsCard
     @State private var phase: CGFloat = 0
 
     var body: some View {
         GeometryReader { geo in
             let w = max(geo.size.width, 1)
-            Pigment.settingsCard
+            backing
                 .overlay(
                     LinearGradient(colors: [.clear, .white.opacity(0.15), .clear],
                                    startPoint: .leading, endPoint: .trailing)

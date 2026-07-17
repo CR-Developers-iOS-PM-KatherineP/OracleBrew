@@ -14,6 +14,10 @@ struct FortuneTellersView: View {
     let onOpenProfile: (FortuneTeller) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
+    /// Reading flow shows step dots + a back chip and a "Continue" CTA; the
+    /// Oracle Chat entry is a single step — no progress, no back, "Start chat".
+    var step: Int? = 2
+    var ctaTitle: LocalizedStringKey = "flow.continue"
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -23,8 +27,8 @@ struct FortuneTellersView: View {
                 FlowHeader(
                     title: "teller.title",
                     subtitle: "teller.subtitle",
-                    step: 2,
-                    onBack: onBack,
+                    step: step,
+                    onBack: step == nil ? nil : onBack,
                     onClose: onClose
                 )
                 .padding(.top, 4)
@@ -35,6 +39,7 @@ struct FortuneTellersView: View {
                             TellerCard(
                                 teller: teller,
                                 isSelected: draft.teller == teller,
+                                dimmed: draft.teller != nil && draft.teller != teller,
                                 onSelect: { draft.teller = teller },
                                 onViewProfile: { onOpenProfile(teller) }
                             )
@@ -49,7 +54,7 @@ struct FortuneTellersView: View {
             if draft.teller != nil {
                 VStack {
                     Spacer()
-                    PrimaryButton(title: "flow.continue", action: onContinue)
+                    PrimaryButton(title: ctaTitle, action: onContinue)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 8)
                         .background(
