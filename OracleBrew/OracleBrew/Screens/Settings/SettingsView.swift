@@ -4,9 +4,10 @@
 //
 //  General (Pro Plan, Restore Purchases) / Legal & Support (Privacy Policy,
 //  Terms Of Use, Support) / Permissions (Camera, Notifications, Data Consent)
-//  / Personal account (Create an account — no onboarding/auth yet in v1.0,
-//  so this is the only account state that exists). Reached from the Brew
-//  tab's gear icon.
+//  / Personal account. Reached from the Brew tab's gear icon.
+//
+//  General and the consent toggle are behind Features flags — this build is
+//  free and asks for no consent, so they're built but not shown.
 //
 //  Pushed onto Atrium's brewRouter NavigationStack — it registers its own
 //  navigationDestination on that SAME stack rather than nesting a second
@@ -89,16 +90,20 @@ struct SettingsView: View {
 
     // MARK: Sections
 
+    /// Both rows are the paywall, so the whole section goes with it.
+    @ViewBuilder
     private var generalSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            SettingsSectionLabel(title: "settings.section.general")
-            SettingsCard {
-                SettingsRow(icon: "IconCrown", title: "settings.pro_plan", tint: Pigment.gold, iconTint: Pigment.gold) {
-                    showComingSoon = true
-                }
-                SettingsDivider()
-                SettingsRow(icon: "IconCart", title: "settings.restore") {
-                    showComingSoon = true
+        if Features.paywall {
+            VStack(alignment: .leading, spacing: 10) {
+                SettingsSectionLabel(title: "settings.section.general")
+                SettingsCard {
+                    SettingsRow(icon: "IconCrown", title: "settings.pro_plan", tint: Pigment.gold, iconTint: Pigment.gold) {
+                        showComingSoon = true
+                    }
+                    SettingsDivider()
+                    SettingsRow(icon: "IconCart", title: "settings.restore") {
+                        showComingSoon = true
+                    }
                 }
             }
         }
@@ -129,13 +134,19 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 10) {
             SettingsSectionLabel(title: "settings.section.permissions")
             SettingsCard {
+                // Camera is always here; each optional row brings its own
+                // divider, or one dangles under the last visible row.
                 SettingsToggleRow(icon: "IconCamera", title: "settings.camera_access",
                                    isOn: $cameraAuthorized, interactive: false, onTap: openSystemSettings)
-                SettingsDivider()
-                SettingsToggleRow(icon: "IconBell", title: "settings.notifications",
-                                   isOn: $notificationsAuthorized, interactive: false, onTap: openSystemSettings)
-                SettingsDivider()
-                SettingsToggleRow(icon: "IconShield", title: "settings.data_consent", isOn: $dataConsent)
+                if Features.notifications {
+                    SettingsDivider()
+                    SettingsToggleRow(icon: "IconBell", title: "settings.notifications",
+                                       isOn: $notificationsAuthorized, interactive: false, onTap: openSystemSettings)
+                }
+                if Features.dataConsent {
+                    SettingsDivider()
+                    SettingsToggleRow(icon: "IconShield", title: "settings.data_consent", isOn: $dataConsent)
+                }
             }
         }
     }
@@ -168,6 +179,7 @@ struct SettingsView: View {
 
     private func refreshPermissionStatus() {
         cameraAuthorized = AVCaptureDevice.authorizationStatus(for: .video) == .authorized
+        guard Features.notifications else { return }
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             Task { @MainActor in
                 notificationsAuthorized = settings.authorizationStatus == .authorized
