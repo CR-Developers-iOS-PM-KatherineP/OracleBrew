@@ -1,13 +1,3 @@
-//
-//  ChatSessionStore.swift
-//  OracleBrew
-//
-//  Chats (tab): the thread list comes from GET /chats/ (paged); an open thread
-//  keeps its live messages in a ChatThread so returning to an oracle resumes
-//  the same conversation. Both entry points (a reading's "Ask Your Oracle" and
-//  Oracle Chat picked directly) route through the same threads.
-//
-
 import Foundation
 
 @Observable
@@ -43,9 +33,11 @@ struct ChatSummary: Identifiable, Hashable {
     let date: Date
     /// The oracle sent a message the user hasn't opened yet — shows the dot.
     let hasUnread: Bool
-    /// This chat grew out of a grounds reading (has a reading id) rather than a
-    /// direct Oracle Chat — the design badges the avatar with a cup for it.
-    let fromReading: Bool
+    /// The reading this chat grew out of, if any. The design badges the avatar
+    /// with that reading's cup; a direct Oracle Chat has none.
+    let readingID: Int?
+
+    var fromReading: Bool { readingID != nil }
 }
 
 @MainActor
@@ -127,7 +119,7 @@ final class ChatSessionStore {
             preview: dto.lastMessage?.text ?? "Say hello to start the conversation",
             date: dto.updatedAt.flatMap { isoFormatter.date(from: $0) } ?? Date(),
             hasUnread: dto.hasUnreadFromOracle ?? false,
-            fromReading: dto.readingId != nil
+            readingID: dto.readingId
         )
     }
 }

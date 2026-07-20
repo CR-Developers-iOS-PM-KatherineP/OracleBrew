@@ -1,8 +1,3 @@
-//
-//  SettingsRow.swift
-//  OracleBrew
-//
-
 import SwiftUI
 
 /// The row icons are the design's own (Lucide) slices, exported as template
@@ -107,7 +102,10 @@ struct SettingsToggleRow: View {
             Toggle("", isOn: $isOn)
                 .labelsHidden()
                 .tint(Pigment.accent)
-                .disabled(!interactive)
+                // Not .disabled(): that greys the whole control out, and the
+                // design draws these at full strength. The row is read-only
+                // (it deep-links to system Settings), so just refuse the touch.
+                .allowsHitTesting(interactive)
         }
         .padding(.horizontal, 16)
         .frame(height: 52)

@@ -1,15 +1,8 @@
-//
-//  ChatsView.swift
-//  OracleBrew
-//
-//  Tab 2 — live oracle conversations, resumable from either entry point
-//  (a reading's "Ask Your Oracle", or Oracle Chat picked directly).
-//
-
 import SwiftUI
 
 struct ChatsView: View {
     @Environment(ChatSessionStore.self) private var chatStore
+    @Environment(ReadingHistoryStore.self) private var historyStore
     @Bindable var router: Pathfinder
 
     @State private var showChatFlow = false
@@ -22,9 +15,9 @@ struct ChatsView: View {
 
                 VStack(spacing: 0) {
                     header
+                        .padding(.horizontal, 20)
                     content
                 }
-                .padding(.horizontal, 20)
                 .padding(.top, 4)
                 .padding(.bottom, tabClearance)
             }
@@ -50,7 +43,11 @@ struct ChatsView: View {
                 Task { await chatStore.loadList() }
             }
         }
-        .task { await chatStore.loadList() }
+        .task {
+            await chatStore.loadList()
+            // The rows badge themselves from History's readings.
+            if historyStore.items.isEmpty { await historyStore.loadFirst() }
+        }
         .onChange(of: router.path.isEmpty) { _, atRoot in
             // Returning to the list — refresh so the unread dot clears (the
             // backend marked the thread read when it was opened).
@@ -75,10 +72,10 @@ struct ChatsView: View {
 
     private func list(_ items: [ChatSummary]) -> some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: 10) {
+            LazyVStack(spacing: 0) {
                 ForEach(items) { summary in
                     Button { router.path.append(summary) } label: {
-                        ChatThreadRow(summary: summary)
+                        ChatThreadRow(summary: summary, cupImageURL: cupImage(for: summary))
                     }
                     .buttonStyle(.plain)
                     .task { await chatStore.loadMoreIfNeeded(currentItem: summary) }
@@ -88,7 +85,16 @@ struct ChatsView: View {
                 }
             }
             .padding(.top, 12)
+            .padding(.horizontal, 12)
         }
+    }
+
+    /// The chat list endpoint carries only `reading_id`, so the cup photo comes
+    /// from the readings History already holds. Nil until (or unless) that
+    /// reading is among the loaded pages — the row falls back to a glyph.
+    private func cupImage(for summary: ChatSummary) -> String? {
+        guard let readingID = summary.readingID else { return nil }
+        return historyStore.items.first { $0.id == readingID }?.cupImageURL
     }
 
     private var loadingState: some View {
@@ -102,14 +108,10 @@ struct ChatsView: View {
 
     private var header: some View {
         HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("tab.chats")
-                    .font(Lettering.displayMedium(24))
-                    .foregroundStyle(Pigment.cream)
-                Text("chats.subtitle")
-                    .font(Lettering.body(12))
-                    .foregroundStyle(Pigment.creamDim)
-            }
+            // The design titles the screen and drops the subtitle.
+            Text("chats.title")
+                .font(Lettering.displayMedium(24))
+                .foregroundStyle(Pigment.cream)
             Spacer()
             SettingsButton()
         }
