@@ -10,6 +10,26 @@
 
 import SwiftUI
 
+/// Decoded images, kept in memory and keyed by URL. URLCache already spares the
+/// download; this spares the decode — without it a card that scrolled away
+/// shimmers again on its way back, because the view's state starts empty.
+private enum DecodedImages {
+    static let cache: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.totalCostLimit = 96 << 20
+        return cache
+    }()
+
+    static func image(for key: String) -> UIImage? {
+        cache.object(forKey: key as NSString)
+    }
+
+    static func store(_ image: UIImage, for key: String) {
+        let cost = image.cgImage.map { $0.bytesPerRow * $0.height } ?? 0
+        cache.setObject(image, forKey: key as NSString, cost: cost)
+    }
+}
+
 struct RemoteImage: View {
     let urlString: String?
     var cornerRadius: CGFloat = 12
@@ -42,14 +62,24 @@ struct RemoteImage: View {
     }
 
     @MainActor private func load() async {
-        image = nil
         failed = false
-        guard let urlString, !urlString.isEmpty, let url = URL(string: urlString) else { return }
+        guard let urlString, !urlString.isEmpty, let url = URL(string: urlString) else {
+            image = nil
+            return
+        }
+        // Check the cache before clearing: assigning nil first would flash the
+        // shimmer even when the image is already in hand.
+        if let cached = DecodedImages.image(for: urlString) {
+            image = Image(uiImage: cached)
+            return
+        }
+        image = nil
         for attempt in 0..<3 {
             if Task.isCancelled { return }
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 guard let ui = UIImage(data: data) else { failed = true; return }
+                DecodedImages.store(ui, for: urlString)
                 withAnimation(.easeInOut(duration: 0.2)) { image = Image(uiImage: ui) }
                 return
             } catch is CancellationError {
