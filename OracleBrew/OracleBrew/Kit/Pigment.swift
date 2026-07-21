@@ -86,4 +86,17 @@ enum Pigment {
         colors: [Color(hex: 0xBB7EF7), Color(hex: 0x8E4DCD)],
         startPoint: .leading, endPoint: .trailing
     )
+
+    // Splash. Its backdrop is its own gradient, not `background` — the splash
+    // sits a shade darker than the app so the ball's glow carries.
+    static let splashBackdrop = LinearGradient(
+        colors: [Color(hex: 0x05060A), Color(hex: 0x0B1020)],
+        startPoint: .top, endPoint: .bottom
+    )
+    /// Cool glow off the top-left corner, before blur.
+    static let splashGlowTop = Color(hex: 0xB08AE0, alpha: 0.3)
+    /// Warm glow off the bottom-right, before blur.
+    static let splashGlowBottom = Color(hex: 0xFDE68A, alpha: 0.12)
+    /// The sparkles beside the splash wordmark.
+    static let splashSpark = Color(hex: 0xE5A772)
 }

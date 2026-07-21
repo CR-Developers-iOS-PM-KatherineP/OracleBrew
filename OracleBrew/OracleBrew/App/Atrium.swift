@@ -18,15 +18,19 @@ struct Atrium: View {
     /// UserDefaults goes with the app, which is the behaviour we want.
     @AppStorage("onboardingSeen") private var onboardingSeen = false
 
+    /// The splash covers the app until the tracking prompt is answered and the
+    /// session is up, so nothing underneath is ever seen mid-load.
+    @State private var booting = true
+
     private var showOnboarding: Bool { !onboardingSeen }
 
     /// The floating tab bar only makes sense at each tab's root — once a tab
     /// pushes a destination, it'd otherwise float on top of that content too
     /// (it's a ZStack sibling, not scoped to any one NavigationStack).
     private var showTabBar: Bool {
-        // Onboarding covers the app, but it's a ZStack sibling — the bar would
-        // otherwise float over it and stay tappable.
-        if showOnboarding { return false }
+        // Onboarding and the splash cover the app, but they're ZStack siblings —
+        // the bar would otherwise float over them and stay tappable.
+        if booting || showOnboarding { return false }
         return switch tab {
         case .brew: brewRouter.path.isEmpty
         case .chats: chatsRouter.path.isEmpty
@@ -59,22 +63,31 @@ struct Atrium: View {
                 OnboardingView(store: profileStore) { onboardingSeen = true }
                     .transition(.opacity)
             }
+
+            if booting {
+                SplashView(bootstrap: bootstrap) { booting = false }
+                    .transition(.opacity)
+            }
         }
         .animation(.easeInOut(duration: 0.25), value: showOnboarding)
+        .animation(.easeInOut(duration: 0.35), value: booting)
         .environment(chatStore)
         .environment(historyStore)
         .environment(profileStore)
         .environment(session)
         .environment(catalog)
-        .task {
-            await session.start()
-            // Catalog and profile are authed, so they wait for the token
-            // guest-signup mints.
-            if session.isReady {
-                await catalog.refresh()
-                await profileStore.load()
-                await session.refreshAccess()
-            }
+    }
+
+    /// Runs under the splash, so the first screen the user touches already has
+    /// its data instead of shimmering into place.
+    private func bootstrap() async {
+        await session.start()
+        // Catalog and profile are authed, so they wait for the token
+        // guest-signup mints.
+        if session.isReady {
+            await catalog.refresh()
+            await profileStore.load()
+            await session.refreshAccess()
         }
     }
 }
