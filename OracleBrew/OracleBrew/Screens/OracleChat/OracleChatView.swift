@@ -6,6 +6,15 @@ struct TellerPeek: Hashable {
     let teller: FortuneTeller
 }
 
+/// Carries the reading card's bottom edge, in the scroll viewport's space, up
+/// to the header so the cup shortcut can appear once the card scrolls off.
+private struct CardOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = .greatestFiniteMagnitude
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = min(value, nextValue())
+    }
+}
+
 struct OracleChatView: View {
     let thread: ChatThread
     let userName: String
@@ -15,11 +24,16 @@ struct OracleChatView: View {
     /// Returns to the reading this chat grew out of (post-reading chat only).
     var onReturnToReading: (() -> Void)? = nil
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     @State private var draftText = ""
     @State private var loading = false
     @State private var sending = false
     @State private var sendFailed = false
     @State private var chipsHidden = false
+    /// True once the reading card has scrolled up out of view — surfaces the
+    /// cup shortcut in the header so the reading stays one tap away.
+    @State private var readingCardOffscreen = false
     @FocusState private var inputFocused: Bool
 
     private let repository = ChatRepository()
@@ -38,6 +52,12 @@ struct OracleChatView: View {
                         VStack(spacing: 12) {
                             if let reading = draft?.reading, let onReturnToReading {
                                 readingCard(reading, action: onReturnToReading)
+                                    .background(GeometryReader { geo in
+                                        Color.clear.preference(
+                                            key: CardOffsetKey.self,
+                                            value: geo.frame(in: .named("chatScroll")).maxY
+                                        )
+                                    })
                             }
                             if !thread.messages.isEmpty { dateDivider }
                             ForEach(thread.messages) { ChatBubble(message: $0).id($0.id) }
@@ -45,9 +65,20 @@ struct OracleChatView: View {
                         }
                         .padding(.vertical, 16)
                     }
+                    .coordinateSpace(name: "chatScroll")
                     .overlay { if loading { ProgressView().tint(Pigment.accent) } }
                     .onChange(of: thread.messages.count) { scrollToBottom(proxy) }
                     .onChange(of: sending) { scrollToBottom(proxy) }
+                    .onPreferenceChange(CardOffsetKey.self) { maxY in
+                        // maxY is the card's bottom in the viewport; ≤0 means it
+                        // has cleared the top. Default (no card) is +∞ → false.
+                        let offscreen = maxY < 8
+                        if offscreen != readingCardOffscreen {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                readingCardOffscreen = offscreen
+                            }
+                        }
+                    }
                 }
                 if !thread.quickQuestions.isEmpty && !chipsHidden { quickMenu }
                 inputBar
@@ -126,7 +157,7 @@ struct OracleChatView: View {
 
             HStack {
                 Button(action: onClose) {
-                    Image(systemName: "arrow.left")
+                    Image(systemName: "arrow.backward")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(Pigment.cream)
                         .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
@@ -134,6 +165,24 @@ struct OracleChatView: View {
                 }
                 .buttonStyle(.plain)
                 Spacer()
+                // The cup takes over from the reading card once it scrolls away,
+                // keeping the reading reachable. Only in a post-reading chat.
+                if let onReturnToReading, draft?.reading != nil, readingCardOffscreen {
+                    Button(action: onReturnToReading) {
+                        Image("IconCup")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(Pigment.accent)
+                            .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
+                            // The design tints this button accent-at-20%, unlike
+                            // the back button's plain surface fill.
+                            .background(Circle().fill(Pigment.accent.opacity(0.2)))
+                    }
+                    .buttonStyle(.plain)
+                    .transition(.opacity.combined(with: .scale))
+                }
             }
         }
         .padding(.top, 4)
@@ -141,36 +190,77 @@ struct OracleChatView: View {
     }
 
     /// A tappable summary of the reading this chat came from — returns to the
-    /// full result. Shown at the top of a post-reading chat.
+    /// full result. Shown at the top of a post-reading chat. Same shape as a
+    /// History row minus the oracle badge (you are already inside that oracle's
+    /// chat): the cup, the date, the topic, and the reading's own text.
     private func readingCard(_ reading: Reading, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: "cup.and.saucer.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(Pigment.accent)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(Pigment.accent.opacity(0.15)))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("chat.reading_card")
-                        .font(Lettering.bodyMedium(11))
+            HStack(alignment: .top, spacing: 12) {
+                cupThumb
+                    .frame(width: 80, height: 80)
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(Date.now.formatted(.dateTime.month(.wide).day().year()))
+                        .font(Lettering.body(10))
                         .textCase(.uppercase)
-                        .foregroundStyle(Pigment.accent)
-                    Text(reading.advice)
-                        .font(Lettering.body(13))
-                        .foregroundStyle(Pigment.cream)
-                        .lineLimit(1)
+                        .foregroundStyle(Pigment.cream.opacity(0.4))
+
+                    if let topic = draft?.topic {
+                        readingTopicChip(topic)
+                    }
+
+                    Text(reading.whatISee)
+                        .font(Lettering.body(12))
+                        .foregroundStyle(Pigment.cream.opacity(0.8))
+                        .lineSpacing(6)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                Spacer(minLength: 4)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Pigment.cream.opacity(0.4))
+
+                Spacer(minLength: 0)
             }
-            .padding(12)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Pigment.surface))
-            .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Pigment.accent.opacity(0.3), lineWidth: 1))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 16)
+            .background(RoundedRectangle(cornerRadius: 24).fill(Color(hex: 0x211836)))
+            .overlay(alignment: .topTrailing) {
+                // Decorative — the whole card is the button. `arrow.forward`
+                // flips itself under RTL.
+                Image(systemName: "arrow.forward")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Pigment.cream.opacity(0.5))
+                    .frame(width: 32, height: 32)
+                    .background(Circle().fill(Color.white.opacity(0.05)))
+                    .padding(12)
+            }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    /// The cup the reading was drawn from — an uploaded photo, an API random cup,
+    /// or the bundled sample as a last resort.
+    @ViewBuilder
+    private var cupThumb: some View {
+        if let photo = draft?.photo {
+            Image(uiImage: photo).resizable().scaledToFill()
+        } else if let url = draft?.randomCupImageURL, !url.isEmpty {
+            RemoteImage(urlString: url, cornerRadius: 40)
+        } else {
+            Image("SampleCupCard").resizable().scaledToFill()
+        }
+    }
+
+    /// Topic pill in the topic's own hue, as the History card draws it.
+    private func readingTopicChip(_ topic: Topic) -> some View {
+        Text(topic.name)
+            .font(Lettering.bodyMedium(10))
+            .foregroundStyle(topic.color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(topic.color.opacity(0.15)))
+            .overlay(Capsule().strokeBorder(topic.color.opacity(0.4), lineWidth: 1))
     }
 
     private var dateDivider: some View {
@@ -197,10 +287,13 @@ struct OracleChatView: View {
                         .background(Pigment.accentGradient)
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         .background(alignment: .bottomTrailing) {
-                            BubbleTail(leading: false)
+                            // These chips are always user-side, so the tail
+                            // follows `.bottomTrailing` — which lands on the
+                            // left in Arabic, where the tail must too.
+                            BubbleTail(leading: layoutDirection == .rightToLeft)
                                 .fill(Pigment.accentGradient)
                                 .frame(width: BubbleTail.size.width, height: BubbleTail.size.height)
-                                .offset(x: 3)
+                                .offset(x: 3 * layoutDirection.sign)
                         }
                 }
                 .buttonStyle(.plain)
@@ -244,6 +337,9 @@ struct OracleChatView: View {
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 24, height: 24)
+                    // The glyph flies toward the far edge of the line, which is
+                    // the left one in Arabic.
+                    .scaleEffect(x: layoutDirection.sign)
                     .foregroundStyle(Pigment.cream)
                     .frame(width: 52, height: 52)
                     .background(Circle().fill(Pigment.accentGradient))
