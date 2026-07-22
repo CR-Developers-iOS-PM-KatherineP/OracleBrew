@@ -10,9 +10,9 @@ enum Identity: String, CaseIterable, Codable, Identifiable {
 
     var label: String {
         switch self {
-        case .female: "Female"
-        case .male: "Male"
-        case .ratherNot: "Rather Not"
+        case .female: String(localized: "field.identity.female")
+        case .male: String(localized: "field.identity.male")
+        case .ratherNot: String(localized: "field.identity.rather_not")
         }
     }
 }
@@ -29,11 +29,11 @@ enum RelationshipStatus: String, CaseIterable, Codable, Identifiable {
 
     var label: String {
         switch self {
-        case .married: "Married"
-        case .inRelationship: "In a relationship"
-        case .single: "Single"
-        case .divorced: "Divorced"
-        case .complicated: "It's complicated"
+        case .married: String(localized: "field.relationship.married")
+        case .inRelationship: String(localized: "field.relationship.in_relationship")
+        case .single: String(localized: "field.relationship.single")
+        case .divorced: String(localized: "field.relationship.divorced")
+        case .complicated: String(localized: "field.relationship.complicated")
         }
     }
 }
@@ -46,11 +46,11 @@ enum Employment: String, CaseIterable, Codable, Identifiable {
 
     var label: String {
         switch self {
-        case .studying: "Studying"
-        case .working: "Working"
-        case .both: "Both"
-        case .seeking: "Seeking"
-        case .notWorking: "Not Working"
+        case .studying: String(localized: "field.employment.studying")
+        case .working: String(localized: "field.employment.working")
+        case .both: String(localized: "field.employment.both")
+        case .seeking: String(localized: "field.employment.seeking")
+        case .notWorking: String(localized: "field.employment.not_working")
         }
     }
 }
@@ -64,9 +64,9 @@ enum ChildrenStatus: String, CaseIterable, Codable, Identifiable {
 
     var label: String {
         switch self {
-        case .have: "Have children"
-        case .none: "No children"
-        case .planning: "Planning"
+        case .have: String(localized: "field.children.have")
+        case .none: String(localized: "field.children.none")
+        case .planning: String(localized: "field.children.planning")
         }
     }
 }
@@ -77,7 +77,24 @@ enum Zodiac: String, Codable, CaseIterable {
     case aries, taurus, gemini, cancer, leo, virgo
     case libra, scorpio, sagittarius, capricorn, aquarius, pisces
 
-    var name: String { rawValue.capitalized }
+    /// Spelled out rather than built from `rawValue` so the keys stay literal —
+    /// an interpolated key would extract as "zodiac.%@" and resolve to nothing.
+    var name: String {
+        switch self {
+        case .aries: String(localized: "zodiac.aries")
+        case .taurus: String(localized: "zodiac.taurus")
+        case .gemini: String(localized: "zodiac.gemini")
+        case .cancer: String(localized: "zodiac.cancer")
+        case .leo: String(localized: "zodiac.leo")
+        case .virgo: String(localized: "zodiac.virgo")
+        case .libra: String(localized: "zodiac.libra")
+        case .scorpio: String(localized: "zodiac.scorpio")
+        case .sagittarius: String(localized: "zodiac.sagittarius")
+        case .capricorn: String(localized: "zodiac.capricorn")
+        case .aquarius: String(localized: "zodiac.aquarius")
+        case .pisces: String(localized: "zodiac.pisces")
+        }
+    }
 
     /// U+FE0E forces text presentation — without it iOS renders these as
     /// colour emoji, which ignores the label's tint.
