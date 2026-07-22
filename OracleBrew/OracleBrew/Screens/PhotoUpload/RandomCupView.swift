@@ -44,6 +44,7 @@ struct RandomCupView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.randomCupShown) }
         .task { if draft.photo == nil { pickCup() } }
     }
 
@@ -81,7 +82,10 @@ struct RandomCupView: View {
         .cardPanel(radius: 20)
     }
 
-    private func chooseAnother() { pickCup() }
+    private func chooseAnother() {
+        Tally.shared.track(.randomCupReshuffled)
+        pickCup()
+    }
 
     /// Draw a fresh random cup: a random real drink and one of its bundled
     /// photos. The chosen image becomes the reading's photo, so the reading is

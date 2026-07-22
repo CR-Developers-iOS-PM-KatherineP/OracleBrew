@@ -40,6 +40,7 @@ struct SettingsView: View {
             .padding(.top, 4)
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.settingsShown) }
         .navigationDestination(for: SettingsDestination.self, destination: destination)
         .onAppear(perform: refreshPermissionStatus)
         .alert("settings.coming_soon.title", isPresented: $showComingSoon) {
@@ -50,6 +51,7 @@ struct SettingsView: View {
         .alert("settings.delete_account.title", isPresented: $showDeleteConfirm) {
             Button("settings.delete_account.confirm", role: .destructive) {
                 Task {
+                    Tally.shared.track(.accountDeleted)
                     await profileStore.deleteAccount()
                     // The old token died with the account — mint a fresh guest
                     // so the app keeps working.
@@ -98,10 +100,14 @@ struct SettingsView: View {
             SettingsSectionLabel(title: "settings.section.legal")
             SettingsCard {
                 SettingsRow(icon: "IconPrivacy", title: "settings.privacy_policy") {
+                    Tally.shared.track(.legalOpened,
+                                       parameters: [AnalyticsEvent.Parameter.source: "privacy"])
                     router.path.append(SettingsDestination.privacy)
                 }
                 SettingsDivider()
                 SettingsRow(icon: "IconTerms", title: "settings.terms") {
+                    Tally.shared.track(.legalOpened,
+                                       parameters: [AnalyticsEvent.Parameter.source: "terms"])
                     router.path.append(SettingsDestination.terms)
                 }
                 SettingsDivider()

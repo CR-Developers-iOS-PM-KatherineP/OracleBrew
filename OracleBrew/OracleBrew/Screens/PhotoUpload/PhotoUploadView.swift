@@ -48,6 +48,7 @@ struct PhotoUploadView: View {
             .padding(.bottom, 12)
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.photoUploadShown) }
         .onAppear(perform: prefillRandomIfNeeded)
         .task {
             // Access is asked for here, before the feed is needed — the Random
@@ -58,7 +59,11 @@ struct PhotoUploadView: View {
         .onDisappear { camera.stop() }
         .onChange(of: pickerItem) { _, item in loadPicked(item) }
         .fullScreenCover(isPresented: $showCamera) {
-            CameraPicker { draft.photo = $0 }.ignoresSafeArea()
+            CameraPicker {
+                draft.photo = $0
+                Tally.shared.track(.cupPhotoTaken)
+            }
+            .ignoresSafeArea()
         }
     }
 
@@ -223,6 +228,7 @@ struct PhotoUploadView: View {
             guard let image = await camera.capture() else { return }
             draft.photo = image
             photoFromCamera = true
+            Tally.shared.track(.cupPhotoTaken)
             camera.stop()
         }
     }
@@ -254,6 +260,7 @@ struct PhotoUploadView: View {
                 }
                 draft.photo = image
                 photoFromCamera = false
+                Tally.shared.track(.cupPhotoPickedFromLibrary)
                 camera.stop()
             }
         }

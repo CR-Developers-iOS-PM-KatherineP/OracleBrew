@@ -44,16 +44,27 @@ struct ReadingLoadingView: View {
             .offset(y: Self.captionCentreOffset)
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.readingLoadingShown) }
         .task {
             spinning = true
+            Tally.shared.track(.readingRequested, parameters: [
+                AnalyticsEvent.Parameter.drink: draft.drink?.id ?? "",
+                AnalyticsEvent.Parameter.oracle: draft.teller?.id ?? "",
+                AnalyticsEvent.Parameter.topic: draft.topic?.id ?? "",
+            ])
             do {
                 let (reading, id) = try await service.generate(from: draft)
                 draft.reading = reading
                 draft.readingID = id
+                Tally.shared.track(.readingSucceeded)
                 onDone()
             } catch let failure as EmissaryFailure {
+                Tally.shared.track(.readingFailed,
+                                   parameters: [AnalyticsEvent.Parameter.reason: failure.isOffline ? "offline" : "server"])
                 onFailure(failure)
             } catch {
+                Tally.shared.track(.readingFailed,
+                                   parameters: [AnalyticsEvent.Parameter.reason: "unknown"])
                 onFailure(.server(statusCode: -1))
             }
         }

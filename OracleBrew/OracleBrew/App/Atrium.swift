@@ -46,17 +46,22 @@ struct Atrium: View {
         ZStack(alignment: .bottom) {
             Pigment.background.ignoresSafeArea()
 
-            switch tab {
-            case .brew:
-                NavigationStack(path: $brewRouter.path) {
-                    BrewView()
-                        .waypointDestinations(brewRouter)
+            // Built only once nothing covers it. Behind the splash or onboarding
+            // a tab would run its `onAppear` — and report itself as seen — while
+            // the user is still looking at something else entirely.
+            if !booting && !showOnboarding {
+                switch tab {
+                case .brew:
+                    NavigationStack(path: $brewRouter.path) {
+                        BrewView()
+                            .waypointDestinations(brewRouter)
+                    }
+                    .environment(brewRouter)
+                case .chats:
+                    ChatsView(router: chatsRouter)
+                case .history:
+                    HistoryView(router: historyRouter)
                 }
-                .environment(brewRouter)
-            case .chats:
-                ChatsView(router: chatsRouter)
-            case .history:
-                HistoryView(router: historyRouter)
             }
 
             if showTabBar {

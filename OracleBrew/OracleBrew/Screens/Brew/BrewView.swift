@@ -36,6 +36,7 @@ struct BrewView: View {
             .padding(.bottom, tabClearance)
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.mainScreenShown) }
         .fullScreenCover(isPresented: $showReadingFlow) {
             BrewReadingFlow { showReadingFlow = false }
         }

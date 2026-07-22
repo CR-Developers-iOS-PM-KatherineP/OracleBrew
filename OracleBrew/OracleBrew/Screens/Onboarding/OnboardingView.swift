@@ -21,13 +21,19 @@ struct OnboardingView: View {
             case .ready:
                 OnboardingReadyView(answers: flow.echoes,
                                     zodiac: flow.profile.zodiac,
-                                    onStart: onFinish)
+                                    onStart: {
+                                        Tally.shared.track(.onboardingFinished)
+                                        onFinish()
+                                    })
             }
 
             if askingToLeave {
                 OnboardingLeavePopup(
                     onKeep: { askingToLeave = false },
-                    onLeave: onFinish
+                    onLeave: {
+                        Tally.shared.track(.onboardingSkipped)
+                        onFinish()
+                    }
                 )
             }
         }

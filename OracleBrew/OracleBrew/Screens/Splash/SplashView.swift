@@ -61,8 +61,12 @@ struct SplashView: View {
         .task(id: scenePhase) {
             guard scenePhase == .active, !started else { return }
             started = true
+            Tally.shared.track(.splashShown)
 
-            await Beacon.request()
+            let status = await Beacon.request()
+            Tally.shared.track(.trackingPromptAnswered,
+                               parameters: [AnalyticsEvent.Parameter.attStatus: status])
+
             await playClip()
             onFinish()
         }

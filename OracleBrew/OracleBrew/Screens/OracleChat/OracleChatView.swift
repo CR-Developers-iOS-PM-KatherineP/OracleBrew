@@ -49,7 +49,11 @@ struct OracleChatView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 12) {
                             if let reading = draft?.reading, let onReturnToReading {
-                                readingCard(reading, action: onReturnToReading)
+                                readingCard(reading, action: {
+                                    Tally.shared.track(.chatReturnedToReading,
+                                                       parameters: [AnalyticsEvent.Parameter.source: "card"])
+                                    onReturnToReading()
+                                })
                                     .background(GeometryReader { geo in
                                         Color.clear.preference(
                                             key: CardOffsetKey.self,
@@ -84,6 +88,7 @@ struct OracleChatView: View {
             .padding(.horizontal, 20)
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.chatShown) }
         .task { await load() }
     }
 
@@ -172,7 +177,11 @@ struct OracleChatView: View {
                 // The cup takes over from the reading card once it scrolls away,
                 // keeping the reading reachable. Only in a post-reading chat.
                 if let onReturnToReading, draft?.reading != nil, readingCardOffscreen {
-                    Button(action: onReturnToReading) {
+                    Button {
+                        Tally.shared.track(.chatReturnedToReading,
+                                           parameters: [AnalyticsEvent.Parameter.source: "header"])
+                        onReturnToReading()
+                    } label: {
                         Image("IconCup")
                             .renderingMode(.template)
                             .resizable()
@@ -279,7 +288,10 @@ struct OracleChatView: View {
     private var quickMenu: some View {
         VStack(alignment: .trailing, spacing: 10) {
             ForEach(thread.quickQuestions, id: \.self) { question in
-                Button { send(question) } label: {
+                Button {
+                    Tally.shared.track(.chatQuickPromptUsed)
+                    send(question)
+                } label: {
                     Text(question)
                         .font(Lettering.bodyMedium(14))
                         .foregroundStyle(Pigment.cream)
@@ -311,7 +323,10 @@ struct OracleChatView: View {
     }
 
     private var dismissHints: some View {
-        Button { withAnimation { chipsHidden = true } } label: {
+        Button {
+            Tally.shared.track(.chatPromptsHidden)
+            withAnimation { chipsHidden = true }
+        } label: {
             Image(systemName: "xmark")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(Pigment.cream)
@@ -365,6 +380,7 @@ struct OracleChatView: View {
         draftText = ""
         inputFocused = false
         sending = true
+        Tally.shared.track(.chatMessageSent)
 
         Task {
             defer { sending = false }

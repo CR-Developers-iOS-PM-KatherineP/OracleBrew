@@ -52,6 +52,7 @@ struct DrinkSelectionView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.drinkSelectionShown) }
     }
 
     /// Tapping the picked card again clears it — the CTA goes away with it.
@@ -64,6 +65,8 @@ struct DrinkSelectionView: View {
             return
         }
         selectedID = drink.id
+        Tally.shared.track(drink.isRandom ? .randomCupPicked : .drinkPicked,
+                           parameters: [AnalyticsEvent.Parameter.drink: drink.id])
         if drink.isRandom {
             draft.isRandomPath = true
             // Pick from the live catalog (real ids), not the bundled mock, so

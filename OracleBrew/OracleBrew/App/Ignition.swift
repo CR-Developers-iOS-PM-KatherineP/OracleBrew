@@ -4,6 +4,7 @@ import SwiftUI
 struct Ignition: App {
     init() {
         Lettering.registerFonts()
+        MainActor.assumeIsolated { Tally.shared.start() }
 
         // URLCache refuses to store a response larger than 5% of its capacity,
         // and the catalog art runs 1–1.7 MB a piece. The default (~10 MB disk)

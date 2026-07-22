@@ -34,6 +34,10 @@ struct IntentionView: View {
                                 items: TimeHorizon.allCases,
                                 selection: $draft.horizon
                             ) { $0.titleKey }
+                            .onChange(of: draft.horizon) { _, horizon in
+                                Tally.shared.track(.horizonPicked,
+                                                   parameters: [AnalyticsEvent.Parameter.horizon: horizon.rawValue])
+                            }
                         }
 
                         section("intention.topics") {
@@ -42,6 +46,8 @@ struct IntentionView: View {
                                     TopicButton(topic: topic, isSelected: draft.topic == topic) {
                                         Resonance.select()
                                         draft.topic = topic
+                                        Tally.shared.track(.topicPicked,
+                                                           parameters: [AnalyticsEvent.Parameter.topic: topic.id])
                                     }
                                 }
                             }
@@ -61,7 +67,12 @@ struct IntentionView: View {
             if draft.topic != nil {
                 VStack {
                     Spacer()
-                    PrimaryButton(title: "flow.continue", action: onContinue)
+                    PrimaryButton(title: "flow.continue") {
+                        if !draft.question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            Tally.shared.track(.questionEntered)
+                        }
+                        onContinue()
+                    }
                         .padding(.horizontal, 20)
                         .padding(.bottom, 8)
                         .background(
@@ -74,6 +85,7 @@ struct IntentionView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.intentionShown) }
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()

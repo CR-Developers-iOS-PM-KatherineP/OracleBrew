@@ -36,7 +36,12 @@ struct FortuneTellersView: View {
                                 // Tapping the picked oracle again clears it.
                                 onSelect: {
                                     Resonance.select()
-                                    draft.teller = draft.teller == teller ? nil : teller
+                                    let picked = draft.teller != teller
+                                    draft.teller = picked ? teller : nil
+                                    if picked {
+                                        Tally.shared.track(.oraclePicked,
+                                                           parameters: [AnalyticsEvent.Parameter.oracle: teller.id])
+                                    }
                                 },
                                 onViewProfile: { onOpenProfile(teller) }
                             )
@@ -67,5 +72,6 @@ struct FortuneTellersView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.oracleListShown) }
     }
 }

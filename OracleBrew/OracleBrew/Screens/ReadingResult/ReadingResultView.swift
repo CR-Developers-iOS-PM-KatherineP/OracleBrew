@@ -44,6 +44,7 @@ struct ReadingResultView: View {
             .padding(.horizontal, 20)
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.readingResultShown) }
         .onAppear {
             guard reading == nil else { return }
             // existingReading = a History replay; draft.reading = the one the
@@ -207,6 +208,11 @@ struct ReadingResultView: View {
                     ) {
                         secondaryLabel("result.share", icon: "square.and.arrow.up")
                     }
+                    // ShareLink owns the tap and never reports the outcome, so
+                    // this records the sheet opening, not a completed share.
+                    .simultaneousGesture(TapGesture().onEnded {
+                        Tally.shared.track(.shareSheetShown)
+                    })
                 } else {
                     secondaryLabel("result.share", icon: "square.and.arrow.up").opacity(0.4)
                 }
@@ -216,8 +222,10 @@ struct ReadingResultView: View {
                 .buttonStyle(.plain)
                 .disabled(shareCard == nil)
             }
-            PrimaryButton(title: draft.readingHasChat ? "result.return_to_chat" : "result.ask_oracle",
-                          action: onAskOracle)
+            PrimaryButton(title: draft.readingHasChat ? "result.return_to_chat" : "result.ask_oracle") {
+                Tally.shared.track(.chatOpenedFromReading)
+                onAskOracle()
+            }
         }
     }
 
@@ -238,6 +246,7 @@ struct ReadingResultView: View {
         guard let card = shareCard else { return }
         UIImageWriteToSavedPhotosAlbum(card.image, nil, nil, nil)
         Resonance.success()
+        Tally.shared.track(.readingSavedToLibrary)
         Tidings.shared.say("result.saved.title")
     }
 }

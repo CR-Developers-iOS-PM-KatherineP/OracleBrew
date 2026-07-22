@@ -39,6 +39,7 @@ struct TellerProfileView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.oracleProfileShown) }
     }
 
     private var hero: some View {

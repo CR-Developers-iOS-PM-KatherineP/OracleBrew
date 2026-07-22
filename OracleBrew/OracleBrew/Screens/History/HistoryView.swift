@@ -21,6 +21,7 @@ struct HistoryView: View {
                 .padding(.bottom, tabClearance)
             }
             .toolbar(.hidden, for: .navigationBar)
+            .onAppear { Tally.shared.track(.historyShown) }
             .waypointDestinations(router)
             .navigationDestination(for: HistoryItem.self) { item in
                 HistoryReplayView(
@@ -67,10 +68,14 @@ struct HistoryView: View {
             LazyVStack(spacing: 10) {
                 ForEach(items) { item in
                     HistoryCard(item: item, onOpenChat: {
+                        Tally.shared.track(.historyChatOpened)
                         router.path.append(chatStore.thread(for: item.teller, context: makeDraft(item)))
                     })
                     .contentShape(Rectangle())
-                    .onTapGesture { router.path.append(item) }
+                    .onTapGesture {
+                        Tally.shared.track(.historyReadingOpened)
+                        router.path.append(item)
+                    }
                     .task { await historyStore.loadMoreIfNeeded(currentItem: item) }
                 }
                 if historyStore.isLoadingMore {

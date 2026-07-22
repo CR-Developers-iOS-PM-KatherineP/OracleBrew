@@ -26,6 +26,7 @@ struct ProfileView: View {
         }
         .overlay(alignment: .bottom) { saveBar }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { Tally.shared.track(.profileShown) }
         .onAppear {
             guard !loaded else { return }
             draft = store.profile
@@ -44,6 +45,7 @@ struct ProfileView: View {
             do {
                 try await store.save(draft)
                 Resonance.success()
+                Tally.shared.track(.profileSaved)
                 // Said after the screen closes, not on it: the form pops on save,
                 // so a confirmation drawn here would go with it.
                 Tidings.shared.say("profile.saved")

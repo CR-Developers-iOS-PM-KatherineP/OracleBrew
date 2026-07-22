@@ -33,12 +33,16 @@ struct ChatsView: View {
             .overlay(alignment: .bottom) {
                 // Only once there are chats. The empty state carries its own CTA.
                 if hasChats {
-                    PrimaryButton(title: "chats.new_chat.cta") { showChatFlow = true }
+                    PrimaryButton(title: "chats.new_chat.cta") {
+                        Tally.shared.track(.chatStartedWithNewOracle)
+                        showChatFlow = true
+                    }
                         .padding(.horizontal, 20)
                         .padding(.bottom, tabClearance)
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
+            .onAppear { Tally.shared.track(.chatListShown) }
             .waypointDestinations(router)
             .navigationDestination(for: ChatSummary.self) { summary in
                 let thread = chatStore.thread(for: summary)
@@ -91,7 +95,10 @@ struct ChatsView: View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: 0) {
                 ForEach(items) { summary in
-                    Button { router.path.append(summary) } label: {
+                    Button {
+                        Tally.shared.track(.chatOpenedFromList)
+                        router.path.append(summary)
+                    } label: {
                         ChatThreadRow(summary: summary, cupImageURL: cupImage(for: summary))
                     }
                     .buttonStyle(.plain)
@@ -140,7 +147,10 @@ struct ChatsView: View {
             icon: "ellipsis.bubble",
             headline: "chats.empty.title",
             subtitle: "chats.empty.subtitle",
-            cta: (title: "chats.empty.cta", action: { showChatFlow = true })
+            cta: (title: "chats.empty.cta", action: {
+                Tally.shared.track(.chatStartedWithNewOracle)
+                showChatFlow = true
+            })
         )
     }
 }

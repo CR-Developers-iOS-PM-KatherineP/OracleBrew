@@ -97,6 +97,9 @@ final class OnboardingFlow {
         }
         await say(step.question)
         activeStep = step
+        // The step is on screen and answerable — the conversational equivalent
+        // of an onboarding page becoming visible. 1-based, as the spec numbers.
+        Tally.shared.track(.onboardingStep(stepIndex + 1))
     }
 
     private func say(_ key: String) async {
