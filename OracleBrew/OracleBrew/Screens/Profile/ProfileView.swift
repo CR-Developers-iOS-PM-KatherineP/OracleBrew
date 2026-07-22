@@ -58,7 +58,7 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 12) {
                 Button(action: onBack) {
-                    Image(systemName: "arrow.left")
+                    Image(systemName: "arrow.backward")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(Pigment.cream)
                         .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
@@ -150,7 +150,7 @@ struct ProfileView: View {
             .zIndex(1)
 
             if let zodiac = draft.zodiac {
-                Text("Zodiac Sign: \(zodiac.glyph) \(zodiac.name)")
+                Text("profile.zodiac.value \(zodiac.glyph) \(zodiac.name)")
                     .font(Lettering.displayMedium(14))
                     .foregroundStyle(Pigment.accent)
             } else {

@@ -3,8 +3,17 @@ import SwiftUI
 struct ChatBubble: View {
     let message: ChatMessage
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     private var isUser: Bool { message.isFromUser }
     private let oracleFill = Color(hex: 0x2C1E48)
+
+    /// Which physical edge the tail hangs off. The alignment below is semantic
+    /// and mirrors itself in Arabic, but a Shape's path and an offset are both
+    /// absolute — so the direction has to be spelled out for them.
+    private var tailOnLeft: Bool {
+        layoutDirection == .rightToLeft ? isUser : !isUser
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -32,9 +41,9 @@ struct ChatBubble: View {
     }
 
     private var tail: some View {
-        BubbleTail(leading: !isUser)
+        BubbleTail(leading: tailOnLeft)
             .fill(isUser ? AnyShapeStyle(Pigment.accentGradient) : AnyShapeStyle(oracleFill))
             .frame(width: BubbleTail.size.width, height: BubbleTail.size.height)
-            .offset(x: isUser ? 3 : -3)
+            .offset(x: tailOnLeft ? -3 : 3)
     }
 }

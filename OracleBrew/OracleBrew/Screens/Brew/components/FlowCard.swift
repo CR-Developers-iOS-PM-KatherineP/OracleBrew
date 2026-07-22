@@ -8,6 +8,8 @@ struct FlowCard: View {
     var height: CGFloat = Cadence.cardHeight
     let action: () -> Void
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     var body: some View {
         Button(action: action) { card }
             .buttonStyle(.plain)
@@ -32,7 +34,8 @@ struct FlowCard: View {
                                 .init(color: .clear, location: 0),
                                 .init(color: .black, location: 0.18)
                             ],
-                            startPoint: .leading, endPoint: .trailing
+                            startPoint: layoutDirection.startEdge,
+                            endPoint: layoutDirection.endEdge
                         )
                     )
                     .allowsHitTesting(false)
@@ -59,7 +62,7 @@ struct FlowCard: View {
 
     /// Decorative CTA affordance — the whole card is the tap target.
     private var arrowBadge: some View {
-        Image(systemName: "arrow.right")
+        Image(systemName: "arrow.forward")
             .font(.system(size: 18, weight: .medium))
             .foregroundStyle(.white)
             .frame(width: 36, height: 36)

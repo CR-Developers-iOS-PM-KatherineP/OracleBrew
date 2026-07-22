@@ -38,6 +38,9 @@ struct FlowLayout: Layout {
                 y += rowHeight + spacing
                 rowHeight = 0
             }
+            // No mirroring here: SwiftUI already flips a Layout's coordinate
+            // space in a right-to-left environment, so `bounds.minX` is the
+            // leading edge. Mirroring by hand flips it a second time.
             view.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
             x += size.width + spacing
             rowHeight = max(rowHeight, size.height)

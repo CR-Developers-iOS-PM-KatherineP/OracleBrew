@@ -20,9 +20,12 @@ struct SettingsIcon: View {
 /// points up and the design rotates it, so the same asset serves the back
 /// button too.
 struct SettingsArrow: View {
+    @Environment(\.layoutDirection) private var layoutDirection
+
     var body: some View {
         SettingsIcon(name: "IconArrow", tint: Pigment.cream.opacity(0.4), size: 20)
-            .rotationEffect(.degrees(90))
+            // Points the way the row reads: right in English, left in Arabic.
+            .rotationEffect(.degrees(90 * layoutDirection.sign))
     }
 }
 

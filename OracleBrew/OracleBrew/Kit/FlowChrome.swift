@@ -28,7 +28,7 @@ struct FlowHeader: View {
 
             HStack {
                 if let onBack {
-                    chip(systemName: "arrow.left", action: onBack)
+                    chip(systemName: "arrow.backward", action: onBack)
                 }
                 Spacer()
                 chip(systemName: "xmark", action: onClose)

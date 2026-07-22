@@ -9,6 +9,8 @@ struct ChatThreadRow: View {
     /// only carries `reading_id`, so this is looked up from History.
     var cupImageURL: String?
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     var body: some View {
         HStack(spacing: 16) {
             avatar
@@ -58,7 +60,9 @@ struct ChatThreadRow: View {
         .frame(width: 60, height: 60)
         .clipShape(RoundedRectangle(cornerRadius: 24))
         .overlay(alignment: .bottomTrailing) {
-            if summary.fromReading { cupBadge.offset(x: 4, y: 4) }
+            // `.bottomTrailing` mirrors itself; the nudge that pushes the badge
+            // clear of the avatar's corner does not.
+            if summary.fromReading { cupBadge.offset(x: 4 * layoutDirection.sign, y: 4) }
         }
     }
 

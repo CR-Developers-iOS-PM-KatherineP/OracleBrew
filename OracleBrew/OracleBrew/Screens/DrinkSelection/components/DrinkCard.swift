@@ -6,6 +6,8 @@ struct DrinkCard: View {
     let dimmed: Bool
     let onTap: () -> Void
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     var body: some View {
         Button(action: onTap) { card }
             .buttonStyle(.plain)
@@ -93,8 +95,10 @@ struct DrinkCard: View {
             .padding(.horizontal, 30)
             .padding(.vertical, 4)
             .background(Pigment.accentGradient)
-            .rotationEffect(.degrees(-35))
-            .offset(x: 2, y: 16)
+            // The corner it crosses mirrors with `.topLeading`; the diagonal it
+            // runs along and the nudge into the corner do not.
+            .rotationEffect(.degrees(-35 * layoutDirection.sign))
+            .offset(x: 2 * layoutDirection.sign, y: 16)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
     }

@@ -8,6 +8,8 @@ struct TellerCard: View {
     let onSelect: () -> Void
     let onViewProfile: () -> Void
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     private let cardColor = Color(hex: 0x271C3E)
     private let fadeColor = Color(hex: 0x2A1B3A)
 
@@ -53,7 +55,8 @@ struct TellerCard: View {
                 .overlay(alignment: .trailing) {
                     LinearGradient(
                         colors: [fadeColor.opacity(0), fadeColor],
-                        startPoint: .leading, endPoint: .trailing
+                        startPoint: layoutDirection.startEdge,
+                        endPoint: layoutDirection.endEdge
                     )
                     .frame(width: 53)
                 }

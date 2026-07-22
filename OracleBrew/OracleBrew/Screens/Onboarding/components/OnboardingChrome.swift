@@ -68,7 +68,15 @@ struct OnboardingHeader: View {
 struct OnboardingBubble: View {
     let line: OnboardingFlow.Line
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     private var isUser: Bool { line.isFromUser }
+
+    /// The alignment below is semantic and mirrors itself in Arabic; the tail's
+    /// path and its nudge are absolute, so they need the direction spelled out.
+    private var tailOnLeft: Bool {
+        layoutDirection == .rightToLeft ? isUser : !isUser
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -102,12 +110,12 @@ struct OnboardingBubble: View {
     }
 
     private var tail: some View {
-        BubbleTail(leading: !isUser)
+        BubbleTail(leading: tailOnLeft)
             .fill(isUser ? AnyShapeStyle(Pigment.accentGradient)
                          : AnyShapeStyle(Pigment.onboardingBubble))
             .frame(width: BubbleTail.size.width, height: BubbleTail.size.height)
             // Only the tip clears the bubble; the rest tucks under it.
-            .offset(x: isUser ? 3 : -3)
+            .offset(x: tailOnLeft ? -3 : 3)
     }
 }
 

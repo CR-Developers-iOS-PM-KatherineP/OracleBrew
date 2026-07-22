@@ -9,6 +9,8 @@ struct HistoryCard: View {
     /// Opens the chat this reading led to.
     var onOpenChat: () -> Void = {}
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     private let cardFill = Color(hex: 0x211836)
 
     private var dateLabel: String {
@@ -54,7 +56,9 @@ struct HistoryCard: View {
             .frame(width: 80, height: 80)
             .clipShape(Circle())
             .overlay(alignment: .bottomTrailing) {
-                oracleBadge.offset(x: 8, y: 8)
+                // `.bottomTrailing` mirrors itself; the nudge out of the cup's
+                // circle does not.
+                oracleBadge.offset(x: 8 * layoutDirection.sign, y: 8)
             }
             .frame(width: 80, height: 80)
     }

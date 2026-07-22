@@ -112,7 +112,7 @@ struct TellerProfileView: View {
     private var backButton: some View {
         HStack {
             Button(action: onBack) {
-                Image(systemName: "arrow.left")
+                Image(systemName: "arrow.backward")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Pigment.cream)
                     .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
