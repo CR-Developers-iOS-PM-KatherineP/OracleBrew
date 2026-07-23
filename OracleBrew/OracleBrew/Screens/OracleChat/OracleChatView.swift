@@ -103,9 +103,12 @@ struct OracleChatView: View {
     }
 
     private func load() async {
-        // Already populated (returning to an open thread) — nothing to do.
-        guard thread.messages.isEmpty, !loading else { return }
-        loading = true
+        guard !loading, !sending else { return }
+        // Refetched even when the thread already has messages: the oracle
+        // answers on a background job, so a reply can land while the user is
+        // away and would otherwise never appear until the app restarts. The
+        // spinner is only for a thread with nothing to show yet.
+        loading = thread.messages.isEmpty
         defer { loading = false }
         do {
             // A thread opened from the list already knows its server id; one
@@ -366,9 +369,16 @@ struct OracleChatView: View {
         Task {
             defer { sending = false }
             do {
+                // Sending only queues the reply; the oracle answers on a job we
+                // then wait on. The typing bubble covers that whole stretch.
                 let response = try await repository.send(chatID: chatID, text: trimmed)
-                thread.messages.append(ChatMapper.message(response.assistantMessage))
+                let reply = try await repository.awaitReply(jobID: response.job.id)
+                thread.messages.append(ChatMessage(isFromUser: false, text: reply))
                 thread.lastUpdated = Date()
+                // The reply flips the thread to unread the moment it lands, and
+                // the user is looking straight at it — clear that, or the list
+                // badges a message they already read.
+                try? await repository.markRead(chatID: chatID)
             } catch {
                 // Drop the optimistic user bubble back into the input so nothing
                 // is lost, and surface the failure.

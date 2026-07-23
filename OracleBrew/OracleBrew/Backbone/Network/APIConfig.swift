@@ -14,7 +14,13 @@ enum APIConfig {
     /// actually decided which strings the user is reading, and the two disagree
     /// when the device language has no localization here.
     static var preferredLanguage: String {
-        let code = Bundle.main.preferredLocalizations.first ?? "en"
-        return "\(code), en;q=0.8"
+        "\(replyLanguage), en;q=0.8"
+    }
+
+    /// Bare ISO 639 code for request bodies that name the language outright —
+    /// the chat asks the oracle to answer in it. Same source as the header, so
+    /// the reply matches the language the UI is running in.
+    static var replyLanguage: String {
+        Bundle.main.preferredLocalizations.first.map { String($0.prefix(2)) } ?? "en"
     }
 }
