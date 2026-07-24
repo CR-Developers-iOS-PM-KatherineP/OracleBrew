@@ -51,6 +51,11 @@ struct DrinkCard: View {
             RoundedRectangle(cornerRadius: Cadence.cardRadius)
                 .strokeBorder(Color.white.opacity(0.1), lineWidth: 2)
         )
+        // Pin the hit and accessibility frame to the card. The "Photo included"
+        // sash is a rotated overlay positioned across the corner; clipShape hides
+        // the overflow but the button's frame is still the union of its children,
+        // so the random-cup card otherwise reports ~25pt past the screen edge.
+        .contentShape(RoundedRectangle(cornerRadius: Cadence.cardRadius))
     }
 
     @ViewBuilder

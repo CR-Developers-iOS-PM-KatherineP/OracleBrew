@@ -26,7 +26,7 @@ struct BubbleTail: Shape {
                       control1: CGPoint(x: 5.11242, y: 18.1842),
                       control2: CGPoint(x: -0.887573, y: 19.5813))
         path.closeSubpath()
-
+        
         var transform = CGAffineTransform(scaleX: rect.width / Self.size.width,
                                           y: rect.height / Self.size.height)
         if !leading {
@@ -37,3 +37,4 @@ struct BubbleTail: Shape {
         return path.applying(transform).offsetBy(dx: rect.minX, dy: rect.minY)
     }
 }
+    

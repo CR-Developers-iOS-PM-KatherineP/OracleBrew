@@ -37,6 +37,11 @@ struct ReadingResultView: View {
                             .padding(.bottom, 8)
                             .background(Pigment.background.ignoresSafeArea(edges: .bottom))
                     }
+                } else {
+                    // No reading to show. Closing is the only way on, since
+                    // there is nothing here to retry — the request that failed
+                    // was made a screen ago.
+                    ScreenStateView(kind: .failure, retry: onClose)
                 }
             }
             .padding(.horizontal, 20)
@@ -48,9 +53,10 @@ struct ReadingResultView: View {
         .onAppear {
             guard reading == nil else { return }
             // existingReading = a History replay; draft.reading = the one the
-            // Loading step fetched from the API; the engine is a last-ditch
-            // fallback. History itself lives on the server now.
-            let result = existingReading ?? draft.reading ?? ReadingEngine.generate(from: draft)
+            // Loading step fetched from the API. There is deliberately no third
+            // option: a locally invented reading is indistinguishable from a
+            // real one, so a failure has to look like a failure.
+            guard let result = existingReading ?? draft.reading else { return }
             reading = result
             if let image = ShareCardRenderer.render(photo: draft.photo, advice: result.advice,
                                                     timeframe: result.timeframe) {

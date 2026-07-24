@@ -1,5 +1,11 @@
 import Foundation
 
+struct ChatMessage: Identifiable, Equatable {
+    let id = UUID()
+    let isFromUser: Bool
+    let text: String
+}
+
 @Observable
 final class ChatThread: Identifiable {
     let id = UUID()
@@ -116,7 +122,7 @@ final class ChatSessionStore {
         ChatSummary(
             id: dto.id,
             teller: CatalogMapper.oracle(dto.oracle),
-            preview: dto.lastMessage?.text ?? "Say hello to start the conversation",
+            preview: dto.lastMessage?.text ?? String(localized: "chats.row.empty_preview"),
             date: dto.updatedAt.flatMap { isoFormatter.date(from: $0) } ?? Date(),
             hasUnread: dto.hasUnreadFromOracle ?? false,
             readingID: dto.readingId

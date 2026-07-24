@@ -75,7 +75,7 @@ struct TellerProfileView: View {
                     RatingLabel(rating: teller.rating, starSize: 20, textSize: 16)
                     Text("teller.sessions \(teller.sessions)")
                         .font(Lettering.body(14)).foregroundStyle(Pigment.cream.opacity(0.4))
-                    Text("teller.reviews \(teller.reviewCount)")
+                    Text("teller.reviews \(teller.reviewCountLabel)")
                         .font(Lettering.body(14)).foregroundStyle(Pigment.cream.opacity(0.4))
                 }
                 FlowLayout(spacing: 8) {

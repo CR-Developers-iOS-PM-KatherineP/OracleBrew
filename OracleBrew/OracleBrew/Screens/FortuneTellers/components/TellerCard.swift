@@ -73,36 +73,42 @@ struct TellerCard: View {
     /// bottom, so the card's own bottom inset (204 − 18 − 164 = 22) falls out
     /// of the fixed height rather than being padded in by hand.
     private var content: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(teller.name)
-                    .font(Lettering.displayMedium(22))
-                    .foregroundStyle(Pigment.cream)
-                Text(teller.title)
-                    .font(Lettering.body(10))
-                    .foregroundStyle(Pigment.cream.opacity(0.4))
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 12) {
-                    RatingLabel(rating: teller.rating, starSize: 16, textSize: 12)
-                    Text("teller.sessions \(teller.sessions)")
-                        .font(Lettering.body(10)).foregroundStyle(Pigment.cream.opacity(0.4))
-                    Text("teller.reviews \(teller.reviewCount)")
-                        .font(Lettering.body(10)).foregroundStyle(Pigment.cream.opacity(0.4))
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(teller.name)
+                        .font(Lettering.displayMedium(22))
+                        .foregroundStyle(Pigment.cream)
+                    Text(teller.title)
+                        .font(Lettering.body(10))
+                        .foregroundStyle(Pigment.cream.opacity(0.4))
                 }
 
-                chipsRow
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 12) {
+                        RatingLabel(rating: teller.rating, starSize: 16, textSize: 12)
+                        Text("teller.sessions \(teller.sessions)")
+                            .font(Lettering.body(10)).foregroundStyle(Pigment.cream.opacity(0.4))
+                        Text("teller.reviews \(teller.reviewCountLabel)")
+                            .font(Lettering.body(10)).foregroundStyle(Pigment.cream.opacity(0.4))
+                    }
 
-                Text(teller.blurb)
-                    .font(Lettering.body(10))
-                    .foregroundStyle(Pigment.cream.opacity(0.4))
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
+                    chipsRow
+
+                    Text(teller.blurb)
+                        .font(Lettering.body(10))
+                        .foregroundStyle(Pigment.cream.opacity(0.4))
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
 
-            Spacer(minLength: 0)
+            // Button sits close under the text, not pinned to the bottom: the
+            // freed space drops below it, so the gap above shrinks and the gap
+            // to the card's bottom grows.
             viewProfileButton
+                .padding(.top, 4)
+            Spacer(minLength: 0)
         }
         .frame(height: 164, alignment: .top)
         .padding(.leading, 142)
