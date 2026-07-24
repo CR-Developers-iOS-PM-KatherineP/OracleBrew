@@ -16,6 +16,12 @@
     "NSCameraUsageDescription": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يستخدم OracleBrew الكاميرا لتصوير فنجان قهوتك من أجل القراءة."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -27,6 +33,12 @@
     "NSPhotoLibraryAddUsageDescription": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يحفظ OracleBrew صورة فنجان قراءتك في معرض صورك عند الضغط على «حفظ»."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -38,6 +50,12 @@
     "NSUserTrackingUsageDescription": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسمح بالتتبّع ليتمكّن Oracle Brew من تخصيص قراءاتك وعرض عروض تناسبك فعلاً."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",

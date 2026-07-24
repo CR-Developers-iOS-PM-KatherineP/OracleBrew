@@ -42,7 +42,11 @@ struct ReadingService {
     }
 
     private func analyze(readingID: Int) async throws -> AIJobDTO {
-        let request = EmissaryRequest(path: "readings/\(readingID)/analyze/", method: .post)
+        // The language rides on analyze, not on create: creating only drafts
+        // the reading, and it is this call that spawns the AI job — the same
+        // shape as chat, where the language goes with each message.
+        let body = ["language": APIConfig.replyLanguage]
+        let request = EmissaryRequest(path: "readings/\(readingID)/analyze/", method: .post, body: .json(body))
         return try await emissary.perform(request, as: AIJobDTO.self)
     }
 
