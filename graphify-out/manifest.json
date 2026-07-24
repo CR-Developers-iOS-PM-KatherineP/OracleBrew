@@ -15,12 +15,12 @@
     "semantic_hash": "ca2cad966c52934a5b310d97ffe8fdbe"
   },
   "OracleBrew/OracleBrew/Backbone/DrinkCatalog.swift": {
-    "mtime": 1784547803.1294084,
-    "ast_hash": "ad9ec13027de660b5b39093a061624df",
-    "semantic_hash": "ad9ec13027de660b5b39093a061624df"
+    "mtime": 1784895239.1688106,
+    "ast_hash": "f358e6be4272c8718d7eb6242ba6f177",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Backbone/FortuneTellers.swift": {
-    "mtime": 1784795162.1405416,
+    "mtime": 1784895239.169364,
     "ast_hash": "5f7d41a88a93b3f9deb5d8d802474458",
     "semantic_hash": "5f7d41a88a93b3f9deb5d8d802474458"
   },
@@ -30,9 +30,9 @@
     "semantic_hash": "2bfa2373d3222bdf6f2a96ae5a4ea3af"
   },
   "OracleBrew/OracleBrew/Backbone/ReadingDraft.swift": {
-    "mtime": 1784547803.138329,
-    "ast_hash": "3bfeb12863dd5ba7a54c386fe6966f58",
-    "semantic_hash": "3bfeb12863dd5ba7a54c386fe6966f58"
+    "mtime": 1784895239.1711304,
+    "ast_hash": "0b7f4e3f848e52f049b654cd7816e6a5",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Backbone/Waypoint.swift": {
     "mtime": 1784547803.1400218,
@@ -85,7 +85,7 @@
     "semantic_hash": "79efba422e6bb46142f77ed5c656669e"
   },
   "OracleBrew/OracleBrew/Screens/Brew/BrewModel.swift": {
-    "mtime": 1784795162.1471503,
+    "mtime": 1784895258.61781,
     "ast_hash": "c4736f2e1dcdfba8465769a3a4e2847f",
     "semantic_hash": "c4736f2e1dcdfba8465769a3a4e2847f"
   },
@@ -100,9 +100,9 @@
     "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Screens/BrewReading/BrewReadingFlow.swift": {
-    "mtime": 1784795162.1486654,
-    "ast_hash": "a4b6363d452e099684aa3f7f66bdc794",
-    "semantic_hash": "a4b6363d452e099684aa3f7f66bdc794"
+    "mtime": 1784895239.1722064,
+    "ast_hash": "7a46b656a86ba09cfe274a1baf6f9d01",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Screens/DrinkSelection/DrinkSelectionView.swift": {
     "mtime": 1784723132.295766,
@@ -110,8 +110,8 @@
     "semantic_hash": "dc3fb4b7aaa0d3ff17a14c9460051342"
   },
   "OracleBrew/OracleBrew/Screens/DrinkSelection/components/DrinkCard.swift": {
-    "mtime": 1784795146.1509655,
-    "ast_hash": "c6cbc3ea93fa8fbb46f516355ce591ff",
+    "mtime": 1784895258.6182432,
+    "ast_hash": "67248613538a08bf11115bc494be5e8b",
     "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Screens/FortuneTellers/FortuneTellersView.swift": {
@@ -120,12 +120,12 @@
     "semantic_hash": "2ba268938d1a6b53d0c32d1d0a0859a7"
   },
   "OracleBrew/OracleBrew/Screens/FortuneTellers/components/TellerCard.swift": {
-    "mtime": 1784875000.1531172,
+    "mtime": 1784895258.618634,
     "ast_hash": "fc0c997321f9d0e5b20bfe7587366558",
     "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Screens/TellerProfile/TellerProfileView.swift": {
-    "mtime": 1784795162.154396,
+    "mtime": 1784895258.6194263,
     "ast_hash": "fe89322541eb5b56d8e483aa1d925e29",
     "semantic_hash": "fe89322541eb5b56d8e483aa1d925e29"
   },
@@ -140,7 +140,7 @@
     "semantic_hash": "530cf39dac6e22e5354b57ccd873f2e0"
   },
   "OracleBrew/OracleBrew/Backbone/Intention.swift": {
-    "mtime": 1784795162.141171,
+    "mtime": 1784895239.1695883,
     "ast_hash": "e5fea659970b746cdade2d425ea57d6f",
     "semantic_hash": "e5fea659970b746cdade2d425ea57d6f"
   },
@@ -175,7 +175,7 @@
     "semantic_hash": "6a163651cffef3ed97a5af373e979798"
   },
   "OracleBrew/OracleBrew/Screens/ReadingResult/ReadingResultView.swift": {
-    "mtime": 1784795162.1528463,
+    "mtime": 1784895258.6190202,
     "ast_hash": "61f0e28c7a3ee0b72a0634f6d0cc02c6",
     "semantic_hash": "61f0e28c7a3ee0b72a0634f6d0cc02c6"
   },
@@ -190,14 +190,14 @@
     "semantic_hash": "b36ff26080d3d6c5f0c17883870c3caa"
   },
   "OracleBrew/OracleBrew/Screens/OracleChat/OracleChatEntryFlow.swift": {
-    "mtime": 1784795162.1515882,
+    "mtime": 1784895239.173523,
     "ast_hash": "6b2bc44fb0f5cb58ca5621976ab74adb",
     "semantic_hash": "6b2bc44fb0f5cb58ca5621976ab74adb"
   },
   "OracleBrew/OracleBrew/Screens/OracleChat/OracleChatView.swift": {
-    "mtime": 1784795162.1522608,
-    "ast_hash": "c25ed5b4bcd05adfe36d7546909fffa4",
-    "semantic_hash": "c25ed5b4bcd05adfe36d7546909fffa4"
+    "mtime": 1784895239.173895,
+    "ast_hash": "7084687a9c139e68e2e7b4158ce90ecd",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Screens/OracleChat/components/ChatBubble.swift": {
     "mtime": 1784715853.0725594,
@@ -255,12 +255,12 @@
     "semantic_hash": "652e9084d7461ae8467165243bdc7150"
   },
   "OracleBrew/OracleBrew/Backbone/CatalogStore.swift": {
-    "mtime": 1784795162.1386228,
-    "ast_hash": "a24a45b82a2c944b9ce63e686ca2b5ab",
-    "semantic_hash": "a24a45b82a2c944b9ce63e686ca2b5ab"
+    "mtime": 1784895239.1684473,
+    "ast_hash": "45c07a451d8187766268cfc00f66742b",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Backbone/ChatSessionStore.swift": {
-    "mtime": 1784795162.1398098,
+    "mtime": 1784895258.6155477,
     "ast_hash": "c75c8244141a4cf689f3252628084b1f",
     "semantic_hash": "c75c8244141a4cf689f3252628084b1f"
   },
@@ -270,8 +270,8 @@
     "semantic_hash": "bbf0eae04487b8ca86622994468e7afa"
   },
   "OracleBrew/OracleBrew/Backbone/Network/CatalogRepository.swift": {
-    "mtime": 1784872529.0697007,
-    "ast_hash": "4ccb84c630de6cb167b14da6ee29d45d",
+    "mtime": 1784895239.169964,
+    "ast_hash": "66dd3c33e0c066df2abbfdec54e82a53",
     "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Backbone/Network/ChatRepository.swift": {
@@ -280,9 +280,9 @@
     "semantic_hash": "ec66d3f45054fc05edd77707eeeb0362"
   },
   "OracleBrew/OracleBrew/Backbone/Network/DTO/CatalogDTO.swift": {
-    "mtime": 1784795162.1425755,
-    "ast_hash": "90970f6f206d29324196920a6ac418ec",
-    "semantic_hash": "90970f6f206d29324196920a6ac418ec"
+    "mtime": 1784895239.1702342,
+    "ast_hash": "3b0e8706a08a0b389c12f827a571149e",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Backbone/Network/DTO/ReadingDTO.swift": {
     "mtime": 1784547803.133067,
@@ -315,9 +315,9 @@
     "semantic_hash": "f793054c1bfec2ba8af66a26d74ab8c2"
   },
   "OracleBrew/OracleBrew/Backbone/Network/ReadingService.swift": {
-    "mtime": 1784795162.143495,
-    "ast_hash": "467c58451092dabbf7fd904cdd425681",
-    "semantic_hash": "467c58451092dabbf7fd904cdd425681"
+    "mtime": 1784895258.6158864,
+    "ast_hash": "a6ff6e20748e8f5f735fc59be35b1a2b",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Backbone/Network/ScreenPhase.swift": {
     "mtime": 1784547803.1363611,
@@ -340,9 +340,9 @@
     "semantic_hash": "14fdd6a0036396161bca0318f0bbd63a"
   },
   "OracleBrew/OracleBrew/Kit/CupCamera.swift": {
-    "mtime": 1784547803.1419797,
-    "ast_hash": "1562af06440b40d628f1862ec3ddf02d",
-    "semantic_hash": "1562af06440b40d628f1862ec3ddf02d"
+    "mtime": 1784895239.1715434,
+    "ast_hash": "dc0fe0a95862c21571c027814b2a5f80",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Kit/RemoteImage.swift": {
     "mtime": 1784547803.1444776,
@@ -360,7 +360,7 @@
     "semantic_hash": "09c20c3c452dd0df678f35fd1ab889fa"
   },
   "OracleBrew/OracleBrew/Screens/Chats/ChatsView.swift": {
-    "mtime": 1784795162.1494393,
+    "mtime": 1784895239.1725214,
     "ast_hash": "1f244412139cf4fbd0807a232065a968",
     "semantic_hash": "1f244412139cf4fbd0807a232065a968"
   },
@@ -370,7 +370,7 @@
     "semantic_hash": "22dc816980e3620825fc1b9f68e8a9b9"
   },
   "OracleBrew/OracleBrew/Screens/History/HistoryView.swift": {
-    "mtime": 1784795162.1509132,
+    "mtime": 1784895239.1731932,
     "ast_hash": "616fb96ff6d6f7c81da2cfea02add7d5",
     "semantic_hash": "616fb96ff6d6f7c81da2cfea02add7d5"
   },
@@ -405,8 +405,8 @@
     "semantic_hash": "c54212729818f7f23ffce3044a571dc4"
   },
   "OracleBrew/OracleBrew/Kit/BubbleTail.swift": {
-    "mtime": 1784875426.0161984,
-    "ast_hash": "48aa9fb63077a4ac437b985eaf647570",
+    "mtime": 1784895258.6162636,
+    "ast_hash": "efdc1df837322081bf0e8d2d0311e773",
     "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Kit/EmptyState.swift": {
@@ -425,9 +425,9 @@
     "semantic_hash": "4463daa23cd5a415a50fba810a0867ee"
   },
   "OracleBrew/OracleBrew/Screens/PhotoUpload/RandomCupView.swift": {
-    "mtime": 1784723132.3063796,
-    "ast_hash": "ee6078e0a4a9f013005c0e7bc03bed1d",
-    "semantic_hash": "ee6078e0a4a9f013005c0e7bc03bed1d"
+    "mtime": 1784895239.1750143,
+    "ast_hash": "c00b3fc0485b267efb8c79dca646a531",
+    "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Screens/Onboarding/OnboardingFlow.swift": {
     "mtime": 1784723132.3023837,
@@ -485,12 +485,12 @@
     "semantic_hash": "bd157fb91b6e5b1f5a22f827941dc98d"
   },
   "OracleBrew/OracleBrew/Backbone/FortuneCatalog.swift": {
-    "mtime": 1784795163.147785,
+    "mtime": 1784895239.1689963,
     "ast_hash": "645b3517eec2a291f9315b3beaf633a2",
     "semantic_hash": "645b3517eec2a291f9315b3beaf633a2"
   },
   "OracleBrew/OracleBrew/Backbone/OracleContent.swift": {
-    "mtime": 1784872524.970599,
+    "mtime": 1784895239.1708832,
     "ast_hash": "7eb4fb1a5fb4dad701245dad8b824c16",
     "semantic_hash": ""
   },
@@ -500,58 +500,63 @@
     "semantic_hash": "e1f62ef9e931b7ab5165c1cefbe26a6b"
   },
   "docs/oracles-content.json": {
-    "mtime": 1784872553.1970747,
+    "mtime": 1784895239.175865,
     "ast_hash": "137aa44d1f4bb9cce987d2714dae782b",
     "semantic_hash": ""
   },
   "loc-work/ar.json": {
-    "mtime": 1784795163.2977228,
+    "mtime": 1784895258.6505191,
     "ast_hash": "d8831c124357b645d73b99b4f0e37717",
     "semantic_hash": "d8831c124357b645d73b99b4f0e37717"
   },
   "loc-work/ar_default.json": {
-    "mtime": 1784795163.2992172,
+    "mtime": 1784895258.6507835,
     "ast_hash": "b79296f32fd85da27809ba7fe05e401c",
     "semantic_hash": "b79296f32fd85da27809ba7fe05e401c"
   },
   "loc-work/ar_prompts.json": {
-    "mtime": 1784795163.3000107,
+    "mtime": 1784895258.6510582,
     "ast_hash": "2105e3c1fd720bce277f56c57ff76c36",
     "semantic_hash": "2105e3c1fd720bce277f56c57ff76c36"
   },
   "loc-work/ar_sets.json": {
-    "mtime": 1784795163.3002825,
+    "mtime": 1784895258.6513064,
     "ast_hash": "7ba9eddc91fa39681276c5108d211daf",
     "semantic_hash": "7ba9eddc91fa39681276c5108d211daf"
   },
   "loc-work/source_ar.json": {
-    "mtime": 1784795163.3007486,
+    "mtime": 1784895258.6516755,
     "ast_hash": "1cefdd05395bb86d7d614c975bd2ed2c",
     "semantic_hash": "1cefdd05395bb86d7d614c975bd2ed2c"
   },
   "loc-work/source_default.json": {
-    "mtime": 1784795163.3014688,
+    "mtime": 1784895258.6519103,
     "ast_hash": "248f571913207c428bb5ff9c7deffdad",
     "semantic_hash": "248f571913207c428bb5ff9c7deffdad"
   },
   "loc-work/source_prompts.json": {
-    "mtime": 1784795163.303055,
+    "mtime": 1784895258.6522171,
     "ast_hash": "9d6849fdeae05f5f8801a96201a12313",
     "semantic_hash": "9d6849fdeae05f5f8801a96201a12313"
   },
   "loc-work/source_sets.json": {
-    "mtime": 1784795163.3038912,
+    "mtime": 1784895258.6523886,
     "ast_hash": "04b070a05e44633b010cd07a8b505d01",
     "semantic_hash": "04b070a05e44633b010cd07a8b505d01"
   },
   "docs/oracle-entity.md": {
-    "mtime": 1784872566.4157474,
+    "mtime": 1784895239.1756709,
     "ast_hash": "c5a7388160b49fadf66f95a8a96b7554",
     "semantic_hash": ""
   },
   "OracleBrew/OracleBrew/Kit/CardGradient.swift": {
     "mtime": 1784875970.2617211,
     "ast_hash": "e89819a8f8024903f101313746aa122b",
+    "semantic_hash": ""
+  },
+  "docs/drink-entity.md": {
+    "mtime": 1784895239.1754978,
+    "ast_hash": "6229e3d51421d12a14a5422c7829ec0a",
     "semantic_hash": ""
   }
 }
