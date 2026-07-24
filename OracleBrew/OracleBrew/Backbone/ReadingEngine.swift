@@ -5,6 +5,9 @@ struct ReadingSymbol: Identifiable {
     let name: String
     let keyword: String     // short tag, e.g. "Success"
     let meaning: String     // longer explanation
+    /// The backend's symbol slug, which is how the icon is found. Empty for the
+    /// locally generated fallback reading, which has no artwork behind it.
+    var slug: String = ""
 }
 
 struct Reading {

@@ -89,10 +89,17 @@ struct ReadingService {
 enum ReadingMapper {
     static func reading(_ dto: ReadingResultDTO?) -> Reading {
         let symbols = (dto?.symbols ?? []).map { entry in
-            ReadingSymbol(
-                name: entry.symbol.name,
-                keyword: entry.shortMeaning ?? entry.symbol.shortMeaning ?? "",
-                meaning: entry.interpretation ?? entry.symbol.baseDescription ?? ""
+            // Name and keyword are the app's own vocabulary, so they come from
+            // its catalog and translate with everything else. What the backend
+            // writes for this particular reading — the interpretation — stays
+            // the backend's, and the AI already produces it in the right
+            // language. Its English-only symbol table is only ever a fallback.
+            let local = SymbolCatalog.entry(forSlug: entry.symbol.slug)
+            return ReadingSymbol(
+                name: local?.name ?? entry.shortMeaning ?? entry.symbol.name,
+                keyword: local?.keyword ?? entry.symbol.shortMeaning ?? "",
+                meaning: entry.interpretation ?? entry.symbol.baseDescription ?? "",
+                slug: entry.symbol.slug
             )
         }
         return Reading(
