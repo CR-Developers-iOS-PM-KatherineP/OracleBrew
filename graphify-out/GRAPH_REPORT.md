@@ -1,16 +1,16 @@
-# Graph Report - OracleBrew  (2026-07-23)
+# Graph Report - OracleBrew  (2026-07-24)
 
 ## Corpus Check
-- 109 files · ~45,604 words
+- 110 files · ~46,272 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1088 nodes · 1937 edges · 63 communities (52 shown, 11 thin omitted)
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 133 edges (avg confidence: 0.8)
+- 1100 nodes · 1937 edges · 74 communities (55 shown, 19 thin omitted)
+- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 122 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a6ec6d23`
+- Built from commit: `8c55d5a6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -65,43 +65,54 @@
 - Community 47
 - Community 48
 - Community 49
+- SessionGate
 - Community 51
 - LayoutDirection
 - SegmentedSelector
 - Community 55
 - Community 56
+- FortuneTeller
 - Community 58
+- IntentionView
 - Community 60
 - CGFloat
 - ScrollViewProxy
 - Community 63
 - Void
+- PhotoUploadView
+- RootTab
 - Community 68
+- .create
 - Community 70
+- Ignition
+- .section
+- LocalizedStringKey
+- String
+- Void
 
 ## God Nodes (most connected - your core abstractions)
-1. `View` - 95 edges
-2. `SwiftUI` - 71 edges
-3. `Color` - 26 edges
+1. `View` - 93 edges
+2. `SwiftUI` - 72 edges
+3. `Color` - 27 edges
 4. `FortuneTeller` - 25 edges
 5. `UserProfile` - 25 edges
 6. `Foundation` - 24 edges
-7. `EmissaryRequest` - 24 edges
+7. `CodingKeys` - 22 edges
 8. `CodingKeys` - 22 edges
-9. `CodingKeys` - 22 edges
-10. `EmissaryFailure` - 22 edges
+9. `EmissaryRequest` - 21 edges
+10. `CodingKeys` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Pigment` --calls--> `Color`  [INFERRED]
   OracleBrew/OracleBrew/Kit/StarRating.swift → OracleBrew/OracleBrew/Kit/Pigment.swift
-- `OracleChatView` --calls--> `ChatRepository`  [INFERRED]
-  OracleBrew/OracleBrew/Screens/OracleChat/OracleChatView.swift → OracleBrew/OracleBrew/Backbone/Network/ChatRepository.swift
-- `SparklePair` --references--> `View`  [EXTRACTED]
-  OracleBrew/OracleBrew/Kit/Sparkle.swift → OracleBrew/OracleBrew/App/WaypointDestinations.swift
-- `OnboardingLoadingView` --references--> `View`  [EXTRACTED]
-  OracleBrew/OracleBrew/Screens/Onboarding/OnboardingView.swift → OracleBrew/OracleBrew/App/WaypointDestinations.swift
-- `ChatBackground` --references--> `View`  [EXTRACTED]
-  OracleBrew/OracleBrew/Screens/OracleChat/components/ChatBackground.swift → OracleBrew/OracleBrew/App/WaypointDestinations.swift
+- `ReadingLoadingView` --calls--> `ReadingService`  [INFERRED]
+  OracleBrew/OracleBrew/Screens/Loading/ReadingLoadingView.swift → OracleBrew/OracleBrew/Backbone/Network/ReadingService.swift
+- `SegmentedSelector` --calls--> `Color`  [INFERRED]
+  OracleBrew/OracleBrew/Kit/SegmentedSelector.swift → OracleBrew/OracleBrew/Kit/Pigment.swift
+- `TellerCard` --calls--> `Color`  [INFERRED]
+  OracleBrew/OracleBrew/Screens/FortuneTellers/components/TellerCard.swift → OracleBrew/OracleBrew/Kit/Pigment.swift
+- `HistoryCard` --calls--> `Color`  [INFERRED]
+  OracleBrew/OracleBrew/Screens/History/components/HistoryCard.swift → OracleBrew/OracleBrew/Kit/Pigment.swift
 
 ## Import Cycles
 - None detected.
@@ -113,55 +124,55 @@
 - **Oracle id round-trip between client and server** — docs_oracle_entity_get_api_oracles, docs_oracle_entity_oracle_id, docs_oracle_entity_post_api_chats, docs_oracle_entity_post_api_readings, docs_oracle_entity_oracles_content_json [EXTRACTED 1.00]
 - **Localization of oracle and reading texts** — docs_oracle_entity_accept_language, docs_oracle_entity_reading_language_in_analyze_body, docs_oracle_entity_post_api_readings_analyze, docs_oracle_entity_bio, docs_oracle_entity_short_description [INFERRED 0.85]
 
-## Communities (63 total, 11 thin omitted)
+## Communities (74 total, 19 thin omitted)
 
 ### Community 0 - "Chat & Catalog DTOs"
-Cohesion: 0.06
-Nodes (43): AIJobDTO, ChatMessage, Emissary, Encodable, Int, ChatDetailDTO, ChatJobDTO, ChatJobResultDTO (+35 more)
+Cohesion: 0.09
+Nodes (29): AIJobDTO, ChatMessage, Emissary, Encodable, Encoder, Int, ChatDetailDTO, ChatJobDTO (+21 more)
 
 ### Community 1 - "History & Navigation"
-Cohesion: 0.06
-Nodes (22): HistoryRepository, Pathfinder, HistoryItem, ReadingHistoryStore, Bool, Date, Hasher, Int (+14 more)
+Cohesion: 0.05
+Nodes (27): HistoryRepository, Int, Pathfinder, HistoryItem, ReadingHistoryStore, Bool, Date, Hasher (+19 more)
 
 ### Community 2 - "Country Catalog & API Config"
-Cohesion: 0.06
-Nodes (31): EmissaryFailure, decoding, encoding, notFound, notSubscribed, offline, rateLimited, server (+23 more)
+Cohesion: 0.14
+Nodes (13): BrewReadingFlow, FlowStub, ReadingStep, chat, intention, loading, photo, result (+5 more)
 
 ### Community 3 - "Reading Service & JSON"
-Cohesion: 0.09
-Nodes (20): Entry, Bool, String, SymbolCatalog, Cadence, Screen, CGFloat, CameraPicker (+12 more)
+Cohesion: 0.10
+Nodes (20): OracleContent, OracleContentCatalog, Bool, Int, String, Cadence, Screen, CGFloat (+12 more)
 
 ### Community 4 - "Chat Wire Models"
 Cohesion: 0.10
 Nodes (20): CodingKeys, authorName, bio, createdAt, description, id, illustration, image (+12 more)
 
 ### Community 5 - "Flow Layout & Bubble Shapes"
-Cohesion: 0.06
-Nodes (30): CGSize, Error, Layout, BubbleTail, Bool, CGRect, Path, FlowLayout (+22 more)
+Cohesion: 0.05
+Nodes (33): CGSize, Error, Layout, BubbleTail, Bool, CGRect, Path, FlowLayout (+25 more)
 
 ### Community 6 - "Onboarding Conversation Flow"
 Cohesion: 0.10
-Nodes (26): Duration, Equatable, Identifiable, Line, OnboardingFlow, Stage, asking, ready (+18 more)
+Nodes (24): Duration, Line, OnboardingFlow, Stage, asking, ready, saving, Bool (+16 more)
 
 ### Community 7 - "App Root & Catalog Store"
-Cohesion: 0.10
-Nodes (15): Calendar, FortuneCatalog, Date, Int, String, OnboardingLeavePopup, OnboardingLoadingView, OnboardingReadyView (+7 more)
+Cohesion: 0.24
+Nodes (8): OnboardingLeavePopup, OnboardingLoadingView, OnboardingReadyView, OnboardingView, ScrollViewProxy, Set, String, Void
 
 ### Community 8 - "Cup Camera Capture"
-Cohesion: 0.13
-Nodes (14): AVCaptureSession, AVCaptureVideoPreviewLayer, AVPlayer, AVPlayerLayer, CameraPreview, PreviewView, AnyClass, Context (+6 more)
+Cohesion: 0.05
+Nodes (40): HTTPURLResponse, JSONDecoder, APIConfig, String, CatalogRepository, DailyFortuneDTO, Int, String (+32 more)
 
 ### Community 9 - "Profile Dropdown Controls"
-Cohesion: 0.10
-Nodes (26): Label, DropdownChevron, DropdownOverlay, DropdownRow, ProfileFieldBox, Bool, CGFloat, Content (+18 more)
+Cohesion: 0.07
+Nodes (33): Label, InterestChip, ProfileChip, ProfileSectionLabel, Bool, LocalizedStringKey, String, Void (+25 more)
 
 ### Community 10 - "Oracle Entity API Contract"
 Cohesion: 0.10
 Nodes (29): Accept-Language header, bio, Bundled art matched to assigned ids, Gap: per-review rating has no source, Gap: reviews_count missing from API, Gap: sessions_count has no source, Gap: short_description empty on live oracles, GET /api/oracles/ (list) (+21 more)
 
 ### Community 11 - "Daily Fortune Catalog"
-Cohesion: 0.19
-Nodes (13): OnboardingBirthPicker, OnboardingContinue, OnboardingInterests, OnboardingOptions, OnboardingTextEntry, OnboardingWheel, Bool, Int (+5 more)
+Cohesion: 0.11
+Nodes (19): Calendar, FortuneCatalog, Date, Int, String, OnboardingBirthPicker, OnboardingContinue, OnboardingInterests (+11 more)
 
 ### Community 12 - "Project Design Notes"
 Cohesion: 0.10
@@ -172,88 +183,88 @@ Cohesion: 0.10
 Nodes (20): CodingKeys, adviceHeadline, aiJobId, baseDescription, cupImage, hasChat, icon, id (+12 more)
 
 ### Community 14 - "Intention: Topic & Horizon"
-Cohesion: 0.14
-Nodes (13): Bool, Hasher, Int, LocalizedStringKey, TimeHorizon, days, month, year (+5 more)
+Cohesion: 0.33
+Nodes (5): Bool, Hasher, Int, Topic, TopicCatalog
 
 ### Community 15 - "Settings Row Components"
 Cohesion: 0.15
 Nodes (17): SettingsArrow, SettingsCard, SettingsDivider, SettingsIcon, SettingsRow, SettingsSectionLabel, SettingsToggleRow, Bool (+9 more)
 
 ### Community 16 - "User Profile Enums"
-Cohesion: 0.15
-Nodes (16): CaseIterable, Codable, ChildrenStatus, have, none, planning, Employment, both (+8 more)
+Cohesion: 0.06
+Nodes (47): CaseIterable, Codable, ProfileDTO, ProfileMapper, ProfileRepository, Bool, Int, String (+39 more)
 
 ### Community 17 - "Chat Session Store"
-Cohesion: 0.09
-Nodes (27): ChatMessage, ChatSessionStore, ChatSummary, ChatThread, Bool, Date, Hasher, Int (+19 more)
+Cohesion: 0.22
+Nodes (10): ChatMessage, ChatSessionStore, ChatSummary, ChatThread, Bool, Date, Hasher, Int (+2 more)
 
 ### Community 18 - "Emissary Request Building"
-Cohesion: 0.06
-Nodes (35): HTTPURLResponse, JSONDecoder, APIConfig, String, AnyEncodable, Data, Emissary, HTTPMethod (+27 more)
+Cohesion: 0.31
+Nodes (7): ReadingEngine, ReadingSymbol, SeededGenerator, ReadingDraft, String, RandomNumberGenerator, UInt64
 
 ### Community 19 - "Typography & Nav Chrome"
-Cohesion: 0.09
-Nodes (12): AVFoundation, CoreText, StepDots, Int, ChatBackground, ChatBubble, Bool, ReviewCard (+4 more)
+Cohesion: 0.13
+Nodes (6): AVFoundation, CoreText, SettingsButton, ChatBackground, ReviewCard, SwiftUI
 
 ### Community 20 - "Catalog Repository"
-Cohesion: 0.08
-Nodes (22): CatalogStore, Int, String, Drink, DrinkCatalog, Bool, LocalizedStringKey, String (+14 more)
+Cohesion: 0.18
+Nodes (9): Equatable, CatalogStore, Int, String, Drink, DrinkCatalog, Bool, LocalizedStringKey (+1 more)
 
 ### Community 21 - "Reading Result Screen"
-Cohesion: 0.07
-Nodes (31): App, Ignition, Reading, ReadingEngine, ReadingSymbol, SeededGenerator, String, Lettering (+23 more)
+Cohesion: 0.22
+Nodes (10): Reading, Color, Pigment, Double, ReadingResultView, Image, LocalizedStringKey, String (+2 more)
 
 ### Community 23 - "Remote Image Cache"
 Cohesion: 0.22
 Nodes (11): ContentMode, NSCache, NSString, DecodedImages, RemoteImage, ShimmerFill, Bool, CGFloat (+3 more)
 
 ### Community 24 - "Network Send & Retry"
-Cohesion: 0.12
-Nodes (10): Foundation, Paginated, Bool, Int, Item, String, Features, RelativeTime (+2 more)
+Cohesion: 0.40
+Nodes (3): RandomCupView, Int, Void
 
 ### Community 25 - "Onboarding Chrome"
-Cohesion: 0.13
-Nodes (14): Kind, failure, offline, ScreenStateView, LocalizedStringKey, String, Void, RootTab (+6 more)
+Cohesion: 0.29
+Nodes (7): Kind, failure, offline, ScreenStateView, LocalizedStringKey, String, Void
 
 ### Community 26 - "Zodiac Signs"
-Cohesion: 0.15
-Nodes (14): View, SettingsButton, HistoryCard, String, Void, OnboardingBackground, OnboardingBubble, OnboardingHeader (+6 more)
+Cohesion: 0.17
+Nodes (12): View, OnboardingBackground, OnboardingBubble, OnboardingHeader, OnboardingPanel, OnboardingTyping, Bool, Content (+4 more)
 
 ### Community 27 - "Brew Reading Flow Steps"
 Cohesion: 0.15
-Nodes (13): CodingKeys, adviceHeadline, createdAt, cupImage, drink, hasChat, id, oracle (+5 more)
+Nodes (15): CodingKeys, adviceHeadline, createdAt, cupImage, drink, hasChat, id, oracle (+7 more)
 
 ### Community 28 - "Session Gate & Bootstrap"
-Cohesion: 0.14
-Nodes (14): Int, Zodiac, aquarius, aries, cancer, capricorn, gemini, leo (+6 more)
+Cohesion: 0.33
+Nodes (5): LegalCopy, LegalTextView, LocalizedStringKey, String, Void
 
 ### Community 30 - "PhotoCaptor"
-Cohesion: 0.42
-Nodes (12): Decodable, DrinkDTO, OracleDTO, RandomCupDTO, ReviewDTO, SpecializationDTO, Double, Int (+4 more)
+Cohesion: 0.51
+Nodes (10): Decodable, DrinkDTO, OracleDTO, RandomCupDTO, ReviewDTO, SpecializationDTO, Double, Int (+2 more)
 
 ### Community 31 - "Network Failure Types"
-Cohesion: 0.26
-Nodes (5): ProfileRepository, Bool, Set, UserProfile, UserProfileStore
+Cohesion: 0.40
+Nodes (4): EmptyState, LocalizedStringKey, String, Void
 
 ### Community 32 - "Profile Field Keys"
-Cohesion: 0.17
-Nodes (12): CodingKeys, children, country, dataConsent, dateOfBirth, employmentStatus, gender, name (+4 more)
+Cohesion: 0.06
+Nodes (36): CodingKey, CodingKeys, assistantMessageId, createdAt, hasUnreadFromOracle, id, job, lastMessage (+28 more)
 
 ### Community 33 - "Profile DTO Mapping"
-Cohesion: 0.19
-Nodes (10): Interest, InterestCatalog, String, InterestChip, ProfileChip, ProfileSectionLabel, Bool, LocalizedStringKey (+2 more)
+Cohesion: 0.50
+Nodes (3): DrinkSelectionView, String, Void
 
 ### Community 34 - "ReadingStep"
-Cohesion: 0.32
-Nodes (6): ProfileDTO, ProfileMapper, Bool, Int, String, T
+Cohesion: 0.50
+Nodes (3): Bool, Void, TopicButton
 
 ### Community 35 - "Lettering Fonts"
 Cohesion: 0.18
-Nodes (7): FortuneTellersView, Int, LocalizedStringKey, Void, RandomCupView, Int, Void
+Nodes (8): FortuneTellersView, Int, LocalizedStringKey, Void, ReadingLoadingView, CGFloat, Double, Void
 
 ### Community 36 - "Oracle Chat Screen"
-Cohesion: 0.07
-Nodes (29): Bool, CGFloat, ChatThread, Drink, FortuneTeller, Hashable, Atrium, Country (+21 more)
+Cohesion: 0.06
+Nodes (32): Bool, CGFloat, ChatThread, Drink, FortuneTeller, LocalizedStringKey, Atrium, Entry (+24 more)
 
 ### Community 37 - "Flow Buttons & Header"
 Cohesion: 0.31
@@ -264,28 +275,16 @@ Cohesion: 0.20
 Nodes (7): Bool, String, TopicChip, Bool, Int, Void, TellerCard
 
 ### Community 39 - "Chats List Screen"
-Cohesion: 0.14
-Nodes (10): LegalCopy, LegalTextView, LocalizedStringKey, String, Void, SettingsDestination, privacy, terms (+2 more)
+Cohesion: 0.22
+Nodes (6): SettingsDestination, privacy, terms, SettingsView, Void, UserNotifications
 
 ### Community 40 - "LegalTextView"
 Cohesion: 0.50
 Nodes (8): AIJobDTO, ReadingDTO, ReadingResultDTO, ReadingSymbolDTO, Bool, Int, String, SymbolDTO
 
-### Community 41 - "Palette & Brew Cards"
-Cohesion: 0.22
-Nodes (7): LinearGradient, Pigment, FlowCard, CGFloat, LocalizedStringKey, String, Void
-
-### Community 42 - "Profile Repository & Store"
-Cohesion: 0.33
-Nodes (6): CodingKey, AuthResponse, CodingKeys, shareCode, token, String
-
-### Community 43 - "Intention Screen"
-Cohesion: 0.33
-Nodes (6): RelationshipStatus, complicated, divorced, inRelationship, married, single
-
 ### Community 44 - "Emissary Core"
-Cohesion: 0.40
-Nodes (4): EmptyState, LocalizedStringKey, String, Void
+Cohesion: 0.05
+Nodes (32): Foundation, Country, CountryCatalog, String, EmissaryFailure, decoding, encoding, notFound (+24 more)
 
 ### Community 48 - "Community 48"
 Cohesion: 0.33
@@ -300,48 +299,72 @@ Cohesion: 0.33
 Nodes (6): Cadence (Metrics), Design System (Kit), Figma Source of Truth, Lettering (Fonts), Pigment (Colors), Platform Constraints (iOS 17, iPhone, Portrait, Light)
 
 ### Community 52 - "LayoutDirection"
-Cohesion: 0.50
-Nodes (3): LayoutDirection, CGFloat, UnitPoint
+Cohesion: 0.20
+Nodes (9): LocalizedStringKey, TimeHorizon, days, month, year, ReadingDraft, Int, String (+1 more)
 
 ### Community 53 - "SegmentedSelector"
 Cohesion: 0.50
 Nodes (3): SegmentedSelector, Item, LocalizedStringKey
 
 ### Community 55 - "Community 55"
-Cohesion: 0.40
-Nodes (4): ReadingLoadingView, CGFloat, Double, Void
+Cohesion: 0.22
+Nodes (8): Hashable, Interest, InterestCatalog, String, ChatEntryStep, chat, OracleChatEntryFlow, Void
 
 ### Community 56 - "Community 56"
-Cohesion: 0.09
-Nodes (20): AVCapturePhoto, AVCapturePhotoCaptureDelegate, AVCapturePhotoOutput, NSObject, CupCamera, Phase, denied, idle (+12 more)
+Cohesion: 0.06
+Nodes (34): AVCapturePhoto, AVCapturePhotoCaptureDelegate, AVCapturePhotoOutput, AVCaptureSession, AVCaptureVideoPreviewLayer, AVPlayer, AVPlayerLayer, NSObject (+26 more)
+
+### Community 57 - "FortuneTeller"
+Cohesion: 0.21
+Nodes (10): Identifiable, FortuneTeller, FortuneTellerRoster, Review, Bool, Double, Hasher, Int (+2 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.33
 Nodes (5): Image, LocalizedStringKey, String, Text, ThumbCard
 
+### Community 59 - "IntentionView"
+Cohesion: 0.22
+Nodes (7): IntentionView, Binding, Bool, Content, LocalizedStringKey, String, Void
+
+### Community 65 - "PhotoUploadView"
+Cohesion: 0.29
+Nodes (5): Lettering, CGFloat, Font, LocalizedStringKey, LocalizedStringKey
+
+### Community 67 - "RootTab"
+Cohesion: 0.29
+Nodes (7): RootTab, brew, chats, history, LocalizedStringKey, String, TabBar
+
 ### Community 68 - "Community 68"
 Cohesion: 1.00
 Nodes (3): Atrium (Root Container), Build Order, Ignition (@main App Entry)
 
+### Community 72 - "Ignition"
+Cohesion: 0.33
+Nodes (3): App, Ignition, Scene
+
+### Community 76 - ".section"
+Cohesion: 0.33
+Nodes (4): Content, LocalizedStringKey, Void, TellerProfileView
+
 ## Knowledge Gaps
-- **193 isolated node(s):** `id`, `role`, `text`, `createdAt`, `oracle` (+188 more)
+- **193 isolated node(s):** `int`, `string`, `id`, `role`, `text` (+188 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `SwiftUI` connect `Typography & Nav Chrome` to `History & Navigation`, `Country Catalog & API Config`, `Reading Service & JSON`, `Flow Layout & Bubble Shapes`, `Onboarding Conversation Flow`, `App Root & Catalog Store`, `Profile Dropdown Controls`, `Daily Fortune Catalog`, `Intention: Topic & Horizon`, `Settings Row Components`, `Chat Session Store`, `Catalog Repository`, `Reading Result Screen`, `Remote Image Cache`, `Onboarding Chrome`, `Zodiac Signs`, `Profile DTO Mapping`, `Lettering Fonts`, `Oracle Chat Screen`, `Flow Buttons & Header`, `Topic & Teller Chips`, `Chats List Screen`, `Palette & Brew Cards`, `Emissary Core`, `Community 48`, `Community 49`, `LayoutDirection`, `SegmentedSelector`, `Community 55`, `Community 56`, `Community 58`?**
-  _High betweenness centrality (0.291) - this node is a cross-community bridge._
-- **Why does `View` connect `Zodiac Signs` to `History & Navigation`, `Country Catalog & API Config`, `Reading Service & JSON`, `Flow Layout & Bubble Shapes`, `App Root & Catalog Store`, `Profile Dropdown Controls`, `Daily Fortune Catalog`, `Intention: Topic & Horizon`, `Settings Row Components`, `Typography & Nav Chrome`, `Catalog Repository`, `Reading Result Screen`, `Remote Image Cache`, `Onboarding Chrome`, `Profile DTO Mapping`, `Lettering Fonts`, `Oracle Chat Screen`, `Flow Buttons & Header`, `Topic & Teller Chips`, `Chats List Screen`, `Palette & Brew Cards`, `Emissary Core`, `Community 48`, `Community 49`, `SegmentedSelector`, `Community 55`, `Community 56`, `Community 58`?**
-  _High betweenness centrality (0.209) - this node is a cross-community bridge._
-- **Why does `Foundation` connect `Network Send & Retry` to `Chat & Catalog DTOs`, `History & Navigation`, `Country Catalog & API Config`, `Oracle Chat Screen`, `Onboarding Conversation Flow`, `App Root & Catalog Store`, `LegalTextView`, `Profile Repository & Store`, `User Profile Enums`, `Chat Session Store`, `Emissary Request Building`, `Reading Result Screen`, `Brew Reading Flow Steps`, `PhotoCaptor`, `Network Failure Types`?**
-  _High betweenness centrality (0.177) - this node is a cross-community bridge._
+- **Why does `SwiftUI` connect `Typography & Nav Chrome` to `History & Navigation`, `Country Catalog & API Config`, `Reading Service & JSON`, `Flow Layout & Bubble Shapes`, `Onboarding Conversation Flow`, `App Root & Catalog Store`, `Cup Camera Capture`, `Profile Dropdown Controls`, `Daily Fortune Catalog`, `Intention: Topic & Horizon`, `Settings Row Components`, `Catalog Repository`, `Reading Result Screen`, `Remote Image Cache`, `Network Send & Retry`, `Onboarding Chrome`, `Zodiac Signs`, `Session Gate & Bootstrap`, `Network Failure Types`, `Profile DTO Mapping`, `ReadingStep`, `Lettering Fonts`, `Oracle Chat Screen`, `Flow Buttons & Header`, `Topic & Teller Chips`, `Chats List Screen`, `Profile Repository & Store`, `Community 48`, `Community 49`, `SegmentedSelector`, `Community 55`, `Community 56`, `Community 58`, `RootTab`, `Ignition`, `.section`?**
+  _High betweenness centrality (0.258) - this node is a cross-community bridge._
+- **Why does `View` connect `Zodiac Signs` to `History & Navigation`, `Country Catalog & API Config`, `Flow Layout & Bubble Shapes`, `App Root & Catalog Store`, `Profile Dropdown Controls`, `Daily Fortune Catalog`, `Settings Row Components`, `Typography & Nav Chrome`, `Reading Result Screen`, `Remote Image Cache`, `Network Send & Retry`, `Onboarding Chrome`, `Session Gate & Bootstrap`, `Network Failure Types`, `Profile DTO Mapping`, `ReadingStep`, `Lettering Fonts`, `Flow Buttons & Header`, `Topic & Teller Chips`, `Chats List Screen`, `Profile Repository & Store`, `Community 48`, `Community 49`, `SegmentedSelector`, `Community 55`, `Community 56`, `Community 58`, `IntentionView`, `PhotoUploadView`, `RootTab`, `.section`?**
+  _High betweenness centrality (0.221) - this node is a cross-community bridge._
+- **Why does `Foundation` connect `Emissary Core` to `Chat & Catalog DTOs`, `Profile Field Keys`, `History & Navigation`, `Onboarding Conversation Flow`, `Cup Camera Capture`, `LegalTextView`, `Daily Fortune Catalog`, `User Profile Enums`, `Chat Session Store`, `Emissary Request Building`, `FortuneTeller`, `Brew Reading Flow Steps`, `PhotoCaptor`?**
+  _High betweenness centrality (0.198) - this node is a cross-community bridge._
 - **Are the 12 inferred relationships involving `Color` (e.g. with `.drink()` and `SegmentedSelector`) actually correct?**
   _`Color` has 12 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `id`, `role`, `text` to the rest of the system?**
+- **What connects `int`, `string`, `id` to the rest of the system?**
   _193 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Chat & Catalog DTOs` be split into smaller, more focused modules?**
-  _Cohesion score 0.06103896103896104 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09158186864014801 - nodes in this community are weakly interconnected._
 - **Should `History & Navigation` be split into smaller, more focused modules?**
-  _Cohesion score 0.06201550387596899 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05176470588235294 - nodes in this community are weakly interconnected._
