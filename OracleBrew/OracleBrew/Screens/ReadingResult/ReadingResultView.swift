@@ -14,8 +14,6 @@ struct ReadingResultView: View {
     /// on every body pass.
     @State private var shareCard: ShareCardImage?
 
-    private let card = Color(hex: 0x271C3E)
-
     var body: some View {
         ZStack(alignment: .top) {
             Pigment.background.ignoresSafeArea()
@@ -128,8 +126,7 @@ struct ReadingResultView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 24).fill(card))
-        .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(Color.white.opacity(0.15), lineWidth: 1))
+        .cardPanel(radius: 24)
     }
 
     private func keySymbols(_ reading: Reading) -> some View {
@@ -179,8 +176,7 @@ struct ReadingResultView: View {
             }
             .padding(20)
             .frame(maxWidth: .infinity)
-            .background(RoundedRectangle(cornerRadius: 24).fill(card))
-            .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(Color.white.opacity(0.15), lineWidth: 1))
+            .cardPanel(radius: 24)
 
             HStack(spacing: 6) {
                 Image("clock")
@@ -235,8 +231,7 @@ struct ReadingResultView: View {
         .foregroundStyle(Pigment.cream)
         .frame(maxWidth: .infinity)
         .frame(height: 56)
-        .background(Capsule().fill(Color(hex: 0x19132B)))
-        .overlay(Capsule().strokeBorder(Color.white.opacity(0.15), lineWidth: 1))
+        .pillPanel()
     }
 
     private func saveCard() {

@@ -90,7 +90,7 @@ struct DrinkCard: View {
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(.white)
             } else {
-                Circle().strokeBorder(Color.white.opacity(0.15), lineWidth: 2)
+                Circle().strokeBorder(Pigment.panelBorder, lineWidth: 2)
             }
         }
         .frame(width: 24, height: 24)

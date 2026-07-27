@@ -37,6 +37,6 @@ struct ThumbCard: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(1, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 24))
-            .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(Color.white.opacity(0.15), lineWidth: 2))
+            .cardBorder(radius: 24, lineWidth: 2)
     }
 }

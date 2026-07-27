@@ -10,13 +10,12 @@ struct TellerCard: View {
 
     @Environment(\.layoutDirection) private var layoutDirection
 
-    private let cardColor = Color(hex: 0x271C3E)
     private let fadeColor = Color(hex: 0x2A1B3A)
 
     var body: some View {
         Button(action: onSelect) {
             ZStack(alignment: .topLeading) {
-                cardColor
+                Pigment.card
                 portrait
                 content
                 radio

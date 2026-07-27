@@ -14,7 +14,6 @@ struct PhotoUploadView: View {
     /// Which source the current photo came from — decides what "another" offers.
     @State private var photoFromCamera = false
 
-    private let field = Color(hex: 0x271C3E)
 
     private var hasPhoto: Bool { draft.photo != nil }
 
@@ -132,7 +131,7 @@ struct PhotoUploadView: View {
                 .padding(.horizontal, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(RoundedRectangle(cornerRadius: 20).fill(field).opacity(0.8))
+        .background(RoundedRectangle(cornerRadius: 20).fill(Pigment.card).opacity(0.8))
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .strokeBorder(Pigment.accent.opacity(0.5),
@@ -152,8 +151,7 @@ struct PhotoUploadView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 20).fill(field))
-        .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Color.white.opacity(0.15), lineWidth: 1))
+        .cardPanel(radius: 20)
     }
 
     // MARK: Buttons
@@ -192,8 +190,7 @@ struct PhotoUploadView: View {
             .foregroundStyle(Pigment.cream)
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(Capsule().fill(Color(hex: 0x19132B)))
-            .overlay(Capsule().strokeBorder(Color.white.opacity(0.15), lineWidth: 1))
+            .pillPanel()
             .contentShape(Capsule())
     }
 

@@ -5,7 +5,6 @@ struct SegmentedSelector<Item: Identifiable & Equatable>: View {
     @Binding var selection: Item
     let title: (Item) -> LocalizedStringKey
 
-    private let track = Color(hex: 0x271C3E)
 
     var body: some View {
         HStack(spacing: 4) {
@@ -21,7 +20,7 @@ struct SegmentedSelector<Item: Identifiable & Equatable>: View {
                         .frame(height: 44)
                         .background(
                             RoundedRectangle(cornerRadius: 22)
-                                .fill(isSelected ? track : .clear)
+                                .fill(isSelected ? Pigment.card : .clear)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 22)
                                         .strokeBorder(isSelected ? Pigment.accent.opacity(0.4) : .clear, lineWidth: 1)
@@ -33,6 +32,6 @@ struct SegmentedSelector<Item: Identifiable & Equatable>: View {
             }
         }
         .padding(4)
-        .background(Capsule().fill(track))
+        .background(Capsule().fill(Pigment.card))
     }
 }

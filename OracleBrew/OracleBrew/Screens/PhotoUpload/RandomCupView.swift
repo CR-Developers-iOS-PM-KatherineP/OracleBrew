@@ -82,8 +82,7 @@ struct RandomCupView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 20).fill(Color(hex: 0x271C3E)))
-        .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Color.white.opacity(0.15), lineWidth: 1))
+        .cardPanel(radius: 20)
     }
 
     private func chooseAnother() { pickCup() }

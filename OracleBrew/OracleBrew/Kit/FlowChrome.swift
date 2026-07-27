@@ -83,8 +83,7 @@ struct SecondaryButton: View {
                 .foregroundStyle(Pigment.cream)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(Capsule().fill(Color(hex: 0x19132B)))
-                .overlay(Capsule().strokeBorder(Color.white.opacity(0.15), lineWidth: 1))
+                .pillPanel()
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)

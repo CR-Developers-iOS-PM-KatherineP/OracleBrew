@@ -38,6 +38,13 @@ enum Pigment {
     static let gold = Color(hex: 0xFCBD1F)
     /// Settings/profile card fill — slightly lighter than background.
     static let settingsCard = Color(hex: 0x1A1430)
+    /// The standard panel fill: reading cards, chips, instruction boxes. Was
+    /// spelled out per-screen, under two different local names.
+    static let card = Color(hex: 0x271C3E)
+    /// The secondary button's pill fill — darker than `card`.
+    static let pill = Color(hex: 0x19132B)
+    /// The hairline border every panel carries.
+    static let panelBorder = Color(hex: 0xFFFFFF, alpha: 0.15)
     /// Destructive — Delete Account.
     static let danger = Color(hex: 0xEF4444)
     /// Amber — warm end of the share card's cup ring.

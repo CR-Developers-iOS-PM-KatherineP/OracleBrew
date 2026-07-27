@@ -10,7 +10,6 @@ struct IntentionView: View {
     @FocusState private var questionFocused: Bool
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 3)
-    private let field = Color(hex: 0x271C3E)
 
     var body: some View {
         @Bindable var draft = draft
@@ -115,7 +114,7 @@ struct IntentionView: View {
                 .padding(.vertical, 8)
         }
         .frame(height: 90)
-        .background(RoundedRectangle(cornerRadius: 20).fill(field))
+        .background(RoundedRectangle(cornerRadius: 20).fill(Pigment.card))
         .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Pigment.accent.opacity(0.4), lineWidth: 1))
     }
 }

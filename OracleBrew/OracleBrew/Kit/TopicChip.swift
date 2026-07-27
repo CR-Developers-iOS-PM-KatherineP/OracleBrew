@@ -12,7 +12,7 @@ struct TopicChip: View {
             .padding(.horizontal, compact ? 10 : 16)
             .padding(.vertical, compact ? 6 : 12)
             .background(
-                Capsule().fill(compact ? Pigment.accent.opacity(0.15) : Color(hex: 0x271C3E))
+                Capsule().fill(compact ? Pigment.accent.opacity(0.15) : Pigment.card)
             )
             .overlay(Capsule().strokeBorder(Pigment.accent.opacity(0.4), lineWidth: 1))
     }
