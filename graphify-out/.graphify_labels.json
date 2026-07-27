@@ -90,8 +90,20 @@
   "88": "Reading",
   "89": "ReadingDraft",
   "90": "Topic",
+  "91": "Reading Result",
+  "92": "Screen Bundles Folder Structure (F20)",
   "93": "EmptyState",
   "94": "Int",
   "95": "Reading",
-  "96": "String"
+  "96": "String",
+  "97": "Throb (Haptics)",
+  "98": "UserProfileStore",
+  "99": "Vault (Storage)",
+  "100": "Waypoint (Route)",
+  "101": "Item",
+  "102": "Content",
+  "103": "ThumbCard",
+  "104": "SymbolChip",
+  "105": "LocalizedStringKey",
+  "106": "String"
 }
