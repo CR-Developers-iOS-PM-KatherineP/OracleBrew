@@ -46,28 +46,16 @@ struct RandomCupView: View {
         .task { if draft.photo == nil { pickCup() } }
     }
 
-    // The design's photo box: 353×395 (a fixed 0.894 aspect), rounded 20, 20pt
-    // side margins. Photos won't share an aspect, so the box is fixed and each
-    // photo fills it — cropped, not letterboxed.
+    /// Photos won't share an aspect, so the box holds the design's and each
+    /// photo fills it — cropped, not letterboxed.
     private var cupZone: some View {
-        // Color.clear is the size root: it holds the box's aspect, and the photo
-        // fills it as an overlay that is then clipped. Putting the image
-        // straight in the frame instead lets scaledToFill's own huge size drive
-        // the layout, which is what made it bleed past the side margins. The
-        // aspect fits within whatever height is left on a short screen, so it
-        // shrinks rather than shoving the pinned buttons off.
-        Color.clear
-            .aspectRatio(353.0 / 395.0, contentMode: .fit)
-            .frame(maxWidth: 353, maxHeight: 395)
-            .overlay {
-                if let photo = draft.photo {
-                    Image(uiImage: photo).resizable().scaledToFill()
-                } else {
-                    Pigment.settingsCard
-                }
+        CupPhotoBox {
+            if let photo = draft.photo {
+                Image(uiImage: photo).resizable().scaledToFill()
+            } else {
+                Pigment.settingsCard
             }
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .frame(maxWidth: .infinity)
+        }
     }
 
     private var instructionCard: some View {

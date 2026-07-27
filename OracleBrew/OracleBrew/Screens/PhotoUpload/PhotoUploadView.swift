@@ -84,11 +84,14 @@ struct PhotoUploadView: View {
     // MARK: Photo zone
 
     private var zone: some View {
-        Group {
+        // Same box as the random-cup step. Each state draws its own shape — the
+        // dashed border sits on the boundary — so the box doesn't clip.
+        CupPhotoBox(clipsContent: false) {
             if let photo = draft.photo {
-                Color.clear
-                    .overlay { Image(uiImage: photo).resizable().scaledToFill() }
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                Image(uiImage: photo)
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(RoundedRectangle(cornerRadius: CupPhoto.radius))
                     // clipShape hides the overflow but still lets it take taps,
                     // and a camera frame is tall enough to spill over the header
                     // and swallow the close button. It's decoration — opt it out.
@@ -96,9 +99,9 @@ struct PhotoUploadView: View {
             } else if camera.phase == .running {
                 // Live feed — the user frames the cup right in the drop zone.
                 CameraPreview(session: camera.session)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .clipShape(RoundedRectangle(cornerRadius: CupPhoto.radius))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: CupPhoto.radius)
                             .strokeBorder(Pigment.accent.opacity(0.5),
                                           style: StrokeStyle(lineWidth: 2, dash: [6, 5]))
                     )
@@ -108,10 +111,6 @@ struct PhotoUploadView: View {
                 dropZonePlaceholder
             }
         }
-        .frame(maxWidth: .infinity)
-        // Flexible rather than fixed: at 395pt the column overflows on SE and
-        // shoves the header up under the status bar. It shrinks to fit instead.
-        .frame(minHeight: 220, maxHeight: 395 * Screen.vScale)
     }
 
     /// Shown until the feed is up, and for good where it can't run at all
@@ -131,9 +130,9 @@ struct PhotoUploadView: View {
                 .padding(.horizontal, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(RoundedRectangle(cornerRadius: 20).fill(Pigment.card).opacity(0.8))
+        .background(RoundedRectangle(cornerRadius: CupPhoto.radius).fill(Pigment.card).opacity(0.8))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: CupPhoto.radius)
                 .strokeBorder(Pigment.accent.opacity(0.5),
                               style: StrokeStyle(lineWidth: 2, dash: [6, 5]))
         )
