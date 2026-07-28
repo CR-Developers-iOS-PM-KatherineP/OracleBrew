@@ -11,6 +11,9 @@ struct PhotoUploadView: View {
     @State private var showCamera = false
     @State private var camera = CupCamera()
     @State private var capturing = false
+    /// A picked photo has to be read out of the library before it can be shown,
+    /// which on an iCloud photo is a visible wait — the zone says so meanwhile.
+    @State private var importingPhoto = false
     /// Which source the current photo came from — decides what "another" offers.
     @State private var photoFromCamera = false
 
@@ -109,6 +112,15 @@ struct PhotoUploadView: View {
                     .animation(.easeOut(duration: 0.15), value: capturing)
             } else {
                 dropZonePlaceholder
+            }
+        }
+        .overlay {
+            if importingPhoto {
+                ZStack {
+                    RoundedRectangle(cornerRadius: CupPhoto.radius)
+                        .fill(Pigment.background.opacity(0.6))
+                    ProgressView().tint(Pigment.accent)
+                }
             }
         }
     }
@@ -227,14 +239,18 @@ struct PhotoUploadView: View {
 
     private func loadPicked(_ item: PhotosPickerItem?) {
         guard let item else { return }
+        importingPhoto = true
         Task {
-            if let data = try? await item.loadTransferable(type: Data.self),
-               let image = UIImage(data: data) {
-                await MainActor.run {
-                    draft.photo = image
-                    photoFromCamera = false
-                    camera.stop()
+            let data = try? await item.loadTransferable(type: Data.self)
+            await MainActor.run {
+                importingPhoto = false
+                guard let data, let image = UIImage(data: data) else {
+                    Resonance.failure()
+                    return
                 }
+                draft.photo = image
+                photoFromCamera = false
+                camera.stop()
             }
         }
     }
