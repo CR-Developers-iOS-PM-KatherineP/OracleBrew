@@ -53,10 +53,12 @@ struct FlowHeader: View {
 struct PrimaryButton: View {
     let title: LocalizedStringKey
     var enabled: Bool = true
+    /// Light by default; a screen marks its weighty CTA `.commit`.
+    var feel: Resonance.Feel = .tap
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button { feel.play(); action() } label: {
             Text(title)
                 .font(Lettering.displayMedium(20))
                 .foregroundStyle(Pigment.cream)
@@ -74,10 +76,11 @@ struct PrimaryButton: View {
 /// Full-width outlined secondary CTA (same footprint as PrimaryButton).
 struct SecondaryButton: View {
     let title: LocalizedStringKey
+    var feel: Resonance.Feel = .tap
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button { feel.play(); action() } label: {
             Text(title)
                 .font(Lettering.displayMedium(20))
                 .foregroundStyle(Pigment.cream)

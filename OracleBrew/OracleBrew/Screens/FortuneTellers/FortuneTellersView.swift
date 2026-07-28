@@ -34,7 +34,10 @@ struct FortuneTellersView: View {
                                 isSelected: draft.teller == teller,
                                 dimmed: draft.teller != nil && draft.teller != teller,
                                 // Tapping the picked oracle again clears it.
-                                onSelect: { draft.teller = draft.teller == teller ? nil : teller },
+                                onSelect: {
+                                    Resonance.select()
+                                    draft.teller = draft.teller == teller ? nil : teller
+                                },
                                 onViewProfile: { onOpenProfile(teller) }
                             )
                         }

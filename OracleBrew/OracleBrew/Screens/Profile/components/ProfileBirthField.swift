@@ -79,6 +79,7 @@ struct ProfileBirthField: View {
                     items: boxes,
                     isSelected: { box in value == label(box.value) },
                     onPick: { box in
+                        Resonance.select()
                         onPick(box.value)
                         clampDayIfNeeded()
                         open = nil

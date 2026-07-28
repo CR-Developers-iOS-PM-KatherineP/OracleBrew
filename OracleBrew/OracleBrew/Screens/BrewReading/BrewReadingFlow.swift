@@ -83,10 +83,12 @@ struct BrewReadingFlow: View {
             // step, not at a spinner that would immediately run again.
             ReadingLoadingView(
                 onDone: {
+                    Resonance.success()
                     path.removeLast()
                     path.append(ReadingStep.result)
                 },
                 onFailure: { failure in
+                    Resonance.failure()
                     path.removeLast()          // back to the photo step
                     readingError = failure
                 }

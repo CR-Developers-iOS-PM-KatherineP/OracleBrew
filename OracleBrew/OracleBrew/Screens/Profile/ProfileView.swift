@@ -156,7 +156,7 @@ struct ProfileView: View {
                     DropdownOverlay(
                         items: RelationshipStatus.allCases,
                         isSelected: { draft.relationship == $0 },
-                        onPick: { draft.relationship = $0; openField = nil },
+                        onPick: { Resonance.select(); draft.relationship = $0; openField = nil },
                         label: { option in
                             Text(option.label)
                                 .font(Lettering.display(14))

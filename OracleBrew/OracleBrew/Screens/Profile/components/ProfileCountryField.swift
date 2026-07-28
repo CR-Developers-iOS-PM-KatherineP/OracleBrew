@@ -55,6 +55,7 @@ struct ProfileCountryField: View {
                         items: CountryCatalog.search(query),
                         isSelected: { countryCode == $0.id },
                         onPick: { country in
+                            Resonance.select()
                             countryCode = country.id
                             query = ""
                             open = nil

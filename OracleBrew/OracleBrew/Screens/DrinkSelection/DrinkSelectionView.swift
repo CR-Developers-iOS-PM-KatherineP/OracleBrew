@@ -56,6 +56,7 @@ struct DrinkSelectionView: View {
 
     /// Tapping the picked card again clears it — the CTA goes away with it.
     private func select(_ drink: Drink) {
+        Resonance.select()
         guard selectedID != drink.id else {
             selectedID = nil
             draft.drink = nil

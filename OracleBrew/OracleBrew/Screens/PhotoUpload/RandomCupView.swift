@@ -34,7 +34,8 @@ struct RandomCupView: View {
                 VStack(spacing: 12) {
                     instructionCard
                     SecondaryButton(title: "random.another", action: chooseAnother)
-                    PrimaryButton(title: "random.start", enabled: draft.photo != nil, action: onContinue)
+                    PrimaryButton(title: "random.start", enabled: draft.photo != nil,
+                                  feel: .commit, action: onContinue)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)

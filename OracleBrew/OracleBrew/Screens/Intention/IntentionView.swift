@@ -40,6 +40,7 @@ struct IntentionView: View {
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(catalog.topics) { topic in
                                     TopicButton(topic: topic, isSelected: draft.topic == topic) {
+                                        Resonance.select()
                                         draft.topic = topic
                                     }
                                 }

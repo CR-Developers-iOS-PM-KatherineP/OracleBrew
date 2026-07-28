@@ -7,7 +7,7 @@ struct ProfileChip: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button { Resonance.select(); action() } label: {
             Text(label)
                 .font(Lettering.displayMedium(14))
                 .foregroundStyle(isSelected ? Pigment.cream : Pigment.fieldMuted)
