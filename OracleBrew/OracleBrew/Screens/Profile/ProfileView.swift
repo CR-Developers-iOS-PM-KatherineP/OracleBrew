@@ -7,13 +7,10 @@ struct ProfileView: View {
 
     @State private var draft = UserProfile()
     @State private var loaded = false
-    @State private var openField: OpenField?
-    @State private var countryQuery = ""
+    /// Which dropdown is open. Shared with the birth and country fields so
+    /// only one is ever open at a time.
+    @State private var openField: ProfileField?
     @State private var saveFailed = false
-    @FocusState private var countrySearchFocused: Bool
-
-    /// Only one dropdown may be open at a time — opening another closes it.
-    private enum OpenField: Hashable { case day, month, year, relationship, country }
 
     private let fadeHeight: CGFloat = 80
     private let saveBarHeight: CGFloat = 60
@@ -42,11 +39,14 @@ struct ProfileView: View {
     }
 
     private func save() {
+        Resonance.commit()
         Task {
             do {
                 try await store.save(draft)
+                Resonance.success()
                 onSaved()
             } catch {
+                Resonance.failure()
                 saveFailed = true
             }
         }
@@ -89,10 +89,11 @@ struct ProfileView: View {
             VStack(alignment: .leading, spacing: 20) {
                 nameSection
                 identitySection
-                birthSection
+                ProfileBirthField(day: $draft.birthDay, month: $draft.birthMonth,
+                                  year: $draft.birthYear, open: $openField)
                 relationshipSection
                 employmentSection
-                countrySection
+                ProfileCountryField(countryCode: $draft.countryCode, open: $openField)
                 childrenSection
                 interestsSection
             }
@@ -132,83 +133,6 @@ struct ProfileView: View {
             }
         }
     }
-
-    // MARK: Date of birth → zodiac
-
-    private var birthSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ProfileSectionLabel(title: "profile.dob")
-
-            HStack(alignment: .top, spacing: 10) {
-                birthDropdown(.day, value: draft.birthDay.map(String.init), placeholder: "DD",
-                              items: Array(1...daysInSelectedMonth)) { draft.birthDay = $0 }
-                birthDropdown(.month, value: draft.birthMonth.map { Self.monthNames[$0 - 1] }, placeholder: "MM",
-                              items: Array(1...12), label: { Self.monthNames[$0 - 1] }) { draft.birthMonth = $0 }
-                birthDropdown(.year, value: draft.birthYear.map(String.init), placeholder: "YYYY",
-                              items: Self.years) { draft.birthYear = $0 }
-            }
-            .zIndex(1)
-
-            if let zodiac = draft.zodiac {
-                Text("profile.zodiac.value \(zodiac.glyph) \(zodiac.name)")
-                    .font(Lettering.displayMedium(14))
-                    .foregroundStyle(Pigment.accent)
-            } else {
-                Text("profile.zodiac.empty")
-                    .font(Lettering.displayMedium(14))
-                    .foregroundStyle(Pigment.fieldMuted)
-            }
-        }
-    }
-
-    /// One of the three DOB dropdowns. `IntBox` wraps the Int so it satisfies
-    /// DropdownOverlay's Identifiable requirement.
-    private func birthDropdown(
-        _ field: OpenField,
-        value: String?,
-        placeholder: String,
-        items: [Int],
-        label: @escaping (Int) -> String = { String($0) },
-        onPick: @escaping (Int) -> Void
-    ) -> some View {
-        let boxes = items.map(IntBox.init)
-        let isOpen = openField == field
-        return VStack(spacing: 4) {
-            Button { toggle(field) } label: {
-                ProfileFieldBox(radius: 10) {
-                    HStack(spacing: 0) {
-                        Text(value ?? placeholder)
-                            .font(Lettering.display(14))
-                            .foregroundStyle(value == nil ? Pigment.fieldMuted : Pigment.cream)
-                            .lineLimit(1)
-                        Spacer(minLength: 4)
-                        DropdownChevron(isOpen: isOpen)
-                    }
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-
-            if isOpen {
-                DropdownOverlay(
-                    items: boxes,
-                    isSelected: { box in value == label(box.value) },
-                    onPick: { box in
-                        onPick(box.value)
-                        clampDayIfNeeded()
-                        openField = nil
-                    },
-                    label: { box in
-                        Text(label(box.value))
-                            .font(Lettering.display(14))
-                            .foregroundStyle(Pigment.cream)
-                    }
-                )
-            }
-        }
-    }
-
-    private struct IntBox: Identifiable { let value: Int; var id: Int { value } }
 
     private var relationshipSection: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -275,67 +199,6 @@ struct ProfileView: View {
         ProfileChip(label: option.label, isSelected: draft.employment == option) {
             draft.employment = draft.employment == option ? nil : option
         }
-    }
-
-    private var countrySection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ProfileSectionLabel(title: "profile.country")
-            VStack(spacing: 4) {
-                Button { toggle(.country) } label: {
-                    ProfileFieldBox {
-                        HStack(spacing: 8) {
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(Pigment.fieldMuted)
-                            if openField == .country {
-                                TextField("", text: $countryQuery, prompt: countryPrompt)
-                                    .font(Lettering.display(15))
-                                    .foregroundStyle(Pigment.cream)
-                                    .tint(Pigment.accent)
-                                    .autocorrectionDisabled()
-                                    .focused($countrySearchFocused)
-                            } else if let country = CountryCatalog.named(draft.countryCode) {
-                                Text("\(country.flag) \(country.name)")
-                                    .font(Lettering.display(15))
-                                    .foregroundStyle(Pigment.cream)
-                                    .lineLimit(1)
-                            } else {
-                                Text("profile.country.placeholder")
-                                    .font(Lettering.display(15))
-                                    .foregroundStyle(Pigment.fieldMuted)
-                            }
-                            Spacer(minLength: 0)
-                            DropdownChevron(isOpen: openField == .country)
-                        }
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-
-                if openField == .country {
-                    DropdownOverlay(
-                        items: CountryCatalog.search(countryQuery),
-                        isSelected: { draft.countryCode == $0.id },
-                        onPick: { country in
-                            draft.countryCode = country.id
-                            countryQuery = ""
-                            openField = nil
-                        },
-                        label: { country in
-                            Text("\(country.flag) \(country.name)")
-                                .font(Lettering.display(14))
-                                .foregroundStyle(draft.countryCode == country.id ? Pigment.accent : Pigment.cream)
-                                .lineLimit(1)
-                        }
-                    )
-                }
-            }
-        }
-        .zIndex(openField == .country ? 1 : 0)
-    }
-
-    private var countryPrompt: Text {
-        Text("profile.country.placeholder").foregroundColor(Pigment.fieldMuted)
     }
 
     private var childrenSection: some View {
@@ -415,41 +278,8 @@ struct ProfileView: View {
 
     // MARK: Helpers
 
-    private func toggle(_ field: OpenField) {
+    private func toggle(_ field: ProfileField) {
         openField = openField == field ? nil : field
-        // The country list is long, so its search field takes focus as soon as
-        // the dropdown opens rather than needing a second tap.
-        countrySearchFocused = openField == .country
-        if openField != .country { countryQuery = "" }
     }
 
-    /// Feb 30 shouldn't survive a month change.
-    private func clampDayIfNeeded() {
-        if let day = draft.birthDay, day > daysInSelectedMonth {
-            draft.birthDay = daysInSelectedMonth
-        }
-    }
-
-    private var daysInSelectedMonth: Int {
-        guard let month = draft.birthMonth else { return 31 }
-        var components = DateComponents()
-        components.year = draft.birthYear ?? 2000
-        components.month = month
-        let calendar = Calendar(identifier: .gregorian)
-        guard let date = calendar.date(from: components),
-              let range = calendar.range(of: .day, in: .month, for: date) else { return 31 }
-        return range.count
-    }
-
-    /// A bare Calendar(identifier:) carries no locale, and monthSymbols then
-    /// yields "M01"…"M12" instead of month names — so set the locale.
-    private static let monthNames: [String] = {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.locale = .current
-        return calendar.monthSymbols
-    }()
-    private static let years: [Int] = {
-        let current = Calendar.current.component(.year, from: Date())
-        return Array((current - 100)...(current - 13)).reversed()
-    }()
 }
