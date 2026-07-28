@@ -34,3 +34,9 @@ fastlane/test_output
 # Graphify: local-only cost, graph itself is committed
 graphify-out/cost.json
 graphify-out/**/cost.json
+# The hook snapshots the graph into a dated folder on every rebuild — ~1.2 MB a
+# time, and the graph is rebuilt from source anyway. History lives in the commits.
+graphify-out/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
+
+# Localization working files — scratch fragments from a translation pass.
+loc-work/
