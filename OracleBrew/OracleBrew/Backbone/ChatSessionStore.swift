@@ -52,16 +52,20 @@ final class ChatSessionStore {
     private(set) var threads: [ChatThread] = []
 
     // Thread list (Chats tab)
-    private(set) var listPhase: ScreenPhase<[ChatSummary]> = .loading
-    private(set) var summaries: [ChatSummary] = []
-    private(set) var isLoadingMore = false
-    private var nextPage = 1
-    private var canLoadMore = true
+    private let list: PagedList<ChatSummary>
+
+    var listPhase: ScreenPhase<[ChatSummary]> { list.phase }
+    var summaries: [ChatSummary] { list.items }
+    var isLoadingMore: Bool { list.isLoadingMore }
 
     private let repository: ChatRepository
 
     init(repository: ChatRepository = ChatRepository()) {
         self.repository = repository
+        list = PagedList { page in
+            let response = try await repository.list(page: page)
+            return (response.results.map(Self.summary), response.hasMore)
+        }
     }
 
     // MARK: Open threads
@@ -86,34 +90,10 @@ final class ChatSessionStore {
 
     // MARK: Thread list
 
-    func loadList() async {
-        nextPage = 1
-        canLoadMore = true
-        summaries = []
-        listPhase = .loading
-        await fetchNextPage(replacing: true)
-    }
+    func loadList() async { await list.loadFirst() }
 
     func loadMoreIfNeeded(currentItem: ChatSummary) async {
-        guard canLoadMore, !isLoadingMore, currentItem.id == summaries.last?.id else { return }
-        isLoadingMore = true
-        defer { isLoadingMore = false }
-        await fetchNextPage(replacing: false)
-    }
-
-    private func fetchNextPage(replacing: Bool) async {
-        do {
-            let page = try await repository.list(page: nextPage)
-            let mapped = page.results.map(Self.summary)
-            summaries = replacing ? mapped : summaries + mapped
-            canLoadMore = page.hasMore
-            nextPage += 1
-            listPhase = .content(summaries)
-        } catch let failure as EmissaryFailure {
-            if replacing { listPhase = .from(failure) }
-        } catch {
-            if replacing { listPhase = .loadFailure }
-        }
+        await list.loadMoreIfNeeded(currentItem: currentItem)
     }
 
     private static let isoFormatter = ISO8601DateFormatter()

@@ -19,50 +19,29 @@ struct HistoryItem: Identifiable, Hashable {
 @MainActor
 @Observable
 final class ReadingHistoryStore {
-    private(set) var phase: ScreenPhase<[HistoryItem]> = .loading
-    private(set) var items: [HistoryItem] = []
-    private(set) var isLoadingMore = false
-
-    private var nextPage = 1
-    private var canLoadMore = true
+    private let list: PagedList<HistoryItem>
     private let repository: HistoryRepository
+
+    var phase: ScreenPhase<[HistoryItem]> { list.phase }
+    var items: [HistoryItem] { list.items }
+    var isLoadingMore: Bool { list.isLoadingMore }
 
     init(repository: HistoryRepository = HistoryRepository()) {
         self.repository = repository
+        list = PagedList { page in
+            let response = try await repository.page(page)
+            return (response.results.map(HistoryMapper.item), response.hasMore)
+        }
     }
 
-    func loadFirst() async {
-        nextPage = 1
-        canLoadMore = true
-        items = []
-        phase = .loading
-        await fetchNextPage(replacing: true)
-    }
+    func loadFirst() async { await list.loadFirst() }
 
     func loadMoreIfNeeded(currentItem: HistoryItem) async {
-        guard canLoadMore, !isLoadingMore, currentItem.id == items.last?.id else { return }
-        isLoadingMore = true
-        defer { isLoadingMore = false }
-        await fetchNextPage(replacing: false)
+        await list.loadMoreIfNeeded(currentItem: currentItem)
     }
 
     /// Pulls the full reading for a history row so the Result screen can replay it.
     func reading(for item: HistoryItem) async -> Reading? {
         try? await repository.readingDetail(id: item.id)
-    }
-
-    private func fetchNextPage(replacing: Bool) async {
-        do {
-            let page = try await repository.page(nextPage)
-            let mapped = page.results.map(HistoryMapper.item)
-            items = replacing ? mapped : items + mapped
-            canLoadMore = page.hasMore
-            nextPage += 1
-            phase = .content(items)
-        } catch let failure as EmissaryFailure {
-            if replacing { phase = .from(failure) }
-        } catch {
-            if replacing { phase = .loadFailure }
-        }
     }
 }
