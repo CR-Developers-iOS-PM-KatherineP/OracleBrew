@@ -52,7 +52,14 @@ struct RandomCupView: View {
     private var cupZone: some View {
         CupPhotoBox {
             if let photo = draft.photo {
-                Image(uiImage: photo).resizable().scaledToFill()
+                // scaledToFill sizes the image past the box it fills; the clip
+                // hides that but the accessibility frame still reports the whole
+                // thing, which reads as an element wider than the screen. It is
+                // decoration either way — the screen's own text says what it is.
+                Image(uiImage: photo)
+                    .resizable()
+                    .scaledToFill()
+                    .accessibilityHidden(true)
             } else {
                 Pigment.settingsCard
             }

@@ -97,8 +97,11 @@ struct PhotoUploadView: View {
                     .clipShape(RoundedRectangle(cornerRadius: CupPhoto.radius))
                     // clipShape hides the overflow but still lets it take taps,
                     // and a camera frame is tall enough to spill over the header
-                    // and swallow the close button. It's decoration — opt it out.
+                    // and swallow the close button. It's decoration — opt it out
+                    // of both the hit test and the accessibility tree, where the
+                    // unclipped size otherwise reads as an oversized element.
                     .allowsHitTesting(false)
+                    .accessibilityHidden(true)
             } else if camera.phase == .running {
                 // Live feed — the user frames the cup right in the drop zone.
                 CameraPreview(session: camera.session)
