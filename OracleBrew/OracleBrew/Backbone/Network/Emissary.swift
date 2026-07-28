@@ -68,16 +68,45 @@ final class Emissary {
     @discardableResult
     private func send(_ request: EmissaryRequest) async throws -> Data {
         let urlRequest = try buildURLRequest(request)
-        do {
-            return try await run(urlRequest, retryOnDeadConnection: true)
-        } catch let failure as EmissaryFailure {
-            // Non-2xx is already on the log via the response; this is for the
-            // rest (encoding, no token).
-            throw failure
-        } catch {
-            WireLog.failure(error, for: urlRequest)
-            throw mapURLError(error)
+        // Only a GET may be repeated blindly — it changes nothing server-side, so
+        // a request that may or may not have landed can be sent again. Anything
+        // that writes gets one attempt.
+        let attempts = urlRequest.httpMethod == "GET" ? Self.getAttempts : 1
+
+        for attempt in 1...attempts {
+            do {
+                return try await run(urlRequest, retryOnDeadConnection: true)
+            } catch let failure as EmissaryFailure {
+                // Non-2xx is already on the log via the response; this is for the
+                // rest (encoding, no token).
+                guard attempt < attempts, Self.isWorthRetrying(failure) else { throw failure }
+            } catch {
+                WireLog.failure(error, for: urlRequest)
+                throw mapURLError(error)
+            }
+            // Backs off so a server coming back up isn't hit by every screen at
+            // once.
+            try? await Task.sleep(for: .seconds(Self.backoff(afterAttempt: attempt)))
         }
+        // Unreachable: the last attempt either returns or throws.
+        throw EmissaryFailure.server(statusCode: -1)
+    }
+
+    /// A 5xx is the server having a moment — worth asking again. A 4xx is the
+    /// request itself being wrong, and repeating it would fail identically.
+    ///
+    /// Offline is deliberately not retried: a dropped connection already gets one
+    /// immediate retry inside `run`, and beyond that the honest answer is the
+    /// offline state with its own Retry button, shown at once rather than after
+    /// seconds of quiet waiting.
+    private static func isWorthRetrying(_ failure: EmissaryFailure) -> Bool {
+        if case .server(let statusCode) = failure { return (500..<600).contains(statusCode) }
+        return false
+    }
+
+    private static let getAttempts = 3
+    private static func backoff(afterAttempt attempt: Int) -> Double {
+        attempt == 1 ? 0.4 : 1.2
     }
 
     private func run(_ urlRequest: URLRequest, retryOnDeadConnection: Bool) async throws -> Data {
