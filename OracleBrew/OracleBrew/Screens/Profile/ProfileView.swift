@@ -44,6 +44,9 @@ struct ProfileView: View {
             do {
                 try await store.save(draft)
                 Resonance.success()
+                // Said after the screen closes, not on it: the form pops on save,
+                // so a confirmation drawn here would go with it.
+                Tidings.shared.say("profile.saved")
                 onSaved()
             } catch {
                 Resonance.failure()
