@@ -2,7 +2,7 @@ import SwiftUI
 
 extension Pigment {
     /// Rating star gold.
-    static let star = Color(hex: 0xF9C169)
+    static let star = Pigment.ratingStar
 }
 
 /// A single gold rating value: ★ + number.

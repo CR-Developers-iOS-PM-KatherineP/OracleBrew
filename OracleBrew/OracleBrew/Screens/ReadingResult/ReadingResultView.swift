@@ -154,7 +154,7 @@ struct ReadingResultView: View {
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 24).fill(Color(hex: 0x1F1A2F)))
+            .background(RoundedRectangle(cornerRadius: 24).fill(Pigment.symbolPanel))
         }
     }
 

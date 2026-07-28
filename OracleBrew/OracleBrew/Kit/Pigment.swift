@@ -45,6 +45,20 @@ enum Pigment {
     static let pill = Color(hex: 0x19132B)
     /// The hairline border every panel carries.
     static let panelBorder = Color(hex: 0xFFFFFF, alpha: 0.15)
+    /// Row fill for the list cards — history, chat threads — and the ring that
+    /// lifts a chat avatar off them.
+    static let row = Color(hex: 0x211836)
+    /// A cooler panel: review cards, and the fade over an oracle's portrait.
+    static let panelCool = Color(hex: 0x2A1B3A)
+    /// The key-symbols panel — a touch flatter than `card`.
+    static let symbolPanel = Color(hex: 0x1F1A2F)
+    /// The oracle's chat bubble.
+    static let oracleBubble = Color(hex: 0x2C1E48)
+    /// Rating stars — warmer than `gold`, which labels the Pro plan.
+    static let ratingStar = Color(hex: 0xF9C169)
+    /// Stand-in gradient for a drink the app has no bundled art for. Every known
+    /// slug carries its own pair in `DrinkCatalog`; this is only for a new one.
+    static let drinkFallbackGradient = [Color(hex: 0x241649), Color(hex: 0x0E062C)]
     /// Destructive — Delete Account.
     static let danger = Color(hex: 0xEF4444)
     /// Amber — warm end of the share card's cup ring.

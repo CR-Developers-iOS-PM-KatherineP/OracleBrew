@@ -20,7 +20,7 @@ struct ReviewCard: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 20).fill(Color(hex: 0x2A1B3A)))
+        .background(RoundedRectangle(cornerRadius: 20).fill(Pigment.panelCool))
         .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Pigment.cream.opacity(0.1), lineWidth: 1))
     }
 }

@@ -10,7 +10,6 @@ struct TellerCard: View {
 
     @Environment(\.layoutDirection) private var layoutDirection
 
-    private let fadeColor = Color(hex: 0x2A1B3A)
 
     var body: some View {
         Button(action: onSelect) {
@@ -53,7 +52,7 @@ struct TellerCard: View {
                 .clipShape(Rectangle())
                 .overlay(alignment: .trailing) {
                     LinearGradient(
-                        colors: [fadeColor.opacity(0), fadeColor],
+                        colors: [Pigment.panelCool.opacity(0), Pigment.panelCool],
                         startPoint: layoutDirection.startEdge,
                         endPoint: layoutDirection.endEdge
                     )

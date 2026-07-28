@@ -56,7 +56,7 @@ enum CatalogMapper {
             name: mock?.name ?? LocalizedStringKey(dto.title),
             blurb: mock?.blurb ?? LocalizedStringKey(dto.description),
             art: mock?.art ?? "",
-            gradient: mock?.gradient ?? [Color(hex: 0x241649), Color(hex: 0x0E062C)],
+            gradient: mock?.gradient ?? Pigment.drinkFallbackGradient,
             isRandom: false,
             imageURL: dto.image,
             // The Random Cup path draws from these bundled photos; a slug we

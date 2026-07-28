@@ -6,7 +6,6 @@ struct ChatBubble: View {
     @Environment(\.layoutDirection) private var layoutDirection
 
     private var isUser: Bool { message.isFromUser }
-    private let oracleFill = Color(hex: 0x2C1E48)
 
     /// Which physical edge the tail hangs off. The alignment below is semantic
     /// and mirrors itself in Arabic, but a Shape's path and an offset are both
@@ -37,12 +36,12 @@ struct ChatBubble: View {
 
     @ViewBuilder
     private var background: some View {
-        if isUser { Pigment.accentGradient } else { oracleFill }
+        if isUser { Pigment.accentGradient } else { Pigment.oracleBubble }
     }
 
     private var tail: some View {
         BubbleTail(leading: tailOnLeft)
-            .fill(isUser ? AnyShapeStyle(Pigment.accentGradient) : AnyShapeStyle(oracleFill))
+            .fill(isUser ? AnyShapeStyle(Pigment.accentGradient) : AnyShapeStyle(Pigment.oracleBubble))
             .frame(width: BubbleTail.size.width, height: BubbleTail.size.height)
             .offset(x: tailOnLeft ? -3 : 3)
     }

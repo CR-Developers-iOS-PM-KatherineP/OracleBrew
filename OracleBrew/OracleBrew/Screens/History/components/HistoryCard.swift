@@ -11,7 +11,6 @@ struct HistoryCard: View {
 
     @Environment(\.layoutDirection) private var layoutDirection
 
-    private let cardFill = Color(hex: 0x211836)
 
     private var dateLabel: String {
         item.date.formatted(.dateTime.month(.wide).day().year())
@@ -43,7 +42,7 @@ struct HistoryCard: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 16)
-        .background(RoundedRectangle(cornerRadius: 24).fill(cardFill))
+        .background(RoundedRectangle(cornerRadius: 24).fill(Pigment.row))
         .overlay(alignment: .topTrailing) {
             if item.hasChat { chatChip }
         }
@@ -84,7 +83,7 @@ struct HistoryCard: View {
         .frame(width: 36, height: 36)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
-            RoundedRectangle(cornerRadius: 12).strokeBorder(cardFill, lineWidth: 3)
+            RoundedRectangle(cornerRadius: 12).strokeBorder(Pigment.row, lineWidth: 3)
         )
     }
 

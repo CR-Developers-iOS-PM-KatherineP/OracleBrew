@@ -231,7 +231,7 @@ struct OracleChatView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 16)
-            .background(RoundedRectangle(cornerRadius: 24).fill(Color(hex: 0x211836)))
+            .background(RoundedRectangle(cornerRadius: 24).fill(Pigment.row))
             .overlay(alignment: .topTrailing) {
                 // Decorative — the whole card is the button. `arrow.forward`
                 // flips itself under RTL.

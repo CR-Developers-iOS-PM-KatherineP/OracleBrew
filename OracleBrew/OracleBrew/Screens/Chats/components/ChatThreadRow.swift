@@ -82,6 +82,6 @@ struct ChatThreadRow: View {
         }
         .frame(width: 28, height: 28)
         .clipShape(Circle())
-        .overlay(Circle().strokeBorder(Color(hex: 0x211836), lineWidth: 3))
+        .overlay(Circle().strokeBorder(Pigment.row, lineWidth: 3))
     }
 }
