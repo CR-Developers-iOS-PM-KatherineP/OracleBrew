@@ -9,7 +9,6 @@ struct ReadingResultView: View {
     let onClose: () -> Void
 
     @State private var reading: Reading?
-    @State private var savedConfirmation = false
     /// Rendered once when the reading lands — ImageRenderer is too heavy to run
     /// on every body pass.
     @State private var shareCard: ShareCardImage?
@@ -45,9 +44,6 @@ struct ReadingResultView: View {
             .padding(.horizontal, 20)
         }
         .toolbar(.hidden, for: .navigationBar)
-        .alert("result.saved.title", isPresented: $savedConfirmation) {
-            Button("common.ok", role: .cancel) {}
-        }
         .onAppear {
             guard reading == nil else { return }
             // existingReading = a History replay; draft.reading = the one the
@@ -241,6 +237,7 @@ struct ReadingResultView: View {
         // itself is already kept server-side regardless.
         guard let card = shareCard else { return }
         UIImageWriteToSavedPhotosAlbum(card.image, nil, nil, nil)
-        savedConfirmation = true
+        Resonance.success()
+        Tidings.shared.say("result.saved.title")
     }
 }

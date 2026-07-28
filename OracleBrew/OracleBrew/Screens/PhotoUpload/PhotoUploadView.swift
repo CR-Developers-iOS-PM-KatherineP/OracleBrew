@@ -246,6 +246,7 @@ struct PhotoUploadView: View {
                 importingPhoto = false
                 guard let data, let image = UIImage(data: data) else {
                     Resonance.failure()
+                    Tidings.shared.say("photo.import_failed")
                     return
                 }
                 draft.photo = image

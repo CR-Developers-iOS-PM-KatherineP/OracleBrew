@@ -73,6 +73,7 @@ struct Atrium: View {
                     .transition(.opacity)
             }
         }
+        .toastLayer()
         .animation(.easeInOut(duration: 0.25), value: showOnboarding)
         .animation(.easeInOut(duration: 0.35), value: booting)
         .environment(chatStore)

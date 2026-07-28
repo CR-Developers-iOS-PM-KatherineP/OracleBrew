@@ -28,7 +28,6 @@ struct OracleChatView: View {
     @State private var draftText = ""
     @State private var loading = false
     @State private var sending = false
-    @State private var sendFailed = false
     @State private var chipsHidden = false
     /// True once the reading card has scrolled up out of view — surfaces the
     /// cup shortcut in the header so the reading stays one tap away.
@@ -86,11 +85,6 @@ struct OracleChatView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .task { await load() }
-        .alert("chat.send_failed.title", isPresented: $sendFailed) {
-            Button("common.ok", role: .cancel) {}
-        } message: {
-            Text("chat.send_failed.message")
-        }
     }
 
     private func scrollToBottom(_ proxy: ScrollViewProxy) {
@@ -131,7 +125,8 @@ struct OracleChatView: View {
                 fromReading: draft?.readingID != nil
             )
         } catch {
-            sendFailed = true
+            Resonance.failure()
+            Tidings.shared.say("chat.send_failed.title")
         }
     }
 
@@ -389,7 +384,8 @@ struct OracleChatView: View {
                 // is lost, and surface the failure.
                 if thread.messages.last?.isFromUser == true { thread.messages.removeLast() }
                 draftText = trimmed
-                sendFailed = true
+                Resonance.failure()
+                Tidings.shared.say("chat.send_failed.title")
             }
         }
     }
