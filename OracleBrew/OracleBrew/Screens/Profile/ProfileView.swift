@@ -59,6 +59,7 @@ struct ProfileView: View {
             HStack(spacing: 12) {
                 Button(action: onBack) {
                     Image(systemName: "arrow.backward")
+                        .accessibilityLabel("a11y.back")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(Pigment.cream)
                         .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)

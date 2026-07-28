@@ -166,6 +166,7 @@ struct OracleChatView: View {
             HStack {
                 Button(action: onClose) {
                     Image(systemName: "arrow.backward")
+                        .accessibilityLabel("a11y.back")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(Pigment.cream)
                         .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
@@ -354,6 +355,7 @@ struct OracleChatView: View {
                     .contentShape(Circle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("a11y.send")
             .disabled(draftText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             .opacity(draftText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.4 : 1)
         }

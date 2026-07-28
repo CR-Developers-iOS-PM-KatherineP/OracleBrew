@@ -28,15 +28,17 @@ struct FlowHeader: View {
 
             HStack {
                 if let onBack {
-                    chip(systemName: "arrow.backward", action: onBack)
+                    chip(systemName: "arrow.backward", label: "a11y.back", action: onBack)
                 }
                 Spacer()
-                chip(systemName: "xmark", action: onClose)
+                chip(systemName: "xmark", label: "a11y.close", action: onClose)
             }
         }
     }
 
-    private func chip(systemName: String, action: @escaping () -> Void) -> some View {
+    private func chip(systemName: String,
+                      label: LocalizedStringKey,
+                      action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 16, weight: .medium))
@@ -46,6 +48,10 @@ struct FlowHeader: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
+        // Spelled out rather than left to the symbol: VoiceOver reads
+        // "arrow.backward" as the identifier itself, and an explicit label keeps
+        // both chips consistent.
+        .accessibilityLabel(label)
     }
 }
 

@@ -8,6 +8,7 @@ struct SettingsButton: View {
             router.push(.settings)
         } label: {
             Image(systemName: "gearshape")
+                .accessibilityLabel("a11y.settings")
                 .font(.system(size: 18))
                 .foregroundStyle(Pigment.cream)
                 .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)

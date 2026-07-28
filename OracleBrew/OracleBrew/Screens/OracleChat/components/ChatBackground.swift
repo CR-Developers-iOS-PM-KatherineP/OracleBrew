@@ -10,5 +10,7 @@ struct ChatBackground: View {
             }
             .ignoresSafeArea()
             .allowsHitTesting(false)
+            // Wallpaper. Without this VoiceOver announces the asset's name.
+            .accessibilityHidden(true)
     }
 }

@@ -56,6 +56,8 @@ struct BrewView: View {
                     Image(systemName: "sparkles")
                         .font(.system(size: 15))
                         .foregroundStyle(Pigment.accent)
+                        // Flourish on the greeting, not a thing to announce.
+                        .accessibilityHidden(true)
                 }
                 Text("brew.subtitle")
                     .font(Lettering.body(12))
@@ -77,6 +79,9 @@ struct BrewView: View {
                 .frame(width: ballSize, height: ballSize)
                 .clipShape(Circle())
                 .allowsHitTesting(false)
+                // Decoration beside the fortune. Without this VoiceOver reads
+                // out the asset's name.
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 8) {
                 Text("brew.daily_fortune")
                     .font(Lettering.bodyMedium(10))
