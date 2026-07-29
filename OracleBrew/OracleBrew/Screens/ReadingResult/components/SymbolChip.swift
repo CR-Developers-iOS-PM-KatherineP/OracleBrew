@@ -3,6 +3,8 @@ import SwiftUI
 struct SymbolChip: View {
     let symbol: ReadingSymbol
 
+    @Environment(\.layoutDirection) private var layoutDirection
+
     private var entry: SymbolCatalog.Entry? { SymbolCatalog.entry(forSlug: symbol.slug) }
 
     var body: some View {
@@ -25,7 +27,11 @@ struct SymbolChip: View {
                 .foregroundStyle(Pigment.cream)
             // Verbatim: it is a glyph, not copy. As a localizable string it was
             // extracted as its own key and sat there untranslatable.
-            Text(verbatim: "→")
+            //
+            // Picked by direction rather than left to the text engine: U+2192
+            // isn't one of the mirrored characters, so in Arabic it kept pointing
+            // right — back at the name it was supposed to lead away from.
+            Text(verbatim: layoutDirection == .rightToLeft ? "←" : "→")
                 .font(Lettering.body(13))
                 .foregroundStyle(Pigment.cream.opacity(0.6))
             Text(symbol.keyword)
