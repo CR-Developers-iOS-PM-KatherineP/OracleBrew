@@ -3,11 +3,16 @@
 <plist version="1.0">
 <dict>
 	<!-- The rest of the Info.plist is still generated from build settings; this
-	     file exists only for the launch screen. Xcode's
+	     file exists for the launch screen and the two keys below. Xcode's
 	     INFOPLIST_KEY_UILaunchScreen_* settings can't express the background
 	     colour — Generation=YES writes an empty dict over it — and without a
 	     colour the launch screen is white, which flashes before the dark
 	     splash. -->
+	<!-- The app talks to its backend over HTTPS and does nothing else with
+	     crypto, which is exempt. Declared here so App Store Connect stops
+	     asking the export-compliance question on every single build. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
