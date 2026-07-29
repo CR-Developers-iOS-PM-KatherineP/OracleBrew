@@ -40,8 +40,13 @@ Repository → Settings → Secrets and variables → Actions.
 | `APPSTORE_CONNECT_API_PRIVATE_KEY` | Contents of the `AuthKey_*.p8`, whole file including the BEGIN/END lines. |
 | `SLACK_WEBHOOK_URL` | Optional. Without it the notify step just prints a warning. |
 
-The Team ID (`3ZVTHYFAJY`) is in the workflow, not a secret — it is printed
+The Team ID (`8H38RT6795`) is in the workflow, not a secret — it is printed
 inside every distributed build anyway.
+
+It is **not** the team the project carries (`3ZVTHYFAJY`, in `project.pbxproj`).
+Local builds sign with that one, releases with this one. The distribution
+certificate and the provisioning profile in the secrets above must both belong to
+`8H38RT6795`, or the build fails the profile check.
 
 ### Making the certificate and profile
 

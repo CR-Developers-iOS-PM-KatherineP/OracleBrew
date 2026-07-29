@@ -20,7 +20,9 @@ env:
   XCODE_SCHEME: OracleBrew
   APP_NAME: OracleBrew
   # Not a secret — the Team ID is printed inside every distributed build anyway.
-  DEVELOPMENT_TEAM: "3ZVTHYFAJY"
+  # Deliberately not the team in project.pbxproj (3ZVTHYFAJY): that one signs
+  # local development builds, this one owns the App Store listing.
+  DEVELOPMENT_TEAM: "8H38RT6795"
   # Unlocks the throwaway keychain import-codesign-certs creates. Not a secret —
   # the keychain exists for the length of one runner and is deleted at the end.
   KEYCHAIN_PASSWORD: "temp_password"
