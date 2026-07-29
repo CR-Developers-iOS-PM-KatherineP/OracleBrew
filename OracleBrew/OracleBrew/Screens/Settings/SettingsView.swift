@@ -106,9 +106,7 @@ struct SettingsView: View {
                 }
                 SettingsDivider()
                 SettingsRow(icon: "IconSupport", title: "settings.support") {
-                    if let url = URL(string: "mailto:support@oraclebrew.app") {
-                        UIApplication.shared.open(url)
-                    }
+                    UIApplication.shared.open(APIConfig.supportMailURL)
                 }
             }
         }

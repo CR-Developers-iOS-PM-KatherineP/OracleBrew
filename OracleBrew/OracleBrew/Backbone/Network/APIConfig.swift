@@ -9,6 +9,21 @@ enum APIConfig {
 
     static let pageSize = 12
 
+    /// Where the legal texts are published. The app shows its own bundled copy
+    /// of each; these are the canonical sources, kept here so pointing at a new
+    /// one is a config change rather than a code change.
+    static let privacyPolicyURL = URL(
+        string: "https://docs.google.com/document/d/1UTYUkZ7LItyBKgXklvx4X1LNM-CCbhVCaLCPZGF6Nfc/edit?tab=t.0"
+    )!
+    static let termsOfUseURL = URL(
+        string: "https://docs.google.com/document/d/1v_PNKqwX3sfgWbtcS8SnDXIuubQaU7QjaLBPOvnMTgk/edit?tab=t.0"
+    )!
+
+    /// Where support mail goes. Named here because the legal texts print it too —
+    /// one address to change, not three.
+    static let supportEmail = "support@oraclebrew.app"
+    static var supportMailURL: URL { URL(string: "mailto:\(supportEmail)")! }
+
     /// The language the app resolved to, as an `Accept-Language` value. Taken
     /// from the bundle rather than `Locale.current` — the bundle is what
     /// actually decided which strings the user is reading, and the two disagree
