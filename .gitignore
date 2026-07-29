@@ -40,3 +40,7 @@ graphify-out/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
 
 # Localization working files — scratch fragments from a translation pass.
 loc-work/
+
+# Python bytecode, e.g. from running the CI signing script locally
+__pycache__/
+*.pyc
