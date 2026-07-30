@@ -78,17 +78,35 @@ struct PhotoUploadView: View {
         }
     }
 
-    // MARK: Header (preview state — title + close only)
+    // MARK: Header (preview state)
 
+    /// Back and close, like every other step in the flow. With close alone the
+    /// only control on the screen dropped the user out to the home tab, which is
+    /// not a step back from anywhere.
+    ///
+    /// Back returns to the capture screen rather than popping to the intention
+    /// step: the preview is a state of *this* step — the photo was just picked
+    /// here — so one step back is un-picking it, not skipping the screen it was
+    /// picked on. Close still leaves the flow.
     private var previewHeader: some View {
         ZStack {
             Text("photo.preview.title")
                 .font(Lettering.displayMedium(24))
                 .foregroundStyle(Pigment.cream)
             HStack {
+                Button(action: retake) {
+                    Image(systemName: "arrow.backward")
+                        .accessibilityLabel("a11y.back")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(Pigment.cream)
+                        .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
+                        .background(Circle().fill(Pigment.surface))
+                }
+                .buttonStyle(.plain)
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark")
+                        .accessibilityLabel("a11y.close")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(Pigment.cream)
                         .frame(width: Cadence.tapTarget, height: Cadence.tapTarget)
