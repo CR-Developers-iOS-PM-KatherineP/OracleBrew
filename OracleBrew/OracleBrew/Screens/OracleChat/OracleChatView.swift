@@ -78,7 +78,7 @@ struct OracleChatView: View {
                         }
                     }
                 }
-                if !thread.quickQuestions.isEmpty && !chipsHidden { quickMenu }
+                if !thread.unusedQuickQuestions.isEmpty && !chipsHidden { quickMenu }
                 inputBar
             }
             .padding(.horizontal, 20)
@@ -278,7 +278,7 @@ struct OracleChatView: View {
     /// dismiss sits inside the panel's top-left corner.
     private var quickMenu: some View {
         VStack(alignment: .trailing, spacing: 10) {
-            ForEach(thread.quickQuestions, id: \.self) { question in
+            ForEach(thread.unusedQuickQuestions, id: \.self) { question in
                 Button { send(question) } label: {
                     Text(question)
                         .font(Lettering.bodyMedium(14))
@@ -323,11 +323,21 @@ struct OracleChatView: View {
         .padding(8)
     }
 
+    /// Same muted cream every other field in the app uses for an empty state.
+    private var composerPrompt: Text {
+        Text("chat.placeholder").foregroundColor(Pigment.fieldMuted)
+    }
+
     private var inputBar: some View {
         HStack(spacing: 8) {
-            TextField("chat.placeholder", text: $draftText, axis: .vertical)
+            // Explicit prompt, same reason as the onboarding name field: the
+            // title-as-placeholder form renders in the system's secondary colour,
+            // and the app forces a Light interface style over dark chrome, so it
+            // came out near-black on the dark capsule.
+            TextField("", text: $draftText, prompt: composerPrompt, axis: .vertical)
                 .font(Lettering.body(14))
                 .foregroundStyle(Pigment.cream)
+                .tint(Pigment.accent)
                 .focused($inputFocused)
                 .padding(.horizontal, 16)
                 .frame(minHeight: 52)

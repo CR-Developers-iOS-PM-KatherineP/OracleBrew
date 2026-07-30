@@ -20,6 +20,20 @@ final class ChatThread: Identifiable {
     /// Quick-question chips the server suggests for this thread.
     var quickQuestions: [String] = []
 
+    /// The suggestions still worth offering: the full list minus anything already
+    /// asked.
+    ///
+    /// Derived from the messages rather than kept as a separate "used" set, and
+    /// that is the point — the message history is what the backend sends back
+    /// when the chat is reopened, so a prompt that was tapped stays gone with
+    /// nothing extra to persist and nothing to fall out of sync. Reseeding
+    /// `quickQuestions` on every open, which is what the chat does, then can't
+    /// bring the used ones back.
+    var unusedQuickQuestions: [String] {
+        let asked = Set(messages.lazy.filter(\.isFromUser).map(\.text))
+        return quickQuestions.filter { !asked.contains($0) }
+    }
+
     init(teller: FortuneTeller, draftContext: ReadingDraft?) {
         self.teller = teller
         self.draftContext = draftContext
