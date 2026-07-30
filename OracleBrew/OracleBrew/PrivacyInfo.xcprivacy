@@ -7,10 +7,30 @@
 	     identifiers they hold from elsewhere. That is what makes the ATT prompt
 	     on the splash necessary rather than decorative.
 
-	     NSPrivacyTrackingDomains is empty on purpose, not by omission: Apple
-	     requires the endpoints only for domains reached *before* the user allows
-	     tracking, and every sink here starts behind the ATT answer. Fill it in if
-	     any provider is ever started ahead of that. -->
+	     NSPrivacyTrackingDomains lists every domain that tracks, full stop — not
+	     just the ones reached before consent. iOS fails connections to a listed
+	     domain while tracking is not permitted, and that enforcement is the point
+	     of listing them.
+
+	     It is short because Apple merges this file with the manifest each SDK
+	     ships, and three of the four declare their own (verified in the resolved
+	     packages):
+
+	       AppsFlyer  16 hosts, att.{attr,launches,conversions,dlsdk}.*
+	       Facebook   ep1.facebook.com
+	       AppMetrica tracking.appmetrica.yandex.net (+ .reserve.)
+
+	     So only what no SDK covers belongs here. Two entries are outstanding, and
+	     both are blocked on a value we don't have yet — see AnalyticsConfig:
+
+	       1. The UserAcquisition host. Our own code posts the IDFA to it, so it is
+	          a tracking domain and nothing else declares it. It MUST be added the
+	          same moment UserAcquisition.serverUrl stops being a placeholder.
+	       2. app-measurement.com, for Firebase. GoogleAppMeasurement 12.17.0 ships
+	          no manifest at all, so Firebase's endpoint is undeclared by anyone.
+	          Listing it is a judgement call rather than a clerical one: it would
+	          also cut Firebase Analytics off for every user who denies ATT, not
+	          only the tracking part. Decide before shipping with Firebase on. -->
 	<key>NSPrivacyTracking</key>
 	<true/>
 	<key>NSPrivacyTrackingDomains</key>

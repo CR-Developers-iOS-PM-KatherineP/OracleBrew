@@ -30,6 +30,11 @@ enum AnalyticsConfig {
     /// UserAcquisition reports to its own backend, so it carries a host as well
     /// as a key. `sharedSecret` is the App Store shared secret that receipt
     /// validation needs.
+    /// - Important: Filling `serverUrl` is only half the job. Our own code posts
+    ///   the IDFA to that host, which makes it a tracking domain, and no SDK
+    ///   manifest declares it for us — so the same host must be added to
+    ///   `NSPrivacyTrackingDomains` in `PrivacyInfo.xcprivacy`. Ship one without
+    ///   the other and the app tracks through an undeclared domain.
     enum UserAcquisition {
         static let apiKey = "USER_ACQUISITION_API_KEY"
         /// Host only — the service prepends `https://` and appends the path.

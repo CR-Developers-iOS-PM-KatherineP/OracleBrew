@@ -68,10 +68,35 @@ forever. That is why `Shipped` exists alongside `Keys`.
   (`Features.notifications` is off). Adding an
   `@UIApplicationDelegateAdaptor` purely to reach a method that can't fire yet
   would be dead weight, so it waits for push to be real.
-- **`NSPrivacyTrackingDomains`** is empty deliberately. Apple wants the endpoints
-  only for domains reached *before* the user allows tracking, and every sink here
-  starts behind the ATT answer. Fill it in if a provider is ever started ahead of
-  that.
+## Tracking domains — two entries still owed
+
+`NSPrivacyTrackingDomains` lists every domain that tracks, not only the ones
+reached before consent. iOS fails connections to a listed domain while tracking
+isn't permitted; that enforcement is why the list exists.
+
+The app's own list is short because Apple merges it with the manifest each SDK
+ships, and three of the four bring their own — verified by reading the resolved
+packages, not from memory:
+
+| SDK | Declares |
+| --- | --- |
+| AppsFlyer | 16 hosts — `att.{attr,launches,conversions,dlsdk}.…` |
+| Facebook | `ep1.facebook.com` |
+| AppMetrica | `tracking.appmetrica.yandex.net`, `tracking.reserve.appmetrica.yandex.net` |
+| Firebase | **nothing** — GoogleAppMeasurement 12.17.0 ships no manifest at all |
+
+So only what no SDK covers belongs in ours, and two entries are outstanding:
+
+1. **The UserAcquisition host — required.** Our own code posts the IDFA to it, so
+   it is a tracking domain and nothing declares it for us. It has to be added the
+   same moment `AnalyticsConfig.UserAcquisition.serverUrl` stops being a
+   placeholder. Filling the key without the domain ships an app that tracks
+   through an undeclared host.
+2. **`app-measurement.com` for Firebase — a decision, not paperwork.** Since
+   GoogleAppMeasurement declares nothing, Firebase's endpoint is undeclared by
+   anyone. Listing it is defensible, but it would also cut Firebase Analytics off
+   entirely for every user who denies ATT — not just the tracking part of it.
+   Settle this before shipping with Firebase enabled.
 
 ## Refund consent
 
