@@ -675,6 +675,70 @@
         }
       }
     },
+    "consent.allow": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السماح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow"
+          }
+        }
+      }
+    },
+    "consent.deny": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عدم السماح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don't Allow"
+          }
+        }
+      }
+    },
+    "consent.message": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سنشارك تفاصيل عملية الشراء مع Apple لمعالجة الاسترداد. ويمكنك الرفض أو سحب موافقتك في أي وقت من الإعدادات."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We will share your purchase details with Apple to process the refund. You can opt out or withdraw consent at any time in the settings."
+          }
+        }
+      }
+    },
+    "consent.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إدارة الموافقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage Consent"
+          }
+        }
+      }
+    },
     "drink.chocolate.blurb": {
       "localizations": {
         "ar": {
@@ -7767,6 +7831,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Edit an Account"
+          }
+        }
+      }
+    },
+    "settings.manage_consent": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إدارة الموافقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage Consent"
           }
         }
       }

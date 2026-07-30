@@ -79,6 +79,10 @@ struct Atrium: View {
             }
         }
         .toastLayer()
+        // At the root for the same reason as the toasts: it is raised while the
+        // paywall that triggered it is dismissing, and an alert attached to that
+        // screen would go down with it.
+        .refundConsentAlert()
         .animation(.easeInOut(duration: 0.25), value: showOnboarding)
         .animation(.easeInOut(duration: 0.35), value: booting)
         .environment(chatStore)

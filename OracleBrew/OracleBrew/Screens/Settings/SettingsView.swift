@@ -16,6 +16,7 @@ struct SettingsView: View {
     @State private var cameraAuthorized = false
     @State private var notificationsAuthorized = false
     @AppStorage("settings.dataConsent") private var dataConsent = false
+    @State private var refundConsent = RefundConsent.shared
     @State private var showComingSoon = false
     @State private var showDeleteConfirm = false
 
@@ -134,6 +135,15 @@ struct SettingsView: View {
                 if Features.dataConsent {
                     SettingsDivider()
                     SettingsToggleRow(icon: "IconShield", title: "settings.data_consent", isOn: $dataConsent)
+                }
+                // Only once there is a purchase to manage consent about. Before
+                // that the row would open a question about something that never
+                // happened.
+                if refundConsent.hasBeenAsked {
+                    SettingsDivider()
+                    SettingsRow(icon: "IconShield", title: "settings.manage_consent") {
+                        refundConsent.reopen()
+                    }
                 }
             }
         }
