@@ -11,7 +11,11 @@ struct OnboardingTextEntry: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            TextField("onb.name.placeholder", text: $text)
+            // An explicit prompt, not the title-as-placeholder form: that one
+            // renders in the system's secondary colour, and the app forces a
+            // Light interface style while drawing dark chrome — so the
+            // placeholder came out near-black on the dark capsule.
+            TextField("", text: $text, prompt: namePrompt)
                 .font(Lettering.body(15))
                 .foregroundStyle(Pigment.cream)
                 .focused($focused)
@@ -28,6 +32,12 @@ struct OnboardingTextEntry: View {
         }
         .animation(.easeOut(duration: 0.2), value: trimmed.isEmpty)
         .onAppear { focused = true }
+    }
+
+    /// Same muted cream the profile form's fields use, so the two name inputs
+    /// don't disagree about what an empty field looks like.
+    private var namePrompt: Text {
+        Text("onb.name.placeholder").foregroundColor(Pigment.fieldMuted)
     }
 
     private func submit() {
