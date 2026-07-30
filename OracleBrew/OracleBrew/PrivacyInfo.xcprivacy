@@ -2,15 +2,88 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Nothing here reads the IDFA, and the only host the app talks to is its
-	     own backend. No data goes to a data broker or an advertising network. -->
+	<!-- True since the attribution stack landed: UserAcquisitionService reads the
+	     IDFA, and AppsFlyer, Facebook and AppMetrica all link app activity to
+	     identifiers they hold from elsewhere. That is what makes the ATT prompt
+	     on the splash necessary rather than decorative.
+
+	     NSPrivacyTrackingDomains is empty on purpose, not by omission: Apple
+	     requires the endpoints only for domains reached *before* the user allows
+	     tracking, and every sink here starts behind the ATT answer. Fill it in if
+	     any provider is ever started ahead of that. -->
 	<key>NSPrivacyTracking</key>
-	<false/>
+	<true/>
 	<key>NSPrivacyTrackingDomains</key>
 	<array/>
 
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>
+		<!-- The IDFA, read by UserAcquisitionService when it reports a receipt,
+		     and the vendor id that travels with it. This is the entry that makes
+		     the declaration above true. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeDeviceID</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising</string>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+			</array>
+		</dict>
+
+		<!-- Campaign, ad group and creative from AppsFlyer's install payload,
+		     plus each SDK's own device identifier, forwarded to the acquisition
+		     backend alongside a purchase. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeAdvertisingData</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising</string>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+			</array>
+		</dict>
+
+		<!-- Which screens were seen and which actions taken — the event stream
+		     the four providers receive. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeProductInteraction</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+				<string>NSPrivacyCollectedDataTypePurposeProductPersonalization</string>
+			</array>
+		</dict>
+
+		<!-- The receipt UserAcquisitionService uploads, and the product, price and
+		     currency read off it. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypePurchaseHistory</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+			</array>
+		</dict>
+
 		<!-- Onboarding profile: the name the reading is addressed to. -->
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
