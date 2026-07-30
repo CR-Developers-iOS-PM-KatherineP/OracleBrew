@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		ABCDEF000000000000000300 /* AppsFlyerLib-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = ABCDEF000000000000000200 /* AppsFlyerLib-Dynamic */; };
+		ABCDEF000000000000000301 /* AppMetricaCore in Frameworks */ = {isa = PBXBuildFile; productRef = ABCDEF000000000000000201 /* AppMetricaCore */; };
+		ABCDEF000000000000000302 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = ABCDEF000000000000000202 /* FacebookCore */; };
+		ABCDEF000000000000000303 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = ABCDEF000000000000000203 /* FirebaseAnalytics */; };
+		ABCDEF000000000000000304 /* SwiftyStoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = ABCDEF000000000000000204 /* SwiftyStoreKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		524D7DCB30051A40005B6816 /* OracleBrew.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OracleBrew.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +31,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ABCDEF000000000000000300 /* AppsFlyerLib-Dynamic in Frameworks */,
+				ABCDEF000000000000000301 /* AppMetricaCore in Frameworks */,
+				ABCDEF000000000000000302 /* FacebookCore in Frameworks */,
+				ABCDEF000000000000000303 /* FirebaseAnalytics in Frameworks */,
+				ABCDEF000000000000000304 /* SwiftyStoreKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +78,11 @@
 			);
 			name = OracleBrew;
 			packageProductDependencies = (
+				ABCDEF000000000000000200 /* AppsFlyerLib-Dynamic */,
+				ABCDEF000000000000000201 /* AppMetricaCore */,
+				ABCDEF000000000000000202 /* FacebookCore */,
+				ABCDEF000000000000000203 /* FirebaseAnalytics */,
+				ABCDEF000000000000000204 /* SwiftyStoreKit */,
 			);
 			productName = OracleBrew;
 			productReference = 524D7DCB30051A40005B6816 /* OracleBrew.app */;
@@ -95,6 +113,13 @@
 			);
 			mainGroup = 524D7DC230051A40005B6816;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				ABCDEF000000000000000100 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Dynamic" */,
+				ABCDEF000000000000000101 /* XCRemoteSwiftPackageReference "appmetrica-sdk-ios" */,
+				ABCDEF000000000000000102 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				ABCDEF000000000000000103 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				ABCDEF000000000000000104 /* XCRemoteSwiftPackageReference "SwiftyStoreKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 524D7DCC30051A40005B6816 /* Products */;
 			projectDirPath = "";
@@ -360,6 +385,77 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ABCDEF000000000000000100 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Dynamic" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework-Dynamic";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.1;
+			};
+		};
+		ABCDEF000000000000000101 /* XCRemoteSwiftPackageReference "appmetrica-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/appmetrica/appmetrica-sdk-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.5.1;
+			};
+		};
+		ABCDEF000000000000000102 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 18.1.0;
+			};
+		};
+		ABCDEF000000000000000103 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.17.0;
+			};
+		};
+		ABCDEF000000000000000104 /* XCRemoteSwiftPackageReference "SwiftyStoreKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bizz84/SwiftyStoreKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.16.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ABCDEF000000000000000200 /* AppsFlyerLib-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ABCDEF000000000000000100 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Dynamic" */;
+			productName = "AppsFlyerLib-Dynamic";
+		};
+		ABCDEF000000000000000201 /* AppMetricaCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ABCDEF000000000000000101 /* XCRemoteSwiftPackageReference "appmetrica-sdk-ios" */;
+			productName = AppMetricaCore;
+		};
+		ABCDEF000000000000000202 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ABCDEF000000000000000102 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		ABCDEF000000000000000203 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ABCDEF000000000000000103 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		ABCDEF000000000000000204 /* SwiftyStoreKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ABCDEF000000000000000104 /* XCRemoteSwiftPackageReference "SwiftyStoreKit" */;
+			productName = SwiftyStoreKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 524D7DC330051A40005B6816 /* Project object */;
 }
