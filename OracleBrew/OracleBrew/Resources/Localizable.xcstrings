@@ -7467,6 +7467,38 @@
         }
       }
     },
+    "reading.no_cup.message": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يقرأ العرّاف الرموز من رواسب القهوة أو أوراق الشاي فقط. جرّب صورة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Oracle reads symbols only from coffee grounds or tea leaves. Try another photo."
+          }
+        }
+      }
+    },
+    "reading.no_cup.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذه لا تبدو فنجانًا"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That doesn't look like a cup"
+          }
+        }
+      }
+    },
     "result.advice_label": {
       "localizations": {
         "ar": {
@@ -7543,6 +7575,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Save"
+          }
+        }
+      }
+    },
+    "result.save_failed.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يتم الحفظ. تحقّق من صلاحية الوصول إلى الصور."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't save. Check photo access in Settings."
           }
         }
       }
