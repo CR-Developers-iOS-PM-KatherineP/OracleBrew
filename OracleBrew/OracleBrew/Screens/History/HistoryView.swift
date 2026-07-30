@@ -5,7 +5,15 @@ struct HistoryView: View {
     @Environment(ChatSessionStore.self) private var chatStore
     @Bindable var router: Pathfinder
 
+    @State private var showReadingFlow = false
     private let tabClearance: CGFloat = 96
+    /// Button height plus the gap under the last card.
+    private let ctaClearance: CGFloat = 72
+
+    private var hasReadings: Bool {
+        if case .content(let items) = historyStore.phase { return !items.isEmpty }
+        return false
+    }
 
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -18,7 +26,17 @@ struct HistoryView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 4)
-                .padding(.bottom, tabClearance)
+                // The list stops above the CTA rather than scrolling under it —
+                // the button is opaque and would clip the last card.
+                .padding(.bottom, tabClearance + (hasReadings ? ctaClearance : 0))
+            }
+            .overlay(alignment: .bottom) {
+                // Only once there are readings. The empty state carries its own CTA.
+                if hasReadings {
+                    PrimaryButton(title: "drink.title") { showReadingFlow = true }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, tabClearance)
+                }
             }
             .toolbar(.hidden, for: .navigationBar)
             .waypointDestinations(router)
@@ -44,6 +62,13 @@ struct HistoryView: View {
             }
         }
         .environment(router)
+        .fullScreenCover(isPresented: $showReadingFlow) {
+            BrewReadingFlow {
+                showReadingFlow = false
+                // A reading cast from here belongs at the top of the list.
+                Task { await historyStore.loadFirst() }
+            }
+        }
         .task { await historyStore.loadFirst() }
     }
 
@@ -93,7 +118,8 @@ struct HistoryView: View {
     private var header: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("tab.history")
+                // Its own title, not the tab's one-word label.
+                Text("history.title")
                     .font(Lettering.displayMedium(24))
                     .foregroundStyle(Pigment.cream)
                 Text("history.subtitle")
@@ -116,12 +142,14 @@ struct HistoryView: View {
     }
 
     // The design only draws the Chats empty state; this mirrors its pattern for
-    // History (no CTA — the tab can't start a reading, that lives on Brew).
+    // History, CTA included — a first reading starts from the same button as
+    // every later one.
     private var emptyState: some View {
         EmptyState(
             icon: "book.closed",
             headline: "history.empty.title",
-            subtitle: "history.empty.subtitle"
+            subtitle: "history.empty.subtitle",
+            cta: (title: "drink.title", action: { showReadingFlow = true })
         )
     }
 }

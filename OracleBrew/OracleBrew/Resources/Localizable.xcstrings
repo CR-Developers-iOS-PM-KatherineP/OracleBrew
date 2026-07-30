@@ -1991,6 +1991,22 @@
         }
       }
     },
+    "history.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سجل القراءات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading History"
+          }
+        }
+      }
+    },
     "intention.horizon": {
       "localizations": {
         "ar": {
