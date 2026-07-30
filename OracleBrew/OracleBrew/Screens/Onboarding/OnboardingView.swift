@@ -148,7 +148,16 @@ struct OnboardingView: View {
         guard let date = Calendar(identifier: .gregorian).date(from: components) else {
             return "\(day)/\(month)/\(year)"
         }
-        return date.formatted(.dateTime.day().month(.wide).year())
+        // Gregorian, pinned, like the wheels the day came off. `.dateTime` alone
+        // takes the locale's calendar, and under ar_SA that reformats a birthday
+        // picked as 12 May 1994 into 1 Dhu al-Hijjah 1414 — a date the user never
+        // chose, next to a wheel that only offers Gregorian years. The month name
+        // still translates; the locale carries that.
+        var style = Date.FormatStyle(locale: .current,
+                                     calendar: Calendar(identifier: .gregorian),
+                                     timeZone: .current)
+        style = style.day().month(.wide).year()
+        return date.formatted(style)
     }
 
     private func interestsEcho(_ picked: Set<String>) -> String {
