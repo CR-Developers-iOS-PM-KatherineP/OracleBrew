@@ -34,11 +34,29 @@ struct BrewReadingFlow: View {
             }
         }
         .environment(draft)
-        .alert("reading.failed.title", isPresented: showReadingError) {
+        // Its own toast layer, because this flow is presented as a
+        // fullScreenCover — a separate presentation layer above the root's
+        // hierarchy. The one in Atrium draws underneath it, so every toast raised
+        // in here (a saved card, a photo that wouldn't load) was invisible.
+        .toastLayer()
+        // "No cup in that photo" gets its own words. It is the one failure here
+        // the user can fix, and the generic "something went wrong" told them
+        // nothing about how — the flow has already dropped them back on the photo
+        // step, so the message only has to say what to change.
+        .alert(readingErrorTitle, isPresented: showReadingError) {
             Button("common.ok", role: .cancel) {}
         } message: {
-            Text(readingError?.isOffline == true ? "reading.failed.offline" : "reading.failed.message")
+            Text(readingErrorMessage)
         }
+    }
+
+    private var readingErrorTitle: LocalizedStringKey {
+        readingError?.isCupNotFound == true ? "reading.no_cup.title" : "reading.failed.title"
+    }
+
+    private var readingErrorMessage: LocalizedStringKey {
+        if readingError?.isCupNotFound == true { return "reading.no_cup.message" }
+        return readingError?.isOffline == true ? "reading.failed.offline" : "reading.failed.message"
     }
 
     private var showReadingError: Binding<Bool> {

@@ -22,6 +22,9 @@ struct ReadingLoadingView: View {
     private static let captionCentreOffset: CGFloat = 192
 
     @State private var spinning = false
+    /// The backend's circular crop, once Vision has found the cup. Until then the
+    /// user's own photo stands in, so the orb is never empty.
+    @State private var cropURL: String?
 
     var body: some View {
         ZStack {
@@ -47,7 +50,9 @@ struct ReadingLoadingView: View {
         .task {
             spinning = true
             do {
-                let (reading, id) = try await service.generate(from: draft)
+                let (reading, id) = try await service.generate(from: draft) { url in
+                    cropURL = url
+                }
                 draft.reading = reading
                 draft.readingID = id
                 onDone()
@@ -92,7 +97,14 @@ struct ReadingLoadingView: View {
 
     private var cupPhoto: some View {
         Group {
-            if let photo = draft.photo {
+            if let cropURL {
+                // The crop the backend cut: the rim inwards, transparent outside,
+                // already circular. Fitted and on a clear backing so it isn't
+                // cropped a second time or boxed by a fill — the design shows the
+                // detected cup here, not the whole shot.
+                RemoteImage(urlString: cropURL, cornerRadius: Self.photoSize / 2,
+                            contentMode: .fit, backing: .clear)
+            } else if let photo = draft.photo {
                 Image(uiImage: photo).resizable().scaledToFill()
             } else {
                 Image("SampleCupCard").resizable().scaledToFill()
