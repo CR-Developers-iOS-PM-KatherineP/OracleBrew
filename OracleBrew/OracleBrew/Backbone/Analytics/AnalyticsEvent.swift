@@ -79,6 +79,14 @@ enum AnalyticsEvent {
     /// Parameterised with the user's answer — see `Parameter.attStatus`.
     case trackingPromptAnswered
 
+    // MARK: Attribution
+
+    /// Whether AppsFlyer managed to tell us where the install came from. Worth
+    /// an event of its own: when attribution silently fails, every downstream
+    /// campaign number is wrong and nothing else says so.
+    case conversionSucceeded
+    case conversionFailed
+
     /// The name that goes on the wire. Fixed by the event spec; do not edit.
     var name: String {
         switch self {
@@ -134,7 +142,19 @@ enum AnalyticsEvent {
         case .accountDeleted: "account_delete"
 
         case .trackingPromptAnswered: "att_answered"
+
+        case .conversionSucceeded: "af_conversion_success"
+        case .conversionFailed: "af_conversion_fail"
         }
+    }
+
+    /// Purchase names are not an enum case, because `logPurchase` takes the name
+    /// from its caller — the same sale is reported under whatever the product
+    /// spec asks for. One name covers every completion: not per plan, not per
+    /// paywall. Splitting it is a decision to make deliberately, and it splits
+    /// the history behind it.
+    enum Purchase {
+        static let subscriptionDone = "subscription_done"
     }
 
     /// Parameter keys, so call sites don't spell them out either.

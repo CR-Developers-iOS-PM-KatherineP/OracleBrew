@@ -18,5 +18,26 @@
 		<key>UIColorName</key>
 		<string>LaunchBackground</string>
 	</dict>
+
+	<!-- Facebook's SDK asserts at launch when these are absent, so they ship as
+	     placeholders and the sink stays off until they are real (see
+	     AnalyticsConfig.isFacebookReady). They have to live in a base plist:
+	     with GENERATE_INFOPLIST_FILE = YES, Xcode only maps a known allowlist of
+	     INFOPLIST_KEY_* settings and would drop these. -->
+	<key>FacebookAppID</key>
+	<string>FACEBOOK_APP_ID</string>
+	<key>FacebookClientToken</key>
+	<string>FACEBOOK_CLIENT_TOKEN</string>
+	<key>FacebookDisplayName</key>
+	<string>OracleBrew</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fbFACEBOOK_APP_ID</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
