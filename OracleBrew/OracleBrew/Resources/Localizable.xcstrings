@@ -5691,7 +5691,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ancient moon wisdom for clarity, emotional insight, and guidance through life's turning points."
+            "value": "Ancient moon wisdom for clarity, insight, and guidance at life's turning points."
           }
         }
       }
@@ -6774,6 +6774,38 @@
         }
       }
     },
+    "photo.denied.message": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسمح بالوصول إلى الكاميرا من الإعدادات لتصوير فنجانك، أو ارفع صورة من معرضك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow camera access in Settings to take a photo of your cup, or upload one from your gallery."
+          }
+        }
+      }
+    },
+    "photo.denied.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الوصول إلى الكاميرا مغلق"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera access is off"
+          }
+        }
+      }
+    },
     "photo.import_failed": {
       "comment": "Toast when a picked photo can't be read.",
       "localizations": {
@@ -6947,6 +6979,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Take a photo of your cup"
+          }
+        }
+      }
+    },
+    "photo.zone.open_settings": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "افتح الإعدادات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
           }
         }
       }
