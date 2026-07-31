@@ -229,7 +229,7 @@ struct OracleChatView: View {
                     .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text((draft?.readingDate ?? .now).formatted(.dateTime.month(.wide).day().year()))
+                    Text((draft?.readingDate ?? .now).readingLabel)
                         .font(Lettering.body(10))
                         .textCase(.uppercase)
                         .foregroundStyle(Pigment.cream.opacity(0.4))

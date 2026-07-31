@@ -19,3 +19,19 @@ enum APIDate {
         return fractional.date(from: string) ?? plain.date(from: string)
     }
 }
+
+extension Date {
+    /// "July 30, 2026" — the way a reading's date is written on cards.
+    ///
+    /// Gregorian, pinned. A bare `.formatted(.dateTime…)` takes the locale's
+    /// calendar, and under ar_SA that rewrote July 30 as 16 Safar 1448 — a
+    /// Hijri date next to readings the app itself stamps in Gregorian. The
+    /// month name still translates; the locale carries that.
+    var readingLabel: String {
+        var style = Date.FormatStyle(locale: .current,
+                                     calendar: Calendar(identifier: .gregorian),
+                                     timeZone: .current)
+        style = style.day().month(.wide).year()
+        return formatted(style)
+    }
+}

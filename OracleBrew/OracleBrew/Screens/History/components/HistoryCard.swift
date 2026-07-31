@@ -12,9 +12,7 @@ struct HistoryCard: View {
     @Environment(\.layoutDirection) private var layoutDirection
 
 
-    private var dateLabel: String {
-        item.date.formatted(.dateTime.month(.wide).day().year())
-    }
+    private var dateLabel: String { item.date.readingLabel }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {

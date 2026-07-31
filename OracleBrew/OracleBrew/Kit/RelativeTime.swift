@@ -13,7 +13,13 @@ enum RelativeTime {
         case ..<604_800:
             return String(localized: "time.days \(Int(seconds / 86_400))")
         default:
-            return date.formatted(.dateTime.day().month(.abbreviated))
+            // Gregorian, pinned — the locale's calendar would print a Hijri
+            // day under ar_SA next to timestamps the app keeps in Gregorian.
+            var style = Date.FormatStyle(locale: .current,
+                                         calendar: Calendar(identifier: .gregorian),
+                                         timeZone: .current)
+            style = style.day().month(.abbreviated)
+            return date.formatted(style)
         }
     }
 }
