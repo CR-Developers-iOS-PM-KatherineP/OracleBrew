@@ -149,6 +149,9 @@ final class ChatSessionStore {
 
     func loadList() async { await list.loadFirst() }
 
+    /// The quiet variant — rows swap in place, no loading flash.
+    func refreshList() async { await list.refresh() }
+
     /// Deletes a chat: the row goes at once, the request follows. On a real
     /// failure the list is reloaded — the server knows the truth — and false
     /// comes back so the screen can say so. A 405 is the backend not having

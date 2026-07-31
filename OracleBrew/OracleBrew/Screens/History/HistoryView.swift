@@ -68,15 +68,17 @@ struct HistoryView: View {
             BrewReadingFlow {
                 showReadingFlow = false
                 // A reading cast from here belongs at the top of the list.
-                Task { await historyStore.loadFirst() }
+                Task { await historyStore.refresh() }
             }
         }
-        .task { await historyStore.loadFirst() }
+        // Quiet refreshes, both of them — loadFirst tears the list down to a
+        // spinner, and re-entering the tab made the tiles jump.
+        .task { await historyStore.refresh() }
         .onChange(of: router.path.isEmpty) { _, atRoot in
             // Back at the list — refresh so a chat begun from a replay's Ask
             // Your Oracle shows its chip (the server sets has_chat the moment
             // the chat exists).
-            if atRoot { Task { await historyStore.loadFirst() } }
+            if atRoot { Task { await historyStore.refresh() } }
         }
     }
 
@@ -109,8 +111,12 @@ struct HistoryView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    Button(role: .destructive) { itemToDelete = item } label: {
-                        Label("common.delete", systemImage: "trash")
+                    // An empty builder means no swipe at all — gated until the
+                    // backend's DELETE goes live.
+                    if FeatureGates.deletion {
+                        Button(role: .destructive) { itemToDelete = item } label: {
+                            Label("common.delete", systemImage: "trash")
+                        }
                     }
                 }
                 .task { await historyStore.loadMoreIfNeeded(currentItem: item) }

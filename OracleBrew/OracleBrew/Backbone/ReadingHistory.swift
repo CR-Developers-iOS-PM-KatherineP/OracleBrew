@@ -36,6 +36,9 @@ final class ReadingHistoryStore {
 
     func loadFirst() async { await list.loadFirst() }
 
+    /// The quiet variant — rows swap in place, no loading flash.
+    func refresh() async { await list.refresh() }
+
     func loadMoreIfNeeded(currentItem: HistoryItem) async {
         await list.loadMoreIfNeeded(currentItem: currentItem)
     }

@@ -66,18 +66,20 @@ struct ChatsView: View {
         .fullScreenCover(isPresented: $showChatFlow) {
             OracleChatEntryFlow {
                 showChatFlow = false
-                Task { await chatStore.loadList() }
+                Task { await chatStore.refreshList() }
             }
         }
+        // Quiet refreshes, both of them — loadFirst tears the list down to a
+        // spinner, and re-entering the tab made the tiles jump.
         .task {
-            await chatStore.loadList()
+            await chatStore.refreshList()
             // The rows badge themselves from History's readings.
             if historyStore.items.isEmpty { await historyStore.loadFirst() }
         }
         .onChange(of: router.path.isEmpty) { _, atRoot in
             // Returning to the list — refresh so the unread dot clears (the
             // backend marked the thread read when it was opened).
-            if atRoot { Task { await chatStore.loadList() } }
+            if atRoot { Task { await chatStore.refreshList() } }
         }
     }
 
@@ -110,8 +112,12 @@ struct ChatsView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    Button(role: .destructive) { chatToDelete = summary } label: {
-                        Label("common.delete", systemImage: "trash")
+                    // An empty builder means no swipe at all — gated until the
+                    // backend's DELETE goes live.
+                    if FeatureGates.deletion {
+                        Button(role: .destructive) { chatToDelete = summary } label: {
+                            Label("common.delete", systemImage: "trash")
+                        }
                     }
                 }
                 .task { await chatStore.loadMoreIfNeeded(currentItem: summary) }
