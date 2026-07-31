@@ -46,11 +46,13 @@ struct HistoryRepository {
         return (ReadingMapper.reading(dto.result), dto.cupImage, APIDate.parse(dto.createdAt))
     }
 
-    /// Deletes the reading — and, per the agreed backend contract, the chat
-    /// that grew from it: a chat without its reading is a stump.
+    /// Deletes the reading — and, per the backend contract, the chat that grew
+    /// from it: a chat without its reading is a stump. Rides the history
+    /// namespace, not readings/ — and only completed/failed readings qualify
+    /// (a draft answers 404), which is fine: drafts never reach the list.
     func delete(readingID: Int) async throws {
         try await emissary.performVoid(
-            EmissaryRequest(path: "readings/\(readingID)/", method: .delete)
+            EmissaryRequest(path: "history/\(readingID)/", method: .delete)
         )
     }
 }

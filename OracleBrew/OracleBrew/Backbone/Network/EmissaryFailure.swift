@@ -18,12 +18,6 @@ enum EmissaryFailure: Error {
     var isAuthProblem: Bool { if case .unauthorized = self { true } else { false } }
 
     var isOffline: Bool { if case .offline = self { true } else { false } }
-
-    /// 405 — the endpoint isn't implemented on the backend yet. Deletion ships
-    /// client-first; this is how the client tells "not yet" from "went wrong".
-    var isUnsupported: Bool {
-        if case .server(let status) = self { status == 405 } else { false }
-    }
 }
 
 extension EmissaryFailure {

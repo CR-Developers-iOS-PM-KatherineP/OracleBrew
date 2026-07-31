@@ -152,18 +152,14 @@ final class ChatSessionStore {
     /// The quiet variant — rows swap in place, no loading flash.
     func refreshList() async { await list.refresh() }
 
-    /// Deletes a chat: the row goes at once, the request follows. On a real
-    /// failure the list is reloaded — the server knows the truth — and false
-    /// comes back so the screen can say so. A 405 is the backend not having
-    /// shipped deletion yet; the local removal stands so the flow already
-    /// works, and the same code goes live the day the endpoint does.
+    /// Deletes a chat: the row goes at once, the request follows. On failure
+    /// the list is reloaded — the server knows the truth — and false comes
+    /// back so the screen can say so.
     func delete(_ summary: ChatSummary) async -> Bool {
         list.remove(id: summary.id)
         threads.removeAll { $0.backendID == summary.id }
         do {
             try await repository.delete(chatID: summary.id)
-            return true
-        } catch let failure as EmissaryFailure where failure.isUnsupported {
             return true
         } catch {
             await loadList()
