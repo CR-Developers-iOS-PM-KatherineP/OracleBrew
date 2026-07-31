@@ -46,6 +46,13 @@ struct HistoryRepository {
         return (ReadingMapper.reading(dto.result), dto.cupImage, APIDate.parse(dto.createdAt))
     }
 
+    /// Deletes the reading — and, per the agreed backend contract, the chat
+    /// that grew from it: a chat without its reading is a stump.
+    func delete(readingID: Int) async throws {
+        try await emissary.performVoid(
+            EmissaryRequest(path: "readings/\(readingID)/", method: .delete)
+        )
+    }
 }
 
 enum HistoryMapper {

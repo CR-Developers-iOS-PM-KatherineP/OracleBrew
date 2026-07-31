@@ -478,6 +478,22 @@
         }
       }
     },
+    "chats.delete.confirm": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أتريد حذف هذه المحادثة؟ ستختفي ردود العرّاف نهائيًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this chat? The oracle’s replies will be gone for good."
+          }
+        }
+      }
+    },
     "chats.empty": {
       "extractionState": "stale",
       "localizations": {
@@ -626,6 +642,22 @@
         }
       }
     },
+    "common.delete": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
     "common.done": {
       "localizations": {
         "ar": {
@@ -671,6 +703,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Try Again"
+          }
+        }
+      }
+    },
+    "delete.failed": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذّر الحذف. حاول مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t delete. Try again."
           }
         }
       }
@@ -1926,6 +1974,22 @@
         }
       }
     },
+    "history.delete.confirm": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أتريد حذف هذه القراءة؟ سيختفي فنجانها وتفسيرها نهائيًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this reading? Its cup and interpretation will be gone for good."
+          }
+        }
+      }
+    },
     "history.empty": {
       "extractionState": "stale",
       "localizations": {
@@ -2422,6 +2486,7 @@
       }
     },
     "onb.children.no": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2438,6 +2503,7 @@
       }
     },
     "onb.children.planning": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2454,6 +2520,7 @@
       }
     },
     "onb.children.yes": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2470,6 +2537,7 @@
       }
     },
     "onb.gender.female": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2486,6 +2554,7 @@
       }
     },
     "onb.gender.male": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2502,6 +2571,7 @@
       }
     },
     "onb.gender.opt_out": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {

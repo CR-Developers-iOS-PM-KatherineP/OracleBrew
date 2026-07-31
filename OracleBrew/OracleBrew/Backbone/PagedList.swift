@@ -33,6 +33,14 @@ final class PagedList<Item: Identifiable> {
         await fetchNextPage(replacing: true)
     }
 
+    /// Drops a row locally — an optimistic delete. Phase follows, so a list
+    /// emptied this way falls into its empty state rather than keeping a stale
+    /// content phase around.
+    func remove(id: Item.ID) {
+        items.removeAll { $0.id == id }
+        if case .content = phase { phase = .content(items) }
+    }
+
     /// Called as each row appears; only the last one pulls the next page.
     func loadMoreIfNeeded(currentItem: Item) async {
         guard canLoadMore, !isLoadingMore, currentItem.id == items.last?.id else { return }

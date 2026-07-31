@@ -44,4 +44,21 @@ final class ReadingHistoryStore {
     func reading(for item: HistoryItem) async -> Reading? {
         try? await repository.readingDetail(id: item.id)
     }
+
+    /// Deletes a reading: the card goes at once, the request follows. On a real
+    /// failure the list is reloaded and false comes back so the screen can say
+    /// so. A 405 is the backend not having shipped deletion yet; the local
+    /// removal stands, and the same code goes live the day the endpoint does.
+    func delete(_ item: HistoryItem) async -> Bool {
+        list.remove(id: item.id)
+        do {
+            try await repository.delete(readingID: item.id)
+            return true
+        } catch let failure as EmissaryFailure where failure.isUnsupported {
+            return true
+        } catch {
+            await loadFirst()
+            return false
+        }
+    }
 }

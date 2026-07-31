@@ -6,6 +6,8 @@ struct HistoryView: View {
     @Bindable var router: Pathfinder
 
     @State private var showReadingFlow = false
+    /// Card awaiting the "really delete?" confirmation.
+    @State private var itemToDelete: HistoryItem?
     private let tabClearance: CGFloat = 96
     /// Button height plus the gap under the last card.
     private let ctaClearance: CGFloat = 72
@@ -70,6 +72,12 @@ struct HistoryView: View {
             }
         }
         .task { await historyStore.loadFirst() }
+        .onChange(of: router.path.isEmpty) { _, atRoot in
+            // Back at the list — refresh so a chat begun from a replay's Ask
+            // Your Oracle shows its chip (the server sets has_chat the moment
+            // the chat exists).
+            if atRoot { Task { await historyStore.loadFirst() } }
+        }
     }
 
     @ViewBuilder
@@ -87,23 +95,57 @@ struct HistoryView: View {
         }
     }
 
+    // A List for the same reason as the Chats tab: swipe-to-delete lives on
+    // List rows, and it mirrors itself under RTL for free.
     private func list(_ items: [HistoryItem]) -> some View {
-        ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: 10) {
-                ForEach(items) { item in
-                    HistoryCard(item: item, onOpenChat: {
-                        router.path.append(chatStore.thread(for: item.teller, context: makeDraft(item)))
-                    })
-                    .contentShape(Rectangle())
-                    .onTapGesture { router.path.append(item) }
-                    .task { await historyStore.loadMoreIfNeeded(currentItem: item) }
+        List {
+            ForEach(items) { item in
+                HistoryCard(item: item, onOpenChat: {
+                    router.path.append(chatStore.thread(for: item.teller, context: makeDraft(item)))
+                })
+                .contentShape(Rectangle())
+                .onTapGesture { router.path.append(item) }
+                .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    Button(role: .destructive) { itemToDelete = item } label: {
+                        Label("common.delete", systemImage: "trash")
+                    }
                 }
-                if historyStore.isLoadingMore {
-                    ProgressView().tint(Pigment.accent).padding(.vertical, 12)
+                .task { await historyStore.loadMoreIfNeeded(currentItem: item) }
+            }
+            if historyStore.isLoadingMore {
+                ProgressView()
+                    .tint(Pigment.accent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+        .contentMargins(.top, 12, for: .scrollContent)
+        .confirmationDialog("history.delete.confirm", isPresented: confirmingDelete,
+                            titleVisibility: .visible) {
+            Button("common.delete", role: .destructive) {
+                guard let item = itemToDelete else { return }
+                Task {
+                    if await historyStore.delete(item) {
+                        Resonance.success()
+                    } else {
+                        Resonance.failure()
+                        Tidings.shared.say("delete.failed")
+                    }
                 }
             }
-            .padding(.top, 12)
         }
+    }
+
+    private var confirmingDelete: Binding<Bool> {
+        Binding(get: { itemToDelete != nil }, set: { if !$0 { itemToDelete = nil } })
     }
 
     private func makeDraft(_ item: HistoryItem) -> ReadingDraft {
@@ -112,6 +154,8 @@ struct HistoryView: View {
         draft.teller = item.teller
         draft.topic = item.topic
         draft.readingID = item.id
+        draft.cupImageURL = item.cupImageURL
+        draft.readingDate = item.date
         return draft
     }
 
@@ -155,8 +199,9 @@ struct HistoryView: View {
 }
 
 /// Fetches the full reading for a history row, then hands it to the Result
-/// screen for verbatim replay.
-private struct HistoryReplayView: View {
+/// screen for verbatim replay. Reached from History, and from a reading-born
+/// chat's cup card in the Chats tab.
+struct HistoryReplayView: View {
     let item: HistoryItem
     let onAskOracle: () -> Void
     let onClose: () -> Void
@@ -172,6 +217,8 @@ private struct HistoryReplayView: View {
         draft.topic = item.topic
         draft.readingID = item.id
         draft.readingHasChat = item.hasChat
+        draft.cupImageURL = item.cupImageURL
+        draft.readingDate = item.date
         return draft
     }
 

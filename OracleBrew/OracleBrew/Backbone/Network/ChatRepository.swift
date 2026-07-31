@@ -139,6 +139,14 @@ struct ChatRepository {
         throw EmissaryFailure.server(statusCode: 504)   // timed out waiting
     }
 
+    /// Deletes the chat. The reading it grew from, if any, stays — the chat is
+    /// the reading's appendage, not the other way round.
+    func delete(chatID: Int) async throws {
+        try await emissary.performVoid(
+            EmissaryRequest(path: "chats/\(chatID)/", method: .delete)
+        )
+    }
+
     /// Marks the thread read without pulling the whole history.
     func markRead(chatID: Int) async throws {
         try await emissary.performVoid(
