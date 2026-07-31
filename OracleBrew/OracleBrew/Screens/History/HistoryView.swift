@@ -139,8 +139,7 @@ struct HistoryView: View {
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .contentMargins(.top, 12, for: .scrollContent)
-        .confirmationDialog("history.delete.confirm", isPresented: confirmingDelete,
-                            titleVisibility: .visible) {
+        .alert("common.delete", isPresented: confirmingDelete) {
             Button("common.delete", role: .destructive) {
                 guard let item = itemToDelete else { return }
                 Task {
@@ -152,6 +151,9 @@ struct HistoryView: View {
                     }
                 }
             }
+            Button("common.cancel", role: .cancel) {}
+        } message: {
+            Text("history.delete.confirm")
         }
     }
 

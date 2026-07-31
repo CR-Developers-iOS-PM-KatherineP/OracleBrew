@@ -77,8 +77,13 @@ struct ChatsView: View {
         // spinner, and re-entering the tab made the tiles jump.
         .task {
             await chatStore.refreshList()
-            // The rows badge themselves from History's readings.
-            if historyStore.items.isEmpty { await historyStore.loadFirst() }
+            // The rows badge themselves from History's readings, and a chat's
+            // cup card resolves its replay from them too — so History must be
+            // as fresh as the chats. Refreshing only when empty left a reading
+            // made after the first load invisible here: its row wore the
+            // placeholder glyph and its card had nowhere to lead until the app
+            // restarted.
+            await historyStore.refresh()
         }
         .onChange(of: router.path.isEmpty) { _, atRoot in
             // Returning to the list — refresh so the unread dot clears (the
@@ -142,8 +147,7 @@ struct ChatsView: View {
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .contentMargins(.top, 12, for: .scrollContent)
-        .confirmationDialog("chats.delete.confirm", isPresented: confirmingDelete,
-                            titleVisibility: .visible) {
+        .alert("common.delete", isPresented: confirmingDelete) {
             Button("common.delete", role: .destructive) {
                 guard let summary = chatToDelete else { return }
                 Task {
@@ -155,6 +159,9 @@ struct ChatsView: View {
                     }
                 }
             }
+            Button("common.cancel", role: .cancel) {}
+        } message: {
+            Text("chats.delete.confirm")
         }
     }
 
