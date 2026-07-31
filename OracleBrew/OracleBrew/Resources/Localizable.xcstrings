@@ -7149,6 +7149,54 @@
         }
       }
     },
+    "profile.dob.day": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DD"
+          }
+        }
+      }
+    },
+    "profile.dob.month": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شهر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MM"
+          }
+        }
+      }
+    },
+    "profile.dob.year": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سنة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YYYY"
+          }
+        }
+      }
+    },
     "profile.employment": {
       "localizations": {
         "ar": {
