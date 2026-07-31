@@ -15,11 +15,19 @@ enum OnboardingControl {
 /// One tappable answer in an `.options` step.
 struct OnboardingChoice: Identifiable {
     let id: String
-    let label: LocalizedStringKey
-    /// Shown in the chat once picked — the design echoes the plain label.
-    let echo: String
+    /// Catalog key, not a `LocalizedStringKey`, because the answer is needed
+    /// both as a view title and as a plain string — the echo has to be resolved,
+    /// and a hardcoded English echo is how the Arabic build ended up answering
+    /// its own Arabic questions in English.
+    let labelKey: String
     /// The design plays the opt-out answer down: dark fill, not the gradient.
     var isNeutral = false
+
+    var label: LocalizedStringKey { LocalizedStringKey(labelKey) }
+
+    /// Shown in the chat once picked, and again in the profile summary — the
+    /// design echoes the plain label, in the language it was tapped in.
+    var echo: String { String(localized: String.LocalizationValue(stringLiteral: labelKey)) }
 }
 
 /// One question: the oracle's lines, then the control that answers them.
@@ -55,10 +63,10 @@ enum OnboardingScript {
             // The reaction carries the name, so the flow builds it.
             question: "onb.q.gender",
             control: .options([
-                OnboardingChoice(id: Identity.ratherNot.rawValue, label: "onb.gender.opt_out",
-                                 echo: "Prefer not to say", isNeutral: true),
-                OnboardingChoice(id: Identity.female.rawValue, label: "onb.gender.female", echo: "Female"),
-                OnboardingChoice(id: Identity.male.rawValue, label: "onb.gender.male", echo: "Male")
+                OnboardingChoice(id: Identity.ratherNot.rawValue, labelKey: "onb.gender.opt_out",
+                                 isNeutral: true),
+                OnboardingChoice(id: Identity.female.rawValue, labelKey: "onb.gender.female"),
+                OnboardingChoice(id: Identity.male.rawValue, labelKey: "onb.gender.male")
             ])
         ),
         OnboardingStep(
@@ -92,10 +100,9 @@ enum OnboardingScript {
             id: "children",
             question: "onb.q.children",
             control: .options([
-                OnboardingChoice(id: ChildrenStatus.have.rawValue, label: "onb.children.yes", echo: "Yes"),
-                OnboardingChoice(id: ChildrenStatus.none.rawValue, label: "onb.children.no", echo: "No"),
-                OnboardingChoice(id: ChildrenStatus.planning.rawValue, label: "onb.children.planning",
-                                 echo: "Planning")
+                OnboardingChoice(id: ChildrenStatus.have.rawValue, labelKey: "onb.children.yes"),
+                OnboardingChoice(id: ChildrenStatus.none.rawValue, labelKey: "onb.children.no"),
+                OnboardingChoice(id: ChildrenStatus.planning.rawValue, labelKey: "onb.children.planning")
             ])
         ),
         OnboardingStep(

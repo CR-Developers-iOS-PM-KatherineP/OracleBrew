@@ -72,6 +72,32 @@ final class CupCamera {
         }
     }
 
+    /// Re-reads the permission and corrects the phase.
+    ///
+    /// Needed because permission can change while the app is in the background:
+    /// revoked in Settings, the session is dead but `phase` still says `.running`,
+    /// and `prepare()` returns early on exactly that — so the preview stayed a
+    /// black rectangle with no explanation. Granted in Settings, the opposite:
+    /// the screen was stuck on the denied message with a working camera behind it.
+    func revalidate() async {
+        #if targetEnvironment(simulator)
+        return
+        #else
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            // Came back with access: drop the denied state so prepare() runs.
+            guard phase == .denied else { return }
+            phase = .idle
+            await prepare()
+        case .denied, .restricted:
+            stop()
+            phase = .denied
+        default:
+            break
+        }
+        #endif
+    }
+
     /// Wires the camera into the session. Runs once; after that the session is
     /// only started and stopped.
     private func configure() async -> Bool {

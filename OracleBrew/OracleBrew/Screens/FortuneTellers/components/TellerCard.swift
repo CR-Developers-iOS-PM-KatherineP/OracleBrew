@@ -137,7 +137,11 @@ struct TellerCard: View {
     private var viewProfileButton: some View {
         Button(action: onViewProfile) {
             Text("teller.view_profile")
-                .font(Lettering.body(8))
+                // 12, not the design's 8: at 8 the call to action was set smaller
+                // than the blurb above it and read as a caption. The pill stays
+                // 24pt and the tap target 44pt, so only the glyphs grow — the
+                // card's height budget is untouched.
+                .font(Lettering.body(12))
                 .foregroundStyle(Pigment.accent)
                 .frame(maxWidth: .infinity)
                 .frame(height: 24)

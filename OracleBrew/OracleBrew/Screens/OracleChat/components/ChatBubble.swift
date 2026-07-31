@@ -18,7 +18,7 @@ struct ChatBubble: View {
         HStack(spacing: 0) {
             if isUser { Spacer(minLength: 44) }
 
-            Text(message.text)
+            Text(message.text.oracleProse)
                 .font(Lettering.bodyMedium(14))
                 .foregroundStyle(Pigment.cream)
                 .lineSpacing(3)

@@ -32,8 +32,14 @@ final class Tidings {
 }
 
 extension View {
-    /// Hosts the toast. Applied once, at the app's root, so a toast survives the
-    /// screen that raised it going away.
+    /// Hosts the toast, so one survives the screen that raised it going away.
+    ///
+    /// Applied at the app's root **and once per full-screen presentation**. A
+    /// `fullScreenCover` is its own presentation layer, drawn above the
+    /// presenter's whole hierarchy — the root's overlay included — so a toast
+    /// raised from inside a cover renders behind it and is never seen. Applying
+    /// it more than once is safe: they all read the same singleton, and only the
+    /// topmost layer is on screen.
     func toastLayer() -> some View {
         overlay(alignment: .top) { ToastCapsule() }
     }
@@ -56,9 +62,21 @@ private struct ToastCapsule: View {
                     // Top, not bottom: every screen carries something along its
                     // bottom edge — the floating tab bar, an action row, the
                     // chat's input — and a capsule down there lands on one of
-                    // them. Cleared past the tallest header (the flow's title,
-                    // subtitle and step dots) so it sits over content instead.
-                    .padding(.top, 150)
+                    // them.
+                    //
+                    // Measured, not guessed: this overlay aligns to the *safe
+                    // area* top, so the offset stacks on top of it. A plain title
+                    // header ends around 100pt from the screen's top and the
+                    // inset is ~62, which puts the capsule just under the title at
+                    // 48 — it was 150, then 110, both of which left it stranded
+                    // mid-content.
+                    //
+                    // No single number clears every header: on a flow step, whose
+                    // header carries a subtitle and step dots down to ~133pt, the
+                    // capsule now overlaps them. That is the deliberate trade —
+                    // three seconds of a capsule over a subtitle beats a
+                    // confirmation nobody connects to what they just did.
+                    .padding(.top, 48)
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
         }

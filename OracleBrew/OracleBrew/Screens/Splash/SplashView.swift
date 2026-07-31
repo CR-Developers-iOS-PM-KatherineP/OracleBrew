@@ -27,6 +27,9 @@ struct SplashView: View {
         .url(forResource: "splash", withExtension: "mp4")
         .map { AVPlayer(url: $0) }
     @State private var started = false
+    /// Held so the sequence can outlive the `task(id: scenePhase)` that starts
+    /// it — see the comment where it's assigned.
+    @State private var sequence: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -63,13 +66,20 @@ struct SplashView: View {
             started = true
             Tally.shared.track(.splashShown)
 
-            let status = await Beacon.request()
-            Tally.shared.track(.trackingPromptAnswered,
-                               parameters: [AnalyticsEvent.Parameter.attStatus: status])
-
-            await playClip()
-            onFinish()
+            // In an unstructured Task on purpose. Presenting the ATT dialog takes
+            // the scene inactive and back, and `task(id:)` cancels its body on an
+            // id change — which cancelled the playback awaits from under us, so
+            // the clip was skipped and onboarding appeared the instant the prompt
+            // was answered. An unstructured Task doesn't inherit that cancellation.
+            sequence = Task {
+                let status = await Beacon.request()
+                Tally.shared.track(.trackingPromptAnswered,
+                                   parameters: [AnalyticsEvent.Parameter.attStatus: status])
+                await playClip()
+                onFinish()
+            }
         }
+        .onDisappear { sequence?.cancel() }
     }
 
     @ViewBuilder

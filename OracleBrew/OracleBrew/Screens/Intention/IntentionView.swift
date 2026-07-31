@@ -58,31 +58,34 @@ struct IntentionView: View {
                         }
                     }
                     .padding(.top, 20)
-                    .padding(.bottom, 110)
                 }
                 .scrollDismissesKeyboard(.interactively)
-            }
-            .padding(.horizontal, 20)
-
-            if draft.topic != nil {
-                VStack {
-                    Spacer()
-                    PrimaryButton(title: "flow.continue") {
-                        if !draft.question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            Tally.shared.track(.questionEntered)
+                // safeAreaInset, not a ZStack overlay with a reserved 110pt of
+                // bottom padding. As an overlay the button floated over the scroll
+                // content, and when the keyboard raised both of them it landed on
+                // the question field — the last row — and hid it. An inset is part
+                // of the ScrollView's own geometry: it contributes exactly its
+                // height to the content inset, so the focused field scrolls into
+                // the space that's left instead of under the button.
+                .safeAreaInset(edge: .bottom) {
+                    if draft.topic != nil {
+                        PrimaryButton(title: "flow.continue") {
+                            if !draft.question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                Tally.shared.track(.questionEntered)
+                            }
+                            onContinue()
                         }
-                        onContinue()
+                            .padding(.bottom, 8)
+                            .background(
+                                LinearGradient(colors: [Pigment.background.opacity(0), Pigment.background],
+                                               startPoint: .top, endPoint: .bottom)
+                                .frame(height: 120).allowsHitTesting(false),
+                                alignment: .bottom
+                            )
                     }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 8)
-                        .background(
-                            LinearGradient(colors: [Pigment.background.opacity(0), Pigment.background],
-                                           startPoint: .top, endPoint: .bottom)
-                            .frame(height: 120).allowsHitTesting(false),
-                            alignment: .bottom
-                        )
                 }
             }
+            .padding(.horizontal, 20)
         }
         .toolbar(.hidden, for: .navigationBar)
         .onAppear { Tally.shared.track(.intentionShown) }
@@ -121,6 +124,9 @@ struct IntentionView: View {
             TextEditor(text: text)
                 .font(Lettering.body(15))
                 .foregroundStyle(Pigment.cream)
+                // Without a tint the caret falls back to the system blue, which
+                // on this card looks like a stray artefact rather than a cursor.
+                .tint(Pigment.accent)
                 .scrollContentBackground(.hidden)
                 .focused($questionFocused)
                 .padding(.horizontal, 12)
@@ -128,6 +134,15 @@ struct IntentionView: View {
         }
         .frame(height: 90)
         .background(RoundedRectangle(cornerRadius: 20).fill(Pigment.card))
-        .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Pigment.accent.opacity(0.4), lineWidth: 1))
+        // The border carries the focus state: at rest it is the design's faint
+        // accent, and on focus it goes full strength and slightly thicker. A
+        // border that never changes leaves a tap on the field with no answer —
+        // which is what read as "the input isn't there".
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .strokeBorder(Pigment.accent.opacity(questionFocused ? 1 : 0.4),
+                              lineWidth: questionFocused ? 1.5 : 1)
+        )
+        .animation(.easeOut(duration: 0.15), value: questionFocused)
     }
 }

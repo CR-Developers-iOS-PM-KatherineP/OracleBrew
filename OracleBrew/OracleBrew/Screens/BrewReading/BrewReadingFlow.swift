@@ -34,11 +34,29 @@ struct BrewReadingFlow: View {
             }
         }
         .environment(draft)
-        .alert("reading.failed.title", isPresented: showReadingError) {
+        // Its own toast layer, because this flow is presented as a
+        // fullScreenCover — a separate presentation layer above the root's
+        // hierarchy. The one in Atrium draws underneath it, so every toast raised
+        // in here (a saved card, a photo that wouldn't load) was invisible.
+        .toastLayer()
+        // "No cup in that photo" gets its own words. It is the one failure here
+        // the user can fix, and the generic "something went wrong" told them
+        // nothing about how — the flow has already dropped them back on the photo
+        // step, so the message only has to say what to change.
+        .alert(readingErrorTitle, isPresented: showReadingError) {
             Button("common.ok", role: .cancel) {}
         } message: {
-            Text(readingError?.isOffline == true ? "reading.failed.offline" : "reading.failed.message")
+            Text(readingErrorMessage)
         }
+    }
+
+    private var readingErrorTitle: LocalizedStringKey {
+        readingError?.isCupNotFound == true ? "reading.no_cup.title" : "reading.failed.title"
+    }
+
+    private var readingErrorMessage: LocalizedStringKey {
+        if readingError?.isCupNotFound == true { return "reading.no_cup.message" }
+        return readingError?.isOffline == true ? "reading.failed.offline" : "reading.failed.message"
     }
 
     private var showReadingError: Binding<Bool> {
@@ -47,19 +65,25 @@ struct BrewReadingFlow: View {
 
     @ViewBuilder
     private func step(_ step: ReadingStep) -> some View {
+        // On the wizard steps the ✕ goes one step back, not out of the flow —
+        // the design's cross is a retreat, and killing three screens of
+        // progress from step four was how testers read it as a bug. Leaving
+        // stays one tap per step. The first step and the result keep ✕ as the
+        // exit: there is nothing behind the one, and un-reading a finished cup
+        // makes no sense on the other.
         switch step {
         case .tellers:
             FortuneTellersView(
                 onContinue: { path.append(ReadingStep.intention) },
                 onOpenProfile: { path.append($0) },
                 onBack: pop,
-                onClose: onClose
+                onClose: pop
             )
         case .intention:
             IntentionView(
                 onContinue: { path.append(ReadingStep.photo) },
                 onBack: pop,
-                onClose: onClose
+                onClose: pop
             )
         case .photo:
             // Random Cup shows a bundled cup photo rather than asking for one —
@@ -68,13 +92,13 @@ struct BrewReadingFlow: View {
                 RandomCupView(
                     onContinue: { path.append(ReadingStep.loading) },
                     onBack: pop,
-                    onClose: onClose
+                    onClose: pop
                 )
             } else {
                 PhotoUploadView(
                     onContinue: { path.append(ReadingStep.loading) },
                     onBack: pop,
-                    onClose: onClose
+                    onClose: pop
                 )
             }
         case .loading:

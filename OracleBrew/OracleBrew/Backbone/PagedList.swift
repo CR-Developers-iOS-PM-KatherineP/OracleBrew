@@ -33,6 +33,29 @@ final class PagedList<Item: Identifiable> {
         await fetchNextPage(replacing: true)
     }
 
+    /// Reloads the first page without tearing the screen down — for the quiet
+    /// refreshes on returning to a tab, where `loadFirst`'s flash of `.loading`
+    /// made the tiles jump. Rows swap in place; a failure keeps what's shown.
+    /// Falls back to a full first load when there's no content to preserve.
+    func refresh() async {
+        guard case .content = phase else { return await loadFirst() }
+        do {
+            let page = try await fetch(1)
+            items = page.items
+            canLoadMore = page.hasMore
+            nextPage = 2
+            phase = .content(items)
+        } catch {}
+    }
+
+    /// Drops a row locally — an optimistic delete. Phase follows, so a list
+    /// emptied this way falls into its empty state rather than keeping a stale
+    /// content phase around.
+    func remove(id: Item.ID) {
+        items.removeAll { $0.id == id }
+        if case .content = phase { phase = .content(items) }
+    }
+
     /// Called as each row appears; only the last one pulls the next page.
     func loadMoreIfNeeded(currentItem: Item) async {
         guard canLoadMore, !isLoadingMore, currentItem.id == items.last?.id else { return }

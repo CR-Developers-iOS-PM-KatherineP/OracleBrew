@@ -19,7 +19,7 @@ struct ChatThreadRow: View {
                 Text(summary.teller.name)
                     .font(Lettering.displayMedium(18))
                     .foregroundStyle(Pigment.cream)
-                Text(summary.preview)
+                Text(summary.preview.oracleProse)
                     .font(Lettering.body(12))
                     .foregroundStyle(Pigment.cream.opacity(0.6))
                     .lineLimit(1)

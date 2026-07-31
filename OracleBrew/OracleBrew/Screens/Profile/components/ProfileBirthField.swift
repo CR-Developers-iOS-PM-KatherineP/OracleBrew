@@ -25,11 +25,16 @@ struct ProfileBirthField: View {
             ProfileSectionLabel(title: "profile.dob")
 
             HStack(alignment: .top, spacing: 10) {
-                dropdown(.day, value: day.map(String.init), placeholder: "DD",
+                // Localized hints, not the latin DD/MM/YYYY — those read as
+                // English in the Arabic build.
+                dropdown(.day, value: day.map(String.init),
+                         placeholder: String(localized: "profile.dob.day"),
                          items: Array(1...daysInSelectedMonth)) { day = $0 }
-                dropdown(.month, value: month.map { Self.monthNames[$0 - 1] }, placeholder: "MM",
+                dropdown(.month, value: month.map { Self.monthNames[$0 - 1] },
+                         placeholder: String(localized: "profile.dob.month"),
                          items: Array(1...12), label: { Self.monthNames[$0 - 1] }) { month = $0 }
-                dropdown(.year, value: year.map(String.init), placeholder: "YYYY",
+                dropdown(.year, value: year.map(String.init),
+                         placeholder: String(localized: "profile.dob.year"),
                          items: Self.years) { year = $0 }
             }
             .zIndex(1)

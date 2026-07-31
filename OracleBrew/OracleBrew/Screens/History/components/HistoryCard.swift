@@ -12,9 +12,7 @@ struct HistoryCard: View {
     @Environment(\.layoutDirection) private var layoutDirection
 
 
-    private var dateLabel: String {
-        item.date.formatted(.dateTime.month(.wide).day().year())
-    }
+    private var dateLabel: String { item.date.readingLabel }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -30,7 +28,7 @@ struct HistoryCard: View {
                     topicChip(topic)
                 }
 
-                Text(item.preview)
+                Text(item.preview.oracleProse)
                     .font(Lettering.body(12))
                     .foregroundStyle(Pigment.cream.opacity(0.8))
                     .lineSpacing(6)

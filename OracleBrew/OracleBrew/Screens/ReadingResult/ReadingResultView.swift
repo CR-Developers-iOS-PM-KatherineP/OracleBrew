@@ -25,11 +25,15 @@ struct ReadingResultView: View {
                             .padding(.top, 20)
                             .padding(.bottom, 12)
                     }
+                    // Only the oracle button is pinned, per the design. Share and
+                    // Save live at the end of the scroll content, so they come
+                    // into view once the reading has been read — see `content`.
+                    //
                     // safeAreaInset reserves exactly its own height as extra
                     // scroll-content inset, so nothing ever peeks out below the
                     // button row — no magic-number bottom padding to guess at.
                     .safeAreaInset(edge: .bottom) {
-                        actions
+                        askOracleButton
                             .padding(.top, 12)
                             .padding(.bottom, 8)
                             .background(Pigment.background.ignoresSafeArea(edges: .bottom))
@@ -85,6 +89,11 @@ struct ReadingResultView: View {
         VStack(spacing: 24) {
             HStack(spacing: 9) {
                 ThumbCard(
+                    // The cup the oracle actually read — the server's circular
+                    // crop, identical here and in a History replay. The picked
+                    // photo and the sample art are fallbacks, in that order.
+                    imageURL: draft.cupImageURL,
+                    imageInset: 14,
                     fallback: cupImage,
                     caption: "result.your_cup",
                     value: draft.drink.map { Text($0.name) } ?? Text("")
@@ -101,6 +110,7 @@ struct ReadingResultView: View {
             whatISee(reading)
             keySymbols(reading)
             advice(reading)
+            shareAndSave
         }
     }
 
@@ -116,7 +126,7 @@ struct ReadingResultView: View {
                     .font(Lettering.displayMedium(18))
                     .foregroundStyle(Pigment.cream)
             }
-            Text(reading.whatISee)
+            Text(reading.whatISee.oracleProse)
                 .font(Lettering.body(14))
                 .foregroundStyle(Pigment.cream)
                 .lineSpacing(4)
@@ -142,7 +152,7 @@ struct ReadingResultView: View {
                         Text(symbol.name)
                             .font(Lettering.bodyMedium(14))
                             .foregroundStyle(Pigment.cream)
-                        Text(symbol.meaning)
+                        Text(symbol.meaning.oracleProse)
                             .font(Lettering.body(14).italic())
                             .foregroundStyle(Pigment.cream.opacity(0.8))
                             .lineSpacing(3)
@@ -163,7 +173,7 @@ struct ReadingResultView: View {
                     .scaledToFit()
                     .frame(width: 32, height: 32)
                     .accessibilityHidden(true)
-                Text(reading.advice)
+                Text(reading.advice.oracleProse)
                     .font(Lettering.displayMedium(24))
                     .foregroundStyle(Pigment.cream)
                     .multilineTextAlignment(.center)
@@ -193,45 +203,55 @@ struct ReadingResultView: View {
         }
     }
 
-    private var actions: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 9) {
-                if let card = shareCard {
-                    ShareLink(
-                        item: card,
-                        // Brand the preview with the app icon rather than the
-                        // raw card thumbnail — this is how the share sheet and
-                        // the saved item identify OracleBrew.
-                        preview: SharePreview("share.preview_title",
-                                              image: Image(uiImage: card.image),
-                                              icon: Image("ShareIcon"))
-                    ) {
-                        secondaryLabel("result.share", icon: "square.and.arrow.up")
-                    }
-                    // ShareLink owns the tap and never reports the outcome, so
-                    // this records the sheet opening, not a completed share.
-                    .simultaneousGesture(TapGesture().onEnded {
-                        Tally.shared.track(.shareSheetShown)
-                    })
-                } else {
-                    secondaryLabel("result.share", icon: "square.and.arrow.up").opacity(0.4)
+    /// Scrolls with the reading rather than being pinned: the design puts these
+    /// after the advice, so they arrive once there is something worth keeping.
+    private var shareAndSave: some View {
+        HStack(spacing: 9) {
+            if let card = shareCard {
+                ShareLink(
+                    item: card,
+                    // Brand the preview with the app icon rather than the
+                    // raw card thumbnail — this is how the share sheet and
+                    // the saved item identify OracleBrew.
+                    preview: SharePreview("share.preview_title",
+                                          image: Image(uiImage: card.image),
+                                          icon: Image("ShareIcon"))
+                ) {
+                    secondaryLabel("result.share", icon: "myshare")
                 }
-                Button(action: saveCard) {
-                    secondaryLabel("result.save", icon: "arrow.down.to.line")
-                }
-                .buttonStyle(.plain)
-                .disabled(shareCard == nil)
+                // ShareLink owns the tap and never reports the outcome, so
+                // this records the sheet opening, not a completed share.
+                .simultaneousGesture(TapGesture().onEnded {
+                    Tally.shared.track(.shareSheetShown)
+                })
+            } else {
+                secondaryLabel("result.share", icon: "myshare").opacity(0.4)
             }
-            PrimaryButton(title: draft.readingHasChat ? "result.return_to_chat" : "result.ask_oracle") {
-                Tally.shared.track(.chatOpenedFromReading)
-                onAskOracle()
+            Button(action: saveCard) {
+                secondaryLabel("result.save", icon: "mysave")
             }
+            .buttonStyle(.plain)
+            .disabled(shareCard == nil)
         }
     }
 
+    private var askOracleButton: some View {
+        PrimaryButton(title: draft.readingHasChat ? "result.return_to_chat" : "result.ask_oracle") {
+            Tally.shared.track(.chatOpenedFromReading)
+            onAskOracle()
+        }
+    }
+
+    /// `icon` is an asset name, not an SF Symbol — the design has its own glyphs
+    /// for these two, and `square.and.arrow.up` / `arrow.down.to.line` were
+    /// standing in. Template-rendered so they take the label's cream.
     private func secondaryLabel(_ key: LocalizedStringKey, icon: String) -> some View {
         HStack(spacing: 8) {
-            Image(systemName: icon).font(.system(size: 18))
+            Image(icon)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 20, height: 20)
             Text(key).font(Lettering.displayMedium(18))
         }
         .foregroundStyle(Pigment.cream)
@@ -244,9 +264,19 @@ struct ReadingResultView: View {
         // Saves the branded Share card, not the raw cup photo — the reading
         // itself is already kept server-side regardless.
         guard let card = shareCard else { return }
-        UIImageWriteToSavedPhotosAlbum(card.image, nil, nil, nil)
-        Resonance.success()
-        Tally.shared.track(.readingSavedToLibrary)
-        Tidings.shared.say("result.saved.title")
+        Task {
+            do {
+                try await PhotoLibrary.save(card.image)
+                Resonance.success()
+                Tally.shared.track(.readingSavedToLibrary)
+                Tidings.shared.say("result.saved.title")
+            } catch {
+                // Said only now that we know. The confirmation used to fire the
+                // moment the call returned, so a refused permission still
+                // reported success and left nothing in the library.
+                Resonance.failure()
+                Tidings.shared.say("result.save_failed.title")
+            }
+        }
     }
 }

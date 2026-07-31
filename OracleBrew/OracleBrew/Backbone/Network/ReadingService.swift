@@ -5,8 +5,26 @@ struct ReadingService {
 
     /// The end-to-end flow. Throws EmissaryFailure on any step; the reading id
     /// is returned alongside the result so the caller can start a chat from it.
-    func generate(from draft: ReadingDraft) async throws -> (reading: Reading, readingID: Int) {
+    ///
+    /// `onCropped` is handed the circular crop's URL as soon as the cup has been
+    /// found, well before the AI finishes — the loading screen shows that instead
+    /// of the whole photo, which is what the design asks for. It fires at most
+    /// once, and never if the crop failed.
+    func generate(
+        from draft: ReadingDraft,
+        onCropped: @escaping @MainActor (String) -> Void = { _ in }
+    ) async throws -> (reading: Reading, readingID: Int) {
         let created = try await create(draft)
+
+        // Crop before analyze, always. The backend only skips Vision for readings
+        // created with `random_cup_id`, and we never create those — a bundled
+        // random cup is uploaded as `cup_image` like any other, so it takes the
+        // same path. Analyze rejects an uncropped upload with `cup_not_cropped`.
+        let cropped = try await crop(readingID: created.id)
+        if let url = cropped.cupImage {
+            await MainActor.run { onCropped(url) }
+        }
+
         _ = try await analyze(readingID: created.id)
         try await pollUntilDone(readingID: created.id)
         let full = try await fetchReading(id: created.id)
@@ -38,6 +56,17 @@ struct ReadingService {
         if let topicID = draft.topic?.numericID { parts.append(.field("topic_id", String(topicID))) }
         if !draft.question.isEmpty { parts.append(.field("question", draft.question)) }
         let request = EmissaryRequest(path: "readings/", method: .post, body: .multipart(parts))
+        return try await emissary.perform(request, as: ReadingDTO.self)
+    }
+
+    /// Finds the cup and returns the reading with `cup_image` swapped for a
+    /// circular PNG of just the rim inwards.
+    ///
+    /// Synchronous and slow-ish — it runs Vision. Idempotent: called twice it
+    /// returns the same crop without detecting again. Throws
+    /// `.badRequest(code: "cup_not_found")` when the photo has no cup in it.
+    private func crop(readingID: Int) async throws -> ReadingDTO {
+        let request = EmissaryRequest(path: "readings/\(readingID)/crop/", method: .post)
         return try await emissary.perform(request, as: ReadingDTO.self)
     }
 

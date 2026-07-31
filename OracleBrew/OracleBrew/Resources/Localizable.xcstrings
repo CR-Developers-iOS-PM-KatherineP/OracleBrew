@@ -478,6 +478,22 @@
         }
       }
     },
+    "chats.delete.confirm": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أتريد حذف هذه المحادثة؟ ستختفي ردود العرّاف نهائيًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this chat? The oracle’s replies will be gone for good."
+          }
+        }
+      }
+    },
     "chats.empty": {
       "extractionState": "stale",
       "localizations": {
@@ -626,6 +642,22 @@
         }
       }
     },
+    "common.delete": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
     "common.done": {
       "localizations": {
         "ar": {
@@ -735,6 +767,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Manage Consent"
+          }
+        }
+      }
+    },
+    "delete.failed": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذّر الحذف. حاول مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t delete. Try again."
           }
         }
       }
@@ -1990,6 +2038,22 @@
         }
       }
     },
+    "history.delete.confirm": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أتريد حذف هذه القراءة؟ سيختفي فنجانها وتفسيرها نهائيًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this reading? Its cup and interpretation will be gone for good."
+          }
+        }
+      }
+    },
     "history.empty": {
       "extractionState": "stale",
       "localizations": {
@@ -2051,6 +2115,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Every reading you've asked for, saved here"
+          }
+        }
+      }
+    },
+    "history.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سجل القراءات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading History"
           }
         }
       }
@@ -2470,6 +2550,7 @@
       }
     },
     "onb.children.no": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2486,6 +2567,7 @@
       }
     },
     "onb.children.planning": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2502,6 +2584,7 @@
       }
     },
     "onb.children.yes": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2518,6 +2601,7 @@
       }
     },
     "onb.gender.female": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2534,6 +2618,7 @@
       }
     },
     "onb.gender.male": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -2550,6 +2635,7 @@
       }
     },
     "onb.gender.opt_out": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -5755,7 +5841,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ancient moon wisdom for clarity, emotional insight, and guidance through life's turning points."
+            "value": "Ancient moon wisdom for clarity, insight, and guidance at life's turning points."
           }
         }
       }
@@ -6838,6 +6924,38 @@
         }
       }
     },
+    "photo.denied.message": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسمح بالوصول إلى الكاميرا من الإعدادات لتصوير فنجانك، أو ارفع صورة من معرضك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow camera access in Settings to take a photo of your cup, or upload one from your gallery."
+          }
+        }
+      }
+    },
+    "photo.denied.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الوصول إلى الكاميرا مغلق"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera access is off"
+          }
+        }
+      }
+    },
     "photo.import_failed": {
       "comment": "Toast when a picked photo can't be read.",
       "localizations": {
@@ -7015,6 +7133,22 @@
         }
       }
     },
+    "photo.zone.open_settings": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "افتح الإعدادات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        }
+      }
+    },
     "profile.children": {
       "localizations": {
         "ar": {
@@ -7075,6 +7209,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Date of Birth"
+          }
+        }
+      }
+    },
+    "profile.dob.day": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DD"
+          }
+        }
+      }
+    },
+    "profile.dob.month": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شهر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MM"
+          }
+        }
+      }
+    },
+    "profile.dob.year": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سنة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YYYY"
           }
         }
       }
@@ -7483,6 +7665,38 @@
         }
       }
     },
+    "reading.no_cup.message": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يقرأ العرّاف الرموز من رواسب القهوة أو أوراق الشاي فقط. جرّب صورة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Oracle reads symbols only from coffee grounds or tea leaves. Try another photo."
+          }
+        }
+      }
+    },
+    "reading.no_cup.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذه لا تبدو فنجانًا"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That doesn't look like a cup"
+          }
+        }
+      }
+    },
     "result.advice_label": {
       "localizations": {
         "ar": {
@@ -7559,6 +7773,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Save"
+          }
+        }
+      }
+    },
+    "result.save_failed.title": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يتم الحفظ. تحقّق من صلاحية الوصول إلى الصور."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't save. Check photo access in Settings."
           }
         }
       }

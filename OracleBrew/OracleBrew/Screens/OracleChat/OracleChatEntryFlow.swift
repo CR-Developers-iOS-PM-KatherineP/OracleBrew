@@ -41,5 +41,9 @@ struct OracleChatEntryFlow: View {
             }
         }
         .environment(draft)
+        // Presented as a fullScreenCover, so it needs its own layer — see
+        // BrewReadingFlow. Without it the chat's "message didn't send" toast
+        // drew behind the cover and never appeared.
+        .toastLayer()
     }
 }

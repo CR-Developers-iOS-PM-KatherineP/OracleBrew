@@ -69,7 +69,7 @@ struct Atrium: View {
             }
 
             if showOnboarding {
-                OnboardingView(store: profileStore) { onboardingSeen = true }
+                OnboardingView(store: profileStore, revealed: !booting) { onboardingSeen = true }
                     .transition(.opacity)
             }
 

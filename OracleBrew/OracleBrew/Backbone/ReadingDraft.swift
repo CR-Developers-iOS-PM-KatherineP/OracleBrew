@@ -20,6 +20,15 @@ final class ReadingDraft {
     // image. There is no separate backend cup id any more.
     var photo: UIImage?
 
+    /// The server's image of this reading's cup, for a History replay where
+    /// `photo` is long gone — the result card must show the cup that was read,
+    /// not the bundled sample.
+    var cupImageURL: String?
+
+    /// When the reading was cast — for the chat's reading card, whose date is
+    /// today only while the session that cast it is still alive.
+    var readingDate: Date?
+
     /// Set once this reading is recorded into ReadingHistoryStore, so re-appearing
     /// on Reading Result (e.g. after a chat) doesn't record a duplicate entry.
     var historySessionID: UUID?

@@ -6,6 +6,8 @@ struct ChatsView: View {
     @Bindable var router: Pathfinder
 
     @State private var showChatFlow = false
+    /// Row awaiting the "really delete?" confirmation.
+    @State private var chatToDelete: ChatSummary?
     private let tabClearance: CGFloat = 96
     /// Button height plus the gap under the last row.
     private let newChatClearance: CGFloat = 72
@@ -47,11 +49,18 @@ struct ChatsView: View {
             .navigationDestination(for: ChatSummary.self) { summary in
                 let thread = chatStore.thread(for: summary)
                 OracleChatView(thread: thread, onClose: router.pop,
-                               onOpenProfile: { router.path.append(TellerPeek(teller: thread.teller)) })
+                               onOpenProfile: { router.path.append(TellerPeek(teller: thread.teller)) },
+                               onReturnToReading: replayHandler(for: thread))
             }
             .navigationDestination(for: ChatThread.self) { thread in
                 OracleChatView(thread: thread, onClose: router.pop,
-                               onOpenProfile: { router.path.append(TellerPeek(teller: thread.teller)) })
+                               onOpenProfile: { router.path.append(TellerPeek(teller: thread.teller)) },
+                               onReturnToReading: replayHandler(for: thread))
+            }
+            .navigationDestination(for: HistoryItem.self) { item in
+                // The reading behind a chat's cup card. Ask Your Oracle pops
+                // back into the chat underneath rather than pushing another.
+                HistoryReplayView(item: item, onAskOracle: router.pop, onClose: router.pop)
             }
             .navigationDestination(for: TellerPeek.self) { peek in
                 TellerProfileView(teller: peek.teller, onBack: router.pop)
@@ -61,18 +70,20 @@ struct ChatsView: View {
         .fullScreenCover(isPresented: $showChatFlow) {
             OracleChatEntryFlow {
                 showChatFlow = false
-                Task { await chatStore.loadList() }
+                Task { await chatStore.refreshList() }
             }
         }
+        // Quiet refreshes, both of them — loadFirst tears the list down to a
+        // spinner, and re-entering the tab made the tiles jump.
         .task {
-            await chatStore.loadList()
+            await chatStore.refreshList()
             // The rows badge themselves from History's readings.
             if historyStore.items.isEmpty { await historyStore.loadFirst() }
         }
         .onChange(of: router.path.isEmpty) { _, atRoot in
             // Returning to the list — refresh so the unread dot clears (the
             // backend marked the thread read when it was opened).
-            if atRoot { Task { await chatStore.loadList() } }
+            if atRoot { Task { await chatStore.refreshList() } }
         }
     }
 
@@ -91,26 +102,73 @@ struct ChatsView: View {
         }
     }
 
+    // A List rather than the LazyVStack it used to be: swipe-to-delete is the
+    // native affordance for rows, and .swipeActions only exists on List rows —
+    // it also mirrors itself under RTL, which a hand-rolled drag would not.
     private func list(_ items: [ChatSummary]) -> some View {
-        ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: 0) {
-                ForEach(items) { summary in
-                    Button {
-                        Tally.shared.track(.chatOpenedFromList)
-                        router.path.append(summary)
-                    } label: {
-                        ChatThreadRow(summary: summary, cupImageURL: cupImage(for: summary))
-                    }
-                    .buttonStyle(.plain)
-                    .task { await chatStore.loadMoreIfNeeded(currentItem: summary) }
+        List {
+            ForEach(items) { summary in
+                Button {
+                    Tally.shared.track(.chatOpenedFromList)
+                    router.path.append(summary)
+                } label: {
+                    ChatThreadRow(summary: summary, cupImageURL: cupImage(for: summary))
                 }
-                if chatStore.isLoadingMore {
-                    ProgressView().tint(Pigment.accent).padding(.vertical, 12)
+                .buttonStyle(.plain)
+                .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    // An empty builder means no swipe at all — gated until the
+                    // backend's DELETE goes live.
+                    if FeatureGates.deletion {
+                        Button(role: .destructive) { chatToDelete = summary } label: {
+                            Label("common.delete", systemImage: "trash")
+                        }
+                    }
+                }
+                .task { await chatStore.loadMoreIfNeeded(currentItem: summary) }
+            }
+            if chatStore.isLoadingMore {
+                ProgressView()
+                    .tint(Pigment.accent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+        .contentMargins(.top, 12, for: .scrollContent)
+        .confirmationDialog("chats.delete.confirm", isPresented: confirmingDelete,
+                            titleVisibility: .visible) {
+            Button("common.delete", role: .destructive) {
+                guard let summary = chatToDelete else { return }
+                Task {
+                    if await chatStore.delete(summary) {
+                        Resonance.success()
+                    } else {
+                        Resonance.failure()
+                        Tidings.shared.say("delete.failed")
+                    }
                 }
             }
-            .padding(.top, 12)
-            .padding(.horizontal, 12)
         }
+    }
+
+    private var confirmingDelete: Binding<Bool> {
+        Binding(get: { chatToDelete != nil }, set: { if !$0 { chatToDelete = nil } })
+    }
+
+    /// Where a reading-born chat's cup card leads: the reading's replay, when
+    /// History's loaded pages can resolve it. Nil leaves the card informative
+    /// but inert — better than promising a destination that can't be built.
+    private func replayHandler(for thread: ChatThread) -> (() -> Void)? {
+        guard let readingID = thread.readingID,
+              let item = historyStore.items.first(where: { $0.id == readingID }) else { return nil }
+        return { router.path.append(item) }
     }
 
     /// The chat list endpoint carries only `reading_id`, so the cup photo comes

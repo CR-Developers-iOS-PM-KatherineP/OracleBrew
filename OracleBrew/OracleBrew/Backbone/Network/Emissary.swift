@@ -119,7 +119,9 @@ final class Emissary {
             }
             WireLog.response(http, data: data, for: urlRequest)
             guard (200..<300).contains(http.statusCode) else {
-                throw EmissaryFailure.from(statusCode: http.statusCode)
+                // The body travels with the status: a 400 can carry a `code` that
+                // says what to tell the user, and it used to be discarded here.
+                throw EmissaryFailure.from(statusCode: http.statusCode, body: data)
             }
             return data
         } catch let urlError as URLError where retryOnDeadConnection && Self.isDeadConnection(urlError) {

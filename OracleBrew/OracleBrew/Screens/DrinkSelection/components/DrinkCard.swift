@@ -33,16 +33,20 @@ struct DrinkCard: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity)
-        .background(
-            LinearGradient(colors: drink.gradient, startPoint: .top, endPoint: .bottom)
-        )
-        .overlay {
-            // Placed by absolute geometry, not by an alignment: the sash is
-            // decoration painted across the artwork, so it stays put whichever
-            // way the card reads, and `.position` takes the design's own
-            // centre point directly.
-            if drink.isRandom {
-                ribbon.position(x: Self.ribbonCentre.x, y: Self.ribbonCentre.y)
+        .background {
+            // The sash lives in the background, above the card's gradient but
+            // under the content — the design runs it behind the cup, and as an
+            // overlay it painted across the lid instead. The artwork is a cutout,
+            // so the band shows through around the cup and disappears behind it.
+            ZStack {
+                LinearGradient(colors: drink.gradient, startPoint: .top, endPoint: .bottom)
+                // Placed by absolute geometry, not by an alignment: the sash is
+                // decoration painted across the artwork, so it stays put whichever
+                // way the card reads, and `.position` takes the design's own
+                // centre point directly.
+                if drink.isRandom {
+                    ribbon.position(x: Self.ribbonCentre.x, y: Self.ribbonCentre.y)
+                }
             }
         }
         .overlay(alignment: .topTrailing) { radio }
@@ -63,14 +67,20 @@ struct DrinkCard: View {
         Group {
             // Prefer the API image; fall back to the bundled art (slug-mapped)
             // while the backend serves image: null.
+            // Fitted, not filled, on both paths. Filling a fixed-height box
+            // crops whatever doesn't fit the aspect, which cut the saucers and
+            // handles off the wider cups. Fitting leaves the art whole and a
+            // little smaller — it's a cutout on the card's gradient, so the
+            // spare space around it isn't visible as a gap.
             if let url = drink.imageURL, !url.isEmpty {
                 // Clear backing: the art is a cutout, so it has to sit on the
                 // card's own gradient — an opaque fill reads as a box around it.
-                RemoteImage(urlString: url, cornerRadius: Cadence.cardRadius, backing: .clear)
+                RemoteImage(urlString: url, cornerRadius: Cadence.cardRadius,
+                            contentMode: .fit, backing: .clear)
             } else {
                 Image(drink.art)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
             }
         }
         .frame(height: 108)

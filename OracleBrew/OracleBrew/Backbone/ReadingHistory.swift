@@ -36,6 +36,9 @@ final class ReadingHistoryStore {
 
     func loadFirst() async { await list.loadFirst() }
 
+    /// The quiet variant — rows swap in place, no loading flash.
+    func refresh() async { await list.refresh() }
+
     func loadMoreIfNeeded(currentItem: HistoryItem) async {
         await list.loadMoreIfNeeded(currentItem: currentItem)
     }
@@ -43,5 +46,20 @@ final class ReadingHistoryStore {
     /// Pulls the full reading for a history row so the Result screen can replay it.
     func reading(for item: HistoryItem) async -> Reading? {
         try? await repository.readingDetail(id: item.id)
+    }
+
+    /// Deletes a reading: the card goes at once, the request follows. On
+    /// failure the list is reloaded and false comes back so the screen can
+    /// say so. The backend cascades the reading's chat; the Chats tab picks
+    /// that up on its next refresh.
+    func delete(_ item: HistoryItem) async -> Bool {
+        list.remove(id: item.id)
+        do {
+            try await repository.delete(readingID: item.id)
+            return true
+        } catch {
+            await loadFirst()
+            return false
+        }
     }
 }
