@@ -35,6 +35,8 @@ struct OracleChatView: View {
     @FocusState private var inputFocused: Bool
 
     private let repository = ChatRepository()
+    /// For hydrating the reading card when the chat is opened from a list.
+    private let readings = HistoryRepository()
 
     private var teller: FortuneTeller { thread.teller }
     private var draft: ReadingDraft? { thread.draftContext }
@@ -48,7 +50,7 @@ struct OracleChatView: View {
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 12) {
-                            if let reading = draft?.reading, let onReturnToReading {
+                            if let reading = draft?.reading {
                                 readingCard(reading, action: onReturnToReading)
                                     .background(GeometryReader { geo in
                                         Color.clear.preference(
@@ -85,6 +87,17 @@ struct OracleChatView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .task { await load() }
+        .onAppear {
+            thread.isOpen = true
+            // Coming back from a pushed profile with a reply that landed while
+            // away: it's on screen now, so the list shouldn't keep badging it.
+            // First open is covered by the server, which marks the thread read
+            // when `load()` fetches it.
+            if let chatID = thread.backendID {
+                Task { try? await repository.markRead(chatID: chatID) }
+            }
+        }
+        .onDisappear { thread.isOpen = false }
     }
 
     private func scrollToBottom(_ proxy: ScrollViewProxy) {
@@ -111,7 +124,9 @@ struct OracleChatView: View {
                 chatID = id
             } else {
                 let oracleID = Int(teller.id) ?? 0
-                let created = try await repository.createOrResume(oracleID: oracleID, readingID: draft?.readingID)
+                // The thread's own key, not the draft's: a thread opened from
+                // the Chats list carries no draft yet may belong to a reading.
+                let created = try await repository.createOrResume(oracleID: oracleID, readingID: thread.readingID)
                 thread.backendID = created.id
                 chatID = created.id
             }
@@ -122,8 +137,17 @@ struct OracleChatView: View {
             // list is never half translated.
             thread.quickQuestions = OracleContentCatalog.prompts(
                 forSlug: teller.slug,
-                fromReading: draft?.readingID != nil
+                fromReading: thread.readingID != nil
             )
+            // A reading-born chat opened from a list carries only the reading's
+            // id — pull the reading itself so its card sits at the top here just
+            // as it does in the chat entered straight from the result.
+            if let draft, let readingID = draft.readingID, draft.reading == nil,
+               let card = try? await readings.readingCard(id: readingID) {
+                draft.reading = card.reading
+                if draft.cupImageURL == nil { draft.cupImageURL = card.cupImageURL }
+                if draft.readingDate == nil { draft.readingDate = card.date }
+            }
         } catch {
             Resonance.failure()
             Tidings.shared.say("chat.send_failed.title")
@@ -197,15 +221,15 @@ struct OracleChatView: View {
     /// full result. Shown at the top of a post-reading chat. Same shape as a
     /// History row minus the oracle badge (you are already inside that oracle's
     /// chat): the cup, the date, the topic, and the reading's own text.
-    private func readingCard(_ reading: Reading, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+    private func readingCard(_ reading: Reading, action: (() -> Void)?) -> some View {
+        Button(action: { action?() }) {
             HStack(alignment: .top, spacing: 12) {
                 cupThumb
                     .frame(width: 80, height: 80)
                     .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(Date.now.formatted(.dateTime.month(.wide).day().year()))
+                    Text((draft?.readingDate ?? .now).formatted(.dateTime.month(.wide).day().year()))
                         .font(Lettering.body(10))
                         .textCase(.uppercase)
                         .foregroundStyle(Pigment.cream.opacity(0.4))
@@ -230,24 +254,32 @@ struct OracleChatView: View {
             .background(RoundedRectangle(cornerRadius: 24).fill(Pigment.row))
             .overlay(alignment: .topTrailing) {
                 // Decorative — the whole card is the button. `arrow.forward`
-                // flips itself under RTL.
-                Image(systemName: "arrow.forward")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Pigment.cream.opacity(0.5))
-                    .frame(width: 32, height: 32)
-                    .background(Circle().fill(Color.white.opacity(0.05)))
-                    .padding(12)
+                // flips itself under RTL. No arrow when there is nowhere to
+                // go: a card without a destination shouldn't promise one.
+                if action != nil {
+                    Image(systemName: "arrow.forward")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Pigment.cream.opacity(0.5))
+                        .frame(width: 32, height: 32)
+                        .background(Circle().fill(Color.white.opacity(0.05)))
+                        .padding(12)
+                }
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .disabled(action == nil)
     }
 
-    /// The cup the reading was drawn from — the uploaded (or bundled Random-Cup)
-    /// photo, or the bundled sample as a last resort.
+    /// The cup the reading was drawn from.
     @ViewBuilder
     private var cupThumb: some View {
-        if let photo = draft?.photo {
+        // The server's crop of the cup that was read, whenever it's known —
+        // same source as the result card and the History row. The session's own
+        // photo and the sample art are the fallbacks, in that order.
+        if let url = draft?.cupImageURL, !url.isEmpty {
+            RemoteImage(urlString: url, cornerRadius: 40)
+        } else if let photo = draft?.photo {
             Image(uiImage: photo).resizable().scaledToFill()
         } else {
             Image("SampleCupCard").resizable().scaledToFill()
@@ -385,10 +417,14 @@ struct OracleChatView: View {
                 let reply = try await repository.awaitReply(jobID: response.job.id)
                 thread.messages.append(ChatMessage(isFromUser: false, text: reply))
                 thread.lastUpdated = Date()
-                // The reply flips the thread to unread the moment it lands, and
-                // the user is looking straight at it — clear that, or the list
-                // badges a message they already read.
-                try? await repository.markRead(chatID: chatID)
+                // The reply flips the thread to unread the moment it lands. If
+                // the user is looking straight at it, clear that — or the list
+                // badges a message they already read. But this task outlives
+                // the screen: when they've left before the answer came, the
+                // dot is the only way they'll learn of it, so it stays.
+                if thread.isOpen {
+                    try? await repository.markRead(chatID: chatID)
+                }
             } catch {
                 // Drop the optimistic user bubble back into the input so nothing
                 // is lost, and surface the failure.

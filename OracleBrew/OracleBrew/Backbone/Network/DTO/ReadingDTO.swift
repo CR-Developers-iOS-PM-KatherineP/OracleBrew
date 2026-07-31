@@ -55,6 +55,7 @@ struct ReadingDTO: Decodable {
     let aiJobId: Int?
     let hasChat: Bool?
     let cupImage: String?
+    let createdAt: String?
     let result: ReadingResultDTO?
 
     enum CodingKeys: String, CodingKey {
@@ -62,5 +63,6 @@ struct ReadingDTO: Decodable {
         case aiJobId = "ai_job_id"
         case hasChat = "has_chat"
         case cupImage = "cup_image"
+        case createdAt = "created_at"
     }
 }

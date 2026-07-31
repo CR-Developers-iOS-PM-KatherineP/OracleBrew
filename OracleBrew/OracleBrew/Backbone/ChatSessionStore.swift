@@ -12,6 +12,11 @@ final class ChatThread: Identifiable {
     let teller: FortuneTeller
     /// Reading this chat grew out of, if any — nil for a direct chat entry.
     let draftContext: ReadingDraft?
+    /// The server's other half of the chat key: a chat is one per
+    /// (oracle, reading), with nil meaning the oracle's single direct chat.
+    /// Kept apart from `draftContext` because a thread opened from the Chats
+    /// list has no draft, yet may still belong to a reading.
+    let readingID: Int?
     var messages: [ChatMessage] = []
     var lastUpdated = Date()
     /// The server chat id, resolved on first open (create-or-resume) or carried
@@ -19,6 +24,11 @@ final class ChatThread: Identifiable {
     var backendID: Int?
     /// Quick-question chips the server suggests for this thread.
     var quickQuestions: [String] = []
+    /// Whether the chat screen is currently showing this thread. The reply
+    /// arrives on a task that outlives the screen, and marking the thread read
+    /// is only honest while someone is actually looking at it — a reply landing
+    /// after the user left must keep its unread dot in the list.
+    var isOpen = false
 
     /// The suggestions still worth offering: the full list minus anything already
     /// asked.
@@ -37,7 +47,9 @@ final class ChatThread: Identifiable {
     init(teller: FortuneTeller, draftContext: ReadingDraft?) {
         self.teller = teller
         self.draftContext = draftContext
+        readingID = draftContext?.readingID
     }
+
 }
 
 extension ChatThread: Hashable {
@@ -84,9 +96,19 @@ final class ChatSessionStore {
 
     // MARK: Open threads
 
-    /// Returns the existing thread with this teller, or opens a new one.
+    /// Returns the existing thread for this chat, or opens a new one.
+    ///
+    /// Matched on the server's own key — (oracle, reading) — not on the oracle
+    /// alone. Keying by oracle is how every door once led into the same room:
+    /// Oracle Chat would hand back the reading's thread with its `backendID`
+    /// already set, the screen would skip create-or-resume, and the user found
+    /// themselves mid-way through a conversation about last week's cup. The
+    /// backend keeps a reading's chat and the oracle's direct chat strictly
+    /// apart; this cache now does too.
     func thread(for teller: FortuneTeller, context: ReadingDraft?) -> ChatThread {
-        if let existing = threads.first(where: { $0.teller.id == teller.id }) {
+        if let existing = threads.first(where: {
+            $0.teller.id == teller.id && $0.readingID == context?.readingID
+        }) {
             return existing
         }
         let new = ChatThread(teller: teller, draftContext: context)
@@ -97,9 +119,30 @@ final class ChatSessionStore {
     /// Opens the thread behind a list row, carrying its known server id so the
     /// chat screen loads messages directly instead of creating a new thread.
     func thread(for summary: ChatSummary) -> ChatThread {
-        let thread = self.thread(for: summary.teller, context: nil)
-        thread.backendID = summary.id
-        return thread
+        // The server id is the surest match; fall back to the (oracle, reading)
+        // key for a flow-born thread that hasn't resolved its id yet.
+        if let existing = threads.first(where: { $0.backendID == summary.id }) {
+            return existing
+        }
+        if let existing = threads.first(where: {
+            $0.backendID == nil && $0.teller.id == summary.teller.id
+                && $0.readingID == summary.readingID
+        }) {
+            existing.backendID = summary.id
+            return existing
+        }
+        // A reading-born row gets a stub draft carrying just the reading id —
+        // the chat screen hydrates the rest (the reading, its cup, its date)
+        // so the reading card shows here exactly as it does after the reading.
+        let context: ReadingDraft? = summary.readingID.map { id in
+            let draft = ReadingDraft()
+            draft.readingID = id
+            return draft
+        }
+        let new = ChatThread(teller: summary.teller, draftContext: context)
+        new.backendID = summary.id
+        threads.insert(new, at: 0)
+        return new
     }
 
     // MARK: Thread list
@@ -110,14 +153,12 @@ final class ChatSessionStore {
         await list.loadMoreIfNeeded(currentItem: currentItem)
     }
 
-    private static let isoFormatter = ISO8601DateFormatter()
-
     private static func summary(_ dto: ChatListItemDTO) -> ChatSummary {
         ChatSummary(
             id: dto.id,
             teller: CatalogMapper.oracle(dto.oracle),
             preview: dto.lastMessage?.text ?? String(localized: "chats.row.empty_preview"),
-            date: dto.updatedAt.flatMap { isoFormatter.date(from: $0) } ?? Date(),
+            date: APIDate.parse(dto.updatedAt) ?? Date(),
             hasUnread: dto.hasUnreadFromOracle ?? false,
             readingID: dto.readingId
         )

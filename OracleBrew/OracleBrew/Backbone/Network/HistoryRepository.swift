@@ -37,11 +37,18 @@ struct HistoryRepository {
         let dto = try await emissary.perform(EmissaryRequest(path: "readings/\(id)/"), as: ReadingDTO.self)
         return ReadingMapper.reading(dto.result)
     }
+
+    /// Everything a chat's reading card needs, in one fetch — for a
+    /// reading-born chat opened from a list, where the session no longer
+    /// holds the reading it came from.
+    func readingCard(id: Int) async throws -> (reading: Reading, cupImageURL: String?, date: Date?) {
+        let dto = try await emissary.perform(EmissaryRequest(path: "readings/\(id)/"), as: ReadingDTO.self)
+        return (ReadingMapper.reading(dto.result), dto.cupImage, APIDate.parse(dto.createdAt))
+    }
+
 }
 
 enum HistoryMapper {
-    private static let isoFormatter = ISO8601DateFormatter()
-
     static func item(_ dto: HistoryItemDTO) -> HistoryItem {
         HistoryItem(
             id: dto.id,
@@ -53,7 +60,7 @@ enum HistoryMapper {
             adviceHeadline: dto.adviceHeadline ?? "",
             timeframe: dto.timeframeLabel ?? "",
             hasChat: dto.hasChat ?? false,
-            date: dto.createdAt.flatMap { isoFormatter.date(from: $0) } ?? Date()
+            date: APIDate.parse(dto.createdAt) ?? Date()
         )
     }
 }
