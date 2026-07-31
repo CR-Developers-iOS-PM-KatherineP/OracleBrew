@@ -65,19 +65,25 @@ struct BrewReadingFlow: View {
 
     @ViewBuilder
     private func step(_ step: ReadingStep) -> some View {
+        // On the wizard steps the ✕ goes one step back, not out of the flow —
+        // the design's cross is a retreat, and killing three screens of
+        // progress from step four was how testers read it as a bug. Leaving
+        // stays one tap per step. The first step and the result keep ✕ as the
+        // exit: there is nothing behind the one, and un-reading a finished cup
+        // makes no sense on the other.
         switch step {
         case .tellers:
             FortuneTellersView(
                 onContinue: { path.append(ReadingStep.intention) },
                 onOpenProfile: { path.append($0) },
                 onBack: pop,
-                onClose: onClose
+                onClose: pop
             )
         case .intention:
             IntentionView(
                 onContinue: { path.append(ReadingStep.photo) },
                 onBack: pop,
-                onClose: onClose
+                onClose: pop
             )
         case .photo:
             // Random Cup shows a bundled cup photo rather than asking for one —
@@ -86,13 +92,13 @@ struct BrewReadingFlow: View {
                 RandomCupView(
                     onContinue: { path.append(ReadingStep.loading) },
                     onBack: pop,
-                    onClose: onClose
+                    onClose: pop
                 )
             } else {
                 PhotoUploadView(
                     onContinue: { path.append(ReadingStep.loading) },
                     onBack: pop,
-                    onClose: onClose
+                    onClose: pop
                 )
             }
         case .loading:
