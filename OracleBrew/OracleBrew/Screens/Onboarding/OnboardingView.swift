@@ -2,6 +2,9 @@ import SwiftUI
 
 struct OnboardingView: View {
     let store: UserProfileStore
+    /// False while the splash still covers this screen — the name field must
+    /// not raise the keyboard from underneath it.
+    var revealed = true
     /// Onboarding is finished with — show the app.
     let onFinish: () -> Void
 
@@ -73,7 +76,7 @@ struct OnboardingView: View {
             Group {
                 switch step.control {
                 case .text:
-                    OnboardingTextEntry { name in
+                    OnboardingTextEntry(revealed: revealed) { name in
                         answer(name) { $0.name = name }
                     }
                     .padding(.horizontal, 20)

@@ -2,6 +2,11 @@ import SwiftUI
 
 /// Name entry — a rounded field over a Continue button.
 struct OnboardingTextEntry: View {
+    /// Whether the screen is actually in front of the user. The onboarding is
+    /// built underneath the splash, and grabbing focus from back there raised
+    /// the keyboard over it — so the field only takes focus once this is true,
+    /// catching up the moment the splash lifts.
+    var revealed = true
     let onSubmit: (String) -> Void
 
     @State private var text = ""
@@ -31,7 +36,10 @@ struct OnboardingTextEntry: View {
             }
         }
         .animation(.easeOut(duration: 0.2), value: trimmed.isEmpty)
-        .onAppear { focused = true }
+        .onAppear { if revealed { focused = true } }
+        .onChange(of: revealed) { _, nowRevealed in
+            if nowRevealed { focused = true }
+        }
     }
 
     /// Same muted cream the profile form's fields use, so the two name inputs
