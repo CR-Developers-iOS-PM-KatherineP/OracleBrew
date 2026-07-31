@@ -133,25 +133,28 @@ struct SettingsView: View {
         }
     }
 
-    /// No profile yet → a single "Create an Account" row. Once saved, it turns
-    /// into "Edit an Account" + "Delete Account" (per the design's notes).
+    /// Create/Edit switches on whether the profile is filled in, but Delete is
+    /// always there: the guest account exists from first launch and gathers
+    /// readings, cup photos and chats long before any profile is saved — so
+    /// there is always something to delete, App Review requires the way out to
+    /// be findable (5.1.1(v)), and the privacy policy promises it. The design
+    /// only draws the created state; deviating here is deliberate.
     private var accountSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             SettingsSectionLabel(title: "settings.section.account")
             SettingsCard {
                 if profileStore.profile.isCreated {
                     SettingsRow(icon: "IconEdit", title: "settings.edit_account", action: onOpenProfile)
-                    SettingsDivider()
-                    SettingsRow(icon: "IconUserMinus", title: "settings.delete_account",
-                                tint: Pigment.danger, iconTint: Pigment.danger, weight: .semibold) {
-                        showDeleteConfirm = true
-                    }
                 } else {
-                    // The design only draws the created state, so there's no
-                    // slice for this row — it opens the same profile form as
-                    // "Edit an Account", so it borrows that icon.
+                    // Opens the same profile form as "Edit an Account", so it
+                    // borrows that icon.
                     SettingsRow(icon: "IconEdit", title: "settings.create_account",
                                 action: onOpenProfile)
+                }
+                SettingsDivider()
+                SettingsRow(icon: "IconUserMinus", title: "settings.delete_account",
+                            tint: Pigment.danger, iconTint: Pigment.danger, weight: .semibold) {
+                    showDeleteConfirm = true
                 }
             }
         }
