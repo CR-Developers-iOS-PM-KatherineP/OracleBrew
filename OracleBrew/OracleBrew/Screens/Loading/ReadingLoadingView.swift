@@ -52,6 +52,9 @@ struct ReadingLoadingView: View {
             do {
                 let (reading, id) = try await service.generate(from: draft) { url in
                     cropURL = url
+                    // The result card and a later History replay show this same
+                    // crop — one cup, whichever door the reading is seen through.
+                    draft.cupImageURL = url
                 }
                 draft.reading = reading
                 draft.readingID = id

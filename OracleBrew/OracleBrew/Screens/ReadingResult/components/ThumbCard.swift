@@ -3,15 +3,24 @@ import SwiftUI
 struct ThumbCard: View {
     /// A server image URL takes precedence; `fallback` is the bundled art.
     var imageURL: String? = nil
+    /// Breathing room around the remote image. Edge-to-edge is right for a
+    /// portrait, but cutout art like the circular cup crop reads as escaping
+    /// the card when it touches the rounded corners — inset it instead, on the
+    /// card's own fill.
+    var imageInset: CGFloat = 0
     let fallback: Image
     let caption: LocalizedStringKey
     let value: Text
 
     var body: some View {
         Color.clear
+            .background(imageInset > 0 ? Pigment.settingsCard : Color.clear)
             .overlay {
                 if let imageURL, !imageURL.isEmpty {
-                    RemoteImage(urlString: imageURL, cornerRadius: 24)
+                    RemoteImage(urlString: imageURL, cornerRadius: 24,
+                                contentMode: imageInset > 0 ? .fit : .fill,
+                                backing: imageInset > 0 ? .clear : Pigment.settingsCard)
+                        .padding(imageInset)
                 } else {
                     fallback.resizable().scaledToFill()
                 }

@@ -88,6 +88,11 @@ struct ReadingResultView: View {
         VStack(spacing: 24) {
             HStack(spacing: 9) {
                 ThumbCard(
+                    // The cup the oracle actually read — the server's circular
+                    // crop, identical here and in a History replay. The picked
+                    // photo and the sample art are fallbacks, in that order.
+                    imageURL: draft.cupImageURL,
+                    imageInset: 14,
                     fallback: cupImage,
                     caption: "result.your_cup",
                     value: draft.drink.map { Text($0.name) } ?? Text("")
