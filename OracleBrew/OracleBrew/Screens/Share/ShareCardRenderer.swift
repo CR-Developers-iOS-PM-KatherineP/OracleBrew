@@ -15,12 +15,26 @@ enum ShareCardRenderer {
     }
 }
 
-/// What the share sheet receives. Carrying a UIImage (rather than a file URL)
-/// lets Instagram/Messages treat it as an image directly.
+/// What the share sheet receives.
+///
+/// The file representation comes first, and deliberately so: several share
+/// extensions — Telegram above all — silently fail to attach an image that
+/// arrives as in-memory data, while a file-backed PNG goes through
+/// everywhere. The data representation stays as the fallback for receivers
+/// that ask for raw bytes.
 struct ShareCardImage: Transferable {
     let image: UIImage
 
     static var transferRepresentation: some TransferRepresentation {
+        FileRepresentation(exportedContentType: .png) { card in
+            let url = FileManager.default.temporaryDirectory
+                .appendingPathComponent("oraclebrew-reading.png")
+            guard let data = card.image.pngData() else {
+                throw ShareCardError.encodingFailed
+            }
+            try data.write(to: url, options: .atomic)
+            return SentTransferredFile(url)
+        }
         DataRepresentation(exportedContentType: .png) { card in
             guard let data = card.image.pngData() else {
                 throw ShareCardError.encodingFailed
