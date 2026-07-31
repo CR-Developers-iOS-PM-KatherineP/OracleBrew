@@ -238,7 +238,7 @@ struct OracleChatView: View {
                         readingTopicChip(topic)
                     }
 
-                    Text(reading.whatISee)
+                    Text(reading.whatISee.oracleProse)
                         .font(Lettering.body(12))
                         .foregroundStyle(Pigment.cream.opacity(0.8))
                         .lineSpacing(6)

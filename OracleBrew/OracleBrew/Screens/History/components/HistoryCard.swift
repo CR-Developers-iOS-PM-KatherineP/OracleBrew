@@ -30,7 +30,7 @@ struct HistoryCard: View {
                     topicChip(topic)
                 }
 
-                Text(item.preview)
+                Text(item.preview.oracleProse)
                     .font(Lettering.body(12))
                     .foregroundStyle(Pigment.cream.opacity(0.8))
                     .lineSpacing(6)
